@@ -1,2 +1,2 @@
-# SistemaGPT
-Projeto com duas contas GPT (Planejamento e Execução)
+# Projeto_Gemini
+Projeto com duas contas Gemini (Planejamento e Execução)
