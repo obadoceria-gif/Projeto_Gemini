@@ -1,0 +1,23 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "?? 1. Iniciar Planejamento",
+            "type": "shell",
+            "command": "powershell -ExecutionPolicy Bypass -File .scripts/autogerenciador.ps1 -Acao planejar",
+            "problemMatcher": []
+        },
+        {
+            "label": "? 2. Aprovar e Executar",
+            "type": "shell",
+            "command": "powershell -ExecutionPolicy Bypass -File .scripts/autogerenciador.ps1 -Acao executar",
+            "problemMatcher": []
+        },
+        {
+            "label": "?? 3. Rodar Auditoria Crítica",
+            "type": "shell",
+            "command": "powershell -ExecutionPolicy Bypass -File .scripts/autogerenciador.ps1 -Acao auditar",
+            "problemMatcher": []
+        }
+    ]
+}
