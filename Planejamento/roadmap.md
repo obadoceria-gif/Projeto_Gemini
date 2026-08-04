@@ -1,7 +1,7 @@
 # Roadmap de Implementação — Oba Doceria
 
 ## Fase 1: Desacoplamento de Dados e Estruturação (Prioridade Alta)
-- [ ] **Etapa 1.1:** Criar `src/data.js` extraindo catálogos, caixas e kits do script monolítico.
+- [x] **Etapa 1.1:** Criar `src/data.js` extraindo catálogos, caixas e kits do script monolítico.
 - [ ] **Etapa 1.2:** Modularizar a estrutura de arquivos em `src/app.js` e `src/styles.css`.
 - [ ] **Etapa 1.3:** Limpar o `index.html` mantendo apenas a marcação base e chamadas de scripts.
 
