@@ -7,9 +7,7 @@
         "activityBar.background": "#0D47A1",
         "activityBar.foreground": "#FFFFFF"
     },
-    "chat.agent.default": "agent",
     "chat.instructions.files": [
-        ".instructions.md",
-        "Planejamento/roadmap.md"
+        ".instructions.md"
     ]
 }
