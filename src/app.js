@@ -32,6 +32,7 @@ import { getConfig, getProducts } from './data.js';
         <header>
           <h1>${sanitizeText(config.storeName)}</h1>
           <p>${sanitizeText(config.welcomeText)}</p>
+          <div style="margin-top:8px;"><button id="oba-run-diagnostics" class="oba-diagnose">Executar Diagnóstico</button></div>
         </header>
       </section>
       <section id="oba-products" class="oba-products"></section>
@@ -49,6 +50,47 @@ import { getConfig, getProducts } from './data.js';
       </aside>
     `;
     document.body.appendChild(root);
+  }
+
+  function showDiagnostics(results) {
+    let panel = qs('#oba-diagnostics');
+    if (!panel) {
+      panel = document.createElement('div');
+      panel.id = 'oba-diagnostics';
+      panel.className = 'oba-diagnostics';
+      document.body.appendChild(panel);
+    }
+    panel.innerHTML = '';
+    const title = document.createElement('h4');
+    title.textContent = 'Resultados do Diagnóstico';
+    panel.appendChild(title);
+    const pre = document.createElement('pre');
+    pre.style.maxHeight = '320px';
+    pre.style.overflow = 'auto';
+    pre.textContent = JSON.stringify(results, null, 2);
+    panel.appendChild(pre);
+    const close = document.createElement('button');
+    close.textContent = 'Fechar';
+    close.addEventListener('click', () => panel.remove());
+    panel.appendChild(close);
+  }
+
+  async function runDiagnostics() {
+    const btn = qs('#oba-run-diagnostics');
+    if (!btn) return;
+    btn.disabled = true;
+    const original = btn.textContent;
+    btn.textContent = 'Executando...';
+    try {
+      const mod = await import('./data/test.js');
+      const results = await (mod.runDataTests ? mod.runDataTests() : window.runDataTests());
+      showDiagnostics(results);
+    } catch (err) {
+      showDiagnostics([{ name: 'error', success: false, error: String(err) }]);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = original;
+    }
   }
 
   function renderProducts(products) {

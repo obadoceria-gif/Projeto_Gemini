@@ -25,6 +25,11 @@ body { font-family: Arial, Helvetica, sans-serif; margin: 0; padding: 0; backgro
   .oba-products { grid-template-columns: 1fr; }
   #oba-root { padding: 12px; }
 }
+
+/* Diagnostics panel */
+.oba-diagnostics { position: fixed; right: 16px; bottom: 16px; width: 420px; max-width: calc(100% - 32px); background: #fff; border-radius: 8px; padding: 12px; box-shadow: 0 6px 18px rgba(0,0,0,0.12); z-index: 9999; }
+.oba-diagnose { background: #2b80ff; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+.oba-diagnose:disabled { opacity: 0.6; cursor: not-allowed; }
 .oba-cart-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
 .oba-checkout-form { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
 .oba-checkout-form input { padding: 8px; border-radius: 6px; border: 1px solid #ddd; }
