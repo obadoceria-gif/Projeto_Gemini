@@ -1,14 +1,17 @@
-# Roadmap de Implementa√ß√£o ‚Äî Oba Doceria
+# Roadmap de ImplementaÁ„o - Card·pio Interativo Oba Doceria (V2 Aprimorada)
 
-## Fase 1: Desacoplamento de Dados e Estrutura√ß√£o (Prioridade Alta)
-- [x] **Etapa 1.1:** Criar `src/data.js` extraindo cat√°logos, caixas e kits do script monol√≠tico.
-- [ ] **Etapa 1.2:** Modularizar a estrutura de arquivos em `src/app.js` e `src/styles.css`.
-- [ ] **Etapa 1.3:** Limpar o `index.html` mantendo apenas a marca√ß√£o base e chamadas de scripts.
+## Regra do Fluxo: Toda etapa exige aprovaÁ„o expressa do usu·rio antes do cÛdigo ser alterado.
 
-## Fase 2: Gerenciamento de Estado e Carrinho (Prioridade Alta)
-- [ ] **Etapa 2.1:** Implementar o objeto de estado central (`state`) para caixa ativa e sele√ß√£o de sabores.
-- [ ] **Etapa 2.2:** Centralizar c√°lculos do carrinho e reescrever o fluxo de checkout via WhatsApp.
+### [Aguardando AprovaÁ„o] Fase 1: Backup da Vers„o Est·vel e Desacoplamento de Dados
+- [ ] **Etapa 1.0 (SeguranÁa):** Criar snapshot de seguranÁa do card·pio atual em `.auditoria/v_estavel/`.
+- [ ] **Etapa 1.1:** Estruturar `src/data.js` com cat·logo completo de caixas (4, 6, 12 un.), kits presente·veis (mini naked cake, uvas verdes, morangos) e opcionais.
+- [ ] **PAUSA PARA REVIS√O DO USU¡RIO:** Aguardar aprovaÁ„o dos dados de `src/data.js`.
 
-## Fase 3: Componentiza√ß√£o e UI (Prioridade M√©dia)
-- [ ] **Etapa 3.1:** Substituir modais e alertas padr√£o (`alert`/`confirm`) por notifica√ß√µes visuais (toasts).
-- [ ] **Etapa 3.2:** Ajustar responsividade do rodap√© e navega√ß√£o mobile.
+### [Pendente] Fase 2: LÛgica do Carrinho e Regras de NegÛcio
+- [ ] **Etapa 2.1:** Implementar estado centralizado (`state`) com travas de capacidade de itens por caixa.
+- [ ] **Etapa 2.2:** Integrar c·lculo de totais e formatar pedido para envio via WhatsApp.
+- [ ] **PAUSA PARA REVIS√O DO USU¡RIO:** Validar o fluxo de checkout antes dos estilos visuais.
+
+### [Pendente] Fase 3: Interface Visualmente Elegante
+- [ ] **Etapa 3.1:** Estilizar vitrine de produtos e seletores de sabor com responsividade mobile.
+- [ ] **PAUSA PARA REVIS√O FINAL:** ValidaÁ„o de aceite do projeto.
