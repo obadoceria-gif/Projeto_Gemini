@@ -1,0 +1,34 @@
+[
+  {
+    "id": "brigadeiro-tradicional",
+    "nome": "Brigadeiro Tradicional",
+    "categoria": "brigadeiros",
+    "preco": 2.5,
+    "img": "",
+    "disponivel": true
+  },
+  {
+    "id": "brigadeiro-doce-de-leite",
+    "nome": "Brigadeiro Doce de Leite",
+    "categoria": "brigadeiros",
+    "preco": 3.0,
+    "img": "",
+    "disponivel": true
+  },
+  {
+    "id": "palha-italiana",
+    "nome": "Palha Italiana",
+    "categoria": "doces",
+    "preco": 4.5,
+    "img": "",
+    "disponivel": true
+  },
+  {
+    "id": "caixa-6",
+    "nome": "Caixa 6 Unidades",
+    "categoria": "embalagens",
+    "preco": 5.0,
+    "img": "",
+    "disponivel": true
+  }
+]

@@ -142,3 +142,11 @@ A proposta deve seguir três frentes principais:
 3. Reescrever os renderizadores de catálogo e modais com estado central.
 4. Testar o fluxo completo de montagem de caixa, kits e checkout WhatsApp.
 5. Ajustar layout responsivo e validar em mobile.
+
+## 9. Manutenção do Catálogo e Segurança mínima
+
+- Formato de edição: o catálogo foi movido para `data/products.json` para facilitar atualizações sem tocar no JavaScript. Cada item possui `id`, `nome`, `categoria`, `preco`, `img` e `disponivel`.
+- Processo de publicação: crie uma branch, faça as alterações no `data/products.json`, abra um Pull Request e aguarde revisão antes de dar merge. Sempre gere um backup em `.auditoria/v_estavel/` antes de deploys.
+- Validação: o frontend valida tipos e faixa de preço (número >= 0). Mesmo assim, preços exibidos no cliente são apenas referenciais — confirme manualmente via WhatsApp até integrar backend.
+- Proteção básica: restrinja quem pode commitar no repositório, use revisão por pares e mantenha cópias estáveis em `.auditoria/v_estavel/` e em um branch de backup.
+

@@ -1,0 +1,14 @@
+/* Estilos básicos para o Cardápio Virtual da Oba Doceria */
+body { font-family: Arial, Helvetica, sans-serif; margin: 0; padding: 0; background: #fff7f0; color: #333; }
+#oba-root { display: flex; gap: 16px; padding: 16px; }
+.oba-products { flex: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+.oba-product { background: #fff; border-radius: 8px; padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.oba-product h4 { margin: 0 0 8px 0; font-size: 1rem; }
+.oba-price { font-weight: 700; color: #b33; margin-bottom: 8px; }
+.oba-actions button { background: #7b2; border: none; padding: 8px 10px; border-radius: 6px; cursor: pointer; }
+.oba-cart { width: 320px; background: #fff; border-radius: 8px; padding: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); height: fit-content; }
+.oba-cart h3 { margin: 0 0 8px 0; }
+.oba-cart-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+.oba-checkout-form { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.oba-checkout-form input { padding: 8px; border-radius: 6px; border: 1px solid #ddd; }
+#oba-send-whatsapp { background: #25D366; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; }
