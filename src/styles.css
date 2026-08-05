@@ -1,13 +1,30 @@
 /* Estilos básicos para o Cardápio Virtual da Oba Doceria */
 body { font-family: Arial, Helvetica, sans-serif; margin: 0; padding: 0; background: #fff7f0; color: #333; }
-#oba-root { display: flex; gap: 16px; padding: 16px; }
-.oba-products { flex: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
-.oba-product { background: #fff; border-radius: 8px; padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+#oba-root { display: flex; gap: 16px; padding: 16px; align-items: flex-start; }
+.oba-intro { grid-column: 1 / -1; margin-bottom: 16px; }
+.oba-intro header { background: #fff; border-radius: 10px; padding: 18px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+.oba-products { flex: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.oba-product { background: #fff; border-radius: 8px; padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 10px; }
+.oba-product img { width: 100%; height: 140px; object-fit: cover; border-radius: 6px; background: #f8f2ee; }
+.oba-image-placeholder { width: 100%; height: 140px; display: flex; align-items: center; justify-content: center; background: #f4ece6; border-radius: 6px; color: #777; font-size: 0.9rem; }
 .oba-product h4 { margin: 0 0 8px 0; font-size: 1rem; }
 .oba-price { font-weight: 700; color: #b33; margin-bottom: 8px; }
-.oba-actions button { background: #7b2; border: none; padding: 8px 10px; border-radius: 6px; cursor: pointer; }
+.oba-actions button { background: #7b2; border: none; padding: 8px 10px; border-radius: 6px; cursor: pointer; width: 100%; }
+.oba-actions button:disabled { background: #ccc; cursor: not-allowed; }
 .oba-cart { width: 320px; background: #fff; border-radius: 8px; padding: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); height: fit-content; }
 .oba-cart h3 { margin: 0 0 8px 0; }
+.oba-field-hint { font-size: 0.85rem; color: #666; margin-bottom: 8px; }
+.oba-checkout-form { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.oba-checkout-form input { padding: 8px; border-radius: 6px; border: 1px solid #ddd; width: 100%; box-sizing: border-box; }
+#oba-send-whatsapp { background: #25D366; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; width: 100%; }
+@media (max-width: 980px) {
+  #oba-root { flex-direction: column; }
+  .oba-cart { width: auto; }
+}
+@media (max-width: 640px) {
+  .oba-products { grid-template-columns: 1fr; }
+  #oba-root { padding: 12px; }
+}
 .oba-cart-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
 .oba-checkout-form { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
 .oba-checkout-form input { padding: 8px; border-radius: 6px; border: 1px solid #ddd; }

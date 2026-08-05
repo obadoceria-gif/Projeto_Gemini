@@ -1,11 +1,13 @@
+import { getConfig, getProducts } from './data.js';
+
 /*
   Frontend mínimo para listagem, carrinho e envio por WhatsApp.
   Arquivo gerado automaticamente durante implementação inicial.
-  Edite `STORE_PHONE` para o número da loja no formato E.164 sem sinais (ex: 5511999999999).
+  Edite `data/config.json` para alterar telefone da loja, textos e mensagens.
 */
 (async function () {
-  const STORE_PHONE = ''; // <<< EDITE AQUI com o telefone da loja (ex: 5511999999999)
   const CART_KEY = 'oba_cart_v1';
+  let config = { storePhone: '', storeName: 'Oba Doceria', welcomeText: '', phoneHint: '', whatsappPrompt: '' };
 
   function qs(sel) { return document.querySelector(sel); }
   function qsa(sel) { return Array.from(document.querySelectorAll(sel)); }
@@ -26,6 +28,12 @@
     const root = document.createElement('div');
     root.id = 'oba-root';
     root.innerHTML = `
+      <section class="oba-intro">
+        <header>
+          <h1>${sanitizeText(config.storeName)}</h1>
+          <p>${sanitizeText(config.welcomeText)}</p>
+        </header>
+      </section>
       <section id="oba-products" class="oba-products"></section>
       <aside id="oba-cart" class="oba-cart">
         <h3>Carrinho</h3>
@@ -34,6 +42,7 @@
         <form id="oba-checkout-form" class="oba-checkout-form">
           <input name="nome" placeholder="Seu nome" required />
           <input name="telefone" placeholder="Telefone (ex: 11999998888)" required />
+          <div class="oba-field-hint">${sanitizeText(config.phoneHint)}</div>
           <input name="endereco" placeholder="Endereço (opcional)" />
           <button type="button" id="oba-send-whatsapp">Enviar por WhatsApp</button>
         </form>
@@ -48,11 +57,15 @@
     products.forEach(p => {
       const card = document.createElement('article');
       card.className = 'oba-product';
+      const imgMarkup = p.img ? `<img src="${sanitizeText(p.img)}" alt="${sanitizeText(p.nome)}" />` : '<div class="oba-image-placeholder">Imagem não disponível</div>';
+      const disabled = !p.disponivel ? 'disabled' : '';
+      const buttonText = p.disponivel ? 'Adicionar' : 'Indisponível';
       card.innerHTML = `
+        ${imgMarkup}
         <h4>${sanitizeText(p.nome)}</h4>
         <div class="oba-price">${formatCurrency(p.preco)}</div>
         <div class="oba-actions">
-          <button data-id="${p.id}" class="oba-add">Adicionar</button>
+          <button data-id="${p.id}" class="oba-add" ${disabled}>${buttonText}</button>
         </div>
       `;
       container.appendChild(card);
@@ -126,6 +139,7 @@
   }
 
   async function init() {
+    config = await getConfig();
     buildLayout();
     const products = await (window.__oba_products = (await (typeof getProducts === 'function' ? getProducts() : Promise.resolve([]))));
     renderProducts(products);
@@ -143,8 +157,8 @@
       if (!Object.keys(cart).length) return alert('Seu carrinho está vazio.');
       const msg = buildWhatsAppMessage(products, cart, { nome, telefone: telefoneRaw, endereco });
       const encoded = encodeURIComponent(msg);
-      const phone = STORE_PHONE || telefone; // se loja não configurada, abre para o próprio cliente (útil para debug)
-      if (!phone) return alert('Telefone da loja não configurado. Edite src/app.js e preencha STORE_PHONE.');
+      const phone = config.storePhone || telefone;
+      if (!phone) return alert('Telefone da loja não configurado. Edite data/config.json e preencha storePhone.');
       const url = `https://wa.me/${phone}?text=${encoded}`;
       window.open(url, '_blank');
     });
