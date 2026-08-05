@@ -1,0 +1,23 @@
+[
+  {
+    "id": "fornecedor-laticinios",
+    "nome": "Laticínios São João",
+    "contato": "(11) 98888-0000",
+    "email": "contato@saojoaolaticinios.com.br",
+    "cidade": "São Paulo"
+  },
+  {
+    "id": "fornecedor-chocolate",
+    "nome": "Chocolate Brasil",
+    "contato": "(11) 97777-1111",
+    "email": "vendas@chocolatebrasil.com.br",
+    "cidade": "Campinas"
+  },
+  {
+    "id": "fornecedor-mercearia",
+    "nome": "Mercearia Central",
+    "contato": "(11) 96666-2222",
+    "email": "atendimento@merceariacentral.com.br",
+    "cidade": "São Paulo"
+  }
+]
