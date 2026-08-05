@@ -2,21 +2,27 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "?? 1. Iniciar Planejamento",
+            "label": "?? 1. Refinar e Debater Ideia (Crítico vs Arquiteto)",
             "type": "shell",
-            "command": "powershell -ExecutionPolicy Bypass -File .scripts/autogerenciador.ps1 -Acao planejar",
+            "command": "echo Inicie o chat com o comando de debate...",
             "problemMatcher": []
         },
         {
-            "label": "? 2. Aprovar e Executar",
+            "label": "?? 2. Consolidação do Planejamento (Pós-Consenso)",
             "type": "shell",
-            "command": "powershell -ExecutionPolicy Bypass -File .scripts/autogerenciador.ps1 -Acao executar",
+            "command": "echo Gravando plano final em .plans/plano_desenvolvimento.md...",
             "problemMatcher": []
         },
         {
-            "label": "?? 3. Rodar Auditoria Crítica",
+            "label": "??? 3. Auditar Engenharia e Código",
             "type": "shell",
-            "command": "powershell -ExecutionPolicy Bypass -File .scripts/autogerenciador.ps1 -Acao auditar",
+            "command": "echo Auditando complexidade e atalhos técnicos...",
+            "problemMatcher": []
+        },
+        {
+            "label": "?? 4. Executar com Backup (Desenvolvedor)",
+            "type": "shell",
+            "command": "powershell -Command \"if (-not (Test-Path .auditoria/v_estavel)) { New-Item -ItemType Directory -Path .auditoria/v_estavel } ; Copy-Item -Path src/* -Destination .auditoria/v_estavel/ -Recurse -Force\"",
             "problemMatcher": []
         }
     ]
