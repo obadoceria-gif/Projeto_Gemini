@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "2026.08.06-baseline",
+  "updatedAt": "2026-08-06",
+  "status": "proposto-nao-integrado",
+  "store": {
+    "name": "Oba Doceria",
+    "whatsapp": "5555999117626",
+    "currency": "BRL",
+    "locale": "pt-BR"
+  },
+  "assets": {
+    "basePath": "./",
+    "imageRoot": "Images/"
+  },
+  "checkout": {
+    "requiredFields": [
+      "nome",
+      "data",
+      "hora",
+      "formaPagamento"
+    ],
+    "paymentMethods": [
+      "Pix",
+      "Dinheiro"
+    ],
+    "includeCatalogVersionInMessage": true
+  },
+  "businessChannels": {
+    "personalizados": true,
+    "eventos": true
+  }
+}

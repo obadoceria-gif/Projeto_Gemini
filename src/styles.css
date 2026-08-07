@@ -4,26 +4,91 @@ body { font-family: Arial, Helvetica, sans-serif; margin: 0; padding: 0; backgro
 .oba-intro { grid-column: 1 / -1; margin-bottom: 16px; }
 .oba-intro header { background: #fff; border-radius: 10px; padding: 18px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
 .oba-products { flex: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
-.oba-product { background: #fff; border-radius: 8px; padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 10px; }
-.oba-product img { width: 100%; height: 140px; object-fit: cover; border-radius: 6px; background: #f8f2ee; }
-.oba-image-placeholder { width: 100%; height: 140px; display: flex; align-items: center; justify-content: center; background: #f4ece6; border-radius: 6px; color: #777; font-size: 0.9rem; }
-.oba-product h4 { margin: 0 0 8px 0; font-size: 1rem; }
-.oba-price { font-weight: 700; color: #b33; margin-bottom: 8px; }
-.oba-actions button { background: #7b2; border: none; padding: 8px 10px; border-radius: 6px; cursor: pointer; width: 100%; }
-.oba-actions button:disabled { background: #ccc; cursor: not-allowed; }
+.oba-product {
+  background: #fff;
+  border-radius: 10px; /* Slightly more rounded */
+  padding: 15px; /* Increased padding */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08); /* Softer, more pronounced shadow */
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Increased gap */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  cursor: pointer; /* Indicate it's clickable */
+}
+.oba-product:hover {
+  transform: translateY(-5px); /* Lift effect on hover */
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12); /* More pronounced shadow on hover */
+}
+.oba-product img {
+  width: 100%;
+  height: 160px; /* Slightly larger image */
+  object-fit: cover;
+  border-radius: 8px; /* Rounded corners for image */
+  background: #f8f2ee;
+}
+.oba-image-placeholder {
+  width: 100%;
+  height: 160px; /* Match image height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4ece6;
+  border-radius: 8px; /* Rounded corners */
+  color: #777;
+  font-size: 0.9rem;
+}
+.oba-product h4 {
+  margin: 0 0 8px 0;
+  font-size: 1.1rem; /* Slightly larger font for product name */
+  color: #4a2e20; /* Darker, warmer color for name */
+}
+.oba-price {
+  font-weight: 700;
+  color: #b33; /* Keep the accent color for price */
+  margin-bottom: 8px;
+  font-size: 1.05rem; /* Slightly larger price */
+}
+.oba-actions {
+  margin-top: auto; /* Push actions to the bottom */
+}
+.oba-actions button {
+  background: #7b2;
+  border: none;
+  padding: 10px 12px; /* Slightly more padding */
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: bold;
+  color: white; /* Ensure button text is white */
+  transition: background 0.2s ease-in-out;
+}
+.oba-actions button:hover {
+  background: #6a1; /* Darker shade on hover */
+}
+.oba-actions button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
 .oba-cart { width: 320px; background: #fff; border-radius: 8px; padding: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); height: fit-content; }
 .oba-cart h3 { margin: 0 0 8px 0; }
 .oba-field-hint { font-size: 0.85rem; color: #666; margin-bottom: 8px; }
 .oba-checkout-form { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
 .oba-checkout-form input { padding: 8px; border-radius: 6px; border: 1px solid #ddd; width: 100%; box-sizing: border-box; }
 #oba-send-whatsapp { background: #25D366; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; width: 100%; }
+
+/* Media Queries para Responsividade */
 @media (max-width: 980px) {
   #oba-root { flex-direction: column; }
-  .oba-cart { width: auto; }
+  .oba-cart { width: auto; } /* Carrinho ocupa a largura disponível */
+  .oba-products { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Ajuste para telas médias */ }
 }
+
 @media (max-width: 640px) {
-  .oba-products { grid-template-columns: 1fr; }
-  #oba-root { padding: 12px; }
+  .oba-products { grid-template-columns: 1fr; /* Uma coluna em telas pequenas */ }
+  #oba-root { padding: 12px; gap: 12px; /* Espaçamento menor em telas pequenas */ }
+  .oba-product { padding: 10px; /* Padding interno menor para produtos */ }
+  .oba-product h4 { font-size: 0.95rem; /* Fonte ligeiramente menor para títulos de produto */ }
+  .oba-price { font-size: 0.95rem; /* Fonte ligeiramente menor para preços */ }
 }
 
 /* Diagnostics panel */

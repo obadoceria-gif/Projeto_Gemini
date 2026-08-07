@@ -1,4 +1,6 @@
-import { getConfig, getProducts } from './data.js';
+
+import { getProducts } from './data.js';
+import { getConfig } from './data/config.js';
 
 /*
   Frontend mínimo para listagem, carrinho e envio por WhatsApp.
@@ -8,6 +10,17 @@ import { getConfig, getProducts } from './data.js';
 (async function () {
   const CART_KEY = 'oba_cart_v1';
   let config = { storePhone: '', storeName: 'Oba Doceria', welcomeText: '', phoneHint: '', whatsappPrompt: '' };
+
+  // Estado centralizado
+  const state = {
+    cart: loadCart(),
+    products: [],
+    boxes: {
+      'cx001': { capacity: 4, currentItems: 0 },
+      'cx002': { capacity: 6, currentItems: 0 },
+      'cx003': { capacity: 12, currentItems: 0 }
+    }
+  };
 
   function qs(sel) { return document.querySelector(sel); }
   function qsa(sel) { return Array.from(document.querySelectorAll(sel)); }
@@ -117,10 +130,23 @@ import { getConfig, getProducts } from './data.js';
 
   function onAdd(e) {
     const id = e.currentTarget.dataset.id;
-    const cart = loadCart();
-    cart[id] = (cart[id] || 0) + 1;
-    saveCart(cart);
-    renderCart(window.__oba_products || [], cart);
+    const product = state.products.find(p => p.id === id);
+
+    if (!product) return;
+
+    // Lógica de travas de capacidade para caixas
+    if (product.type === 'caixa') {
+      const box = state.boxes[product.id];
+      if (box && box.currentItems >= box.capacity) {
+        alert(`A caixa ${product.name} já está cheia!`);
+        return;
+      }
+      if (box) box.currentItems++;
+    }
+
+    state.cart[id] = (state.cart[id] || 0) + 1;
+    saveCart(state.cart);
+    renderCart(state.products, state.cart);
   }
 
   function renderCart(products, cart) {
@@ -142,12 +168,25 @@ import { getConfig, getProducts } from './data.js';
     totalEl.textContent = 'Total: ' + formatCurrency(total);
     qsa('.oba-remove').forEach(btn => btn.addEventListener('click', e => {
       const id = e.currentTarget.dataset.id;
-      const cart = loadCart();
-      if (!cart[id]) return;
-      cart[id] = cart[id] - 1;
-      if (cart[id] <= 0) delete cart[id];
-      saveCart(cart);
-      renderCart(products, cart);
+      const product = state.products.find(p => p.id === id);
+      if (!product) return;
+
+      if (state.cart[id]) {
+        state.cart[id]--;
+        if (state.cart[id] <= 0) {
+          delete state.cart[id];
+        }
+
+        // Lógica de travas de capacidade para caixas
+        if (product.type === 'caixa') {
+          const box = state.boxes[product.id];
+          if (box && box.currentItems > 0) {
+            box.currentItems--;
+          }
+        }
+      }
+      saveCart(state.cart);
+      renderCart(products, state.cart);
     }));
   }
 
@@ -183,9 +222,9 @@ import { getConfig, getProducts } from './data.js';
   async function init() {
     config = await getConfig();
     buildLayout();
-    const products = await (window.__oba_products = (await (typeof getProducts === 'function' ? getProducts() : Promise.resolve([]))));
-    renderProducts(products);
-    renderCart(products, loadCart());
+    state.products = await getProducts(); // Carrega os produtos para o estado
+    renderProducts(state.products);
+    renderCart(state.products, state.cart);
 
     qs('#oba-send-whatsapp').addEventListener('click', () => {
       const form = qs('#oba-checkout-form');
@@ -195,9 +234,9 @@ import { getConfig, getProducts } from './data.js';
       const endereco = form.endereco.value && sanitizeText(form.endereco.value.trim());
       if (!nome) return alert('Preencha seu nome.');
       if (!telefone) return alert('Telefone inválido. Use apenas números.');
-      const cart = loadCart();
+      const cart = state.cart; // Usa o carrinho do estado
       if (!Object.keys(cart).length) return alert('Seu carrinho está vazio.');
-      const msg = buildWhatsAppMessage(products, cart, { nome, telefone: telefoneRaw, endereco });
+      const msg = buildWhatsAppMessage(state.products, cart, { nome, telefone: telefoneRaw, endereco });
       const encoded = encodeURIComponent(msg);
       const phone = config.storePhone || telefone;
       if (!phone) return alert('Telefone da loja não configurado. Edite data/config.json e preencha storePhone.');
