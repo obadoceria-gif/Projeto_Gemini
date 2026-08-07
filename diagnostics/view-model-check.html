@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diagnóstico da Vitrine</title>
+  <style>
+    body {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px;
+      font-family: system-ui, sans-serif;
+      line-height: 1.5;
+    }
+
+    .status {
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    article {
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    h2 {
+      margin-top: 28px;
+    }
+
+    small {
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>Diagnóstico do Adaptador da Vitrine</h1>
+  <div id="app">Carregando...</div>
+
+  <script type="module">
+    import {
+      initializeCatalog,
+      buildCatalogViewModel
+    } from '../src/catalog/index.js';
+
+    const app = document.querySelector('#app');
+
+    const money = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    });
+
+    try {
+      const catalog = await initializeCatalog();
+      const view = buildCatalogViewModel(catalog);
+
+      const caixa25 = view.sections
+        .flatMap(section => section.items)
+        .find(item => item.id === 'caixa-25');
+
+      const degustacao12 = view.sections
+        .flatMap(section => section.items)
+        .find(item => item.id === 'degustacao-12');
+
+      if (!caixa25?.configuravel) {
+        throw new Error('Caixa de 25 deveria ser configurável.');
+      }
+
+      if (caixa25.preco !== null) {
+        throw new Error('Caixa montável não deve possuir preço fixo na vitrine.');
+      }
+
+      if (degustacao12?.preco !== 40) {
+        throw new Error('Caixa degustação de 12 deveria custar R$ 40,00.');
+      }
+
+      const html = view.sections.map(section => `
+        <section>
+          <h2>${section.titulo}</h2>
+          <div class="grid">
+            ${section.items.map(item => `
+              <article>
+                <strong>${item.nome}</strong>
+                <p>${item.descricao}</p>
+                <div>
+                  ${
+                    item.preco === null
+                      ? '<strong>Preço calculado conforme os sabores</strong>'
+                      : `<strong>${money.format(item.preco)}</strong>`
+                  }
+                </div>
+                <small>
+                  ${item.configuravel ? 'Configurável' : 'Preço fixo'}
+                </small>
+              </article>
+            `).join('')}
+          </div>
+        </section>
+      `).join('');
+
+      app.innerHTML = `
+        <p class="status">✅ Adaptador da vitrine validado com sucesso.</p>
+        <p>Versão do catálogo: <strong>${view.catalogVersion}</strong></p>
+        ${html}
+      `;
+    } catch (error) {
+      app.innerHTML = `
+        <p class="status">❌ Falha no diagnóstico.</p>
+        <pre>${String(error?.stack || error)}</pre>
+      `;
+    }
+  </script>
+</body>
+</html>

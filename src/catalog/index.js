@@ -12,3 +12,7 @@ export {
 export {
   validateCatalog
 } from './validator.js';
+
+export {
+  buildCatalogViewModel
+} from './view-model.js';
