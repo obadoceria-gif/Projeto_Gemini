@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diagnóstico do Modelo Mestre</title>
+  <style>
+    body {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px;
+      font-family: system-ui, sans-serif;
+      line-height: 1.5;
+    }
+
+    pre {
+      overflow: auto;
+      padding: 16px;
+      background: #f4f4f4;
+      border-radius: 8px;
+      white-space: pre-wrap;
+    }
+
+    .ok {
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <h1>Diagnóstico do Modelo Mestre</h1>
+  <p>Esta página não faz parte do cardápio público. Ela existe apenas para validar a nova fonte de dados.</p>
+  <div id="result">Carregando...</div>
+
+  <script type="module">
+    import {
+      initializeCatalog,
+      getCatalogBaseUrl
+    } from '../src/catalog/index.js';
+
+    const result = document.querySelector('#result');
+
+    try {
+      const catalog = await initializeCatalog();
+
+      const summary = {
+        catalogVersion: catalog.config.catalogVersion,
+        baseUrl: getCatalogBaseUrl(),
+        categorias: catalog.categories.length,
+        sabores: catalog.flavors.length,
+        caixas: catalog.boxes.length,
+        produtos: catalog.products.length,
+        opcionais: catalog.options.length,
+        combos: catalog.combos.length,
+        avisos: catalog.validation.warnings
+      };
+
+      result.innerHTML = `
+        <p class="ok">✅ Modelo Mestre carregado e validado com sucesso.</p>
+        <pre>${JSON.stringify(summary, null, 2)}</pre>
+      `;
+    } catch (error) {
+      result.innerHTML = `
+        <p><strong>❌ Falha na validação.</strong></p>
+        <pre>${String(error?.stack || error)}</pre>
+      `;
+    }
+  </script>
+</body>
+</html>
