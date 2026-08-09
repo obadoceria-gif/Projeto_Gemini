@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diagnóstico do Catalog Service</title>
+  <style>
+    body { max-width: 900px; margin: 0 auto; padding: 24px; font-family: system-ui, sans-serif; line-height: 1.5; }
+    pre { overflow: auto; padding: 16px; background: #f4f4f4; border-radius: 8px; white-space: pre-wrap; }
+    .ok { font-weight: 700; }
+  </style>
+</head>
+<body>
+  <h1>Diagnóstico do Catalog Service</h1>
+  <p>Valida somente a nova camada de serviço.</p>
+  <div id="result">Executando...</div>
+
+  <script type="module">
+    import {
+      initializeCatalogService,
+      getCatalogVersion,
+      getStore,
+      getSections,
+      getAllViewItems,
+      getConfigurableBoxes,
+      getFixedPriceItems,
+      findViewItemById
+    } from '../src/services/index.js';
+
+    const result = document.querySelector('#result');
+
+    function assert(condition, message) {
+      if (!condition) throw new Error(message);
+    }
+
+    try {
+      await initializeCatalogService();
+
+      const store = getStore();
+      const sections = getSections();
+      const allItems = getAllViewItems();
+      const configurableBoxes = getConfigurableBoxes();
+      const fixedPriceItems = getFixedPriceItems();
+
+      assert(getCatalogVersion() === '2026.08.06-baseline', 'Versão inesperada do catálogo.');
+      assert(store?.name === 'Oba Doceria', 'Nome da loja não encontrado.');
+      assert(/^\d{10,15}$/.test(store?.whatsapp ?? ''), 'WhatsApp oficial não configurado.');
+      assert(sections.length === 2, 'Quantidade inesperada de seções.');
+      assert(allItems.length === 8, 'Quantidade inesperada de itens.');
+      assert(configurableBoxes.length === 4, 'Esperadas 4 caixas montáveis.');
+      assert(fixedPriceItems.length === 4, 'Esperados 4 itens de preço fixo.');
+
+      assert(findViewItemById('caixa-25')?.preco === null, 'Caixa 25 não deve ter preço fixo.');
+      assert(findViewItemById('degustacao-12')?.preco === 40, 'Degustação 12 incorreta.');
+      assert(findViewItemById('kit-tabua')?.preco === 180, 'Tábua Doce Artesanal incorreta.');
+
+      const summary = {
+        catalogVersion: getCatalogVersion(),
+        loja: store.name,
+        whatsapp: store.whatsapp,
+        secoes: sections.map(section => section.id),
+        totalDeItens: allItems.length,
+        caixasMontaveis: configurableBoxes.map(item => item.id),
+        itensPrecoFixo: fixedPriceItems.map(item => ({ id: item.id, preco: item.preco }))
+      };
+
+      result.innerHTML = `
+        <p class="ok">✅ Catalog Service validado com sucesso.</p>
+        <pre>${JSON.stringify(summary, null, 2)}</pre>
+      `;
+    } catch (error) {
+      result.innerHTML = `
+        <p><strong>❌ Falha no Catalog Service.</strong></p>
+        <pre>${String(error?.stack || error)}</pre>
+      `;
+    }
+  </script>
+</body>
+</html>
