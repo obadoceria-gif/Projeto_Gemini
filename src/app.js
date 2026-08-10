@@ -1,6 +1,12 @@
 
 import { getProducts } from './data.js';
 import { getConfig } from './data/config.js';
+import {
+  initializeCatalogService,
+  getCatalogVersion,
+  getAllViewItems,
+  buildLegacyProductsFromViewItems
+} from './services/index.js';
 
 /*
   Frontend mínimo para listagem, carrinho e envio por WhatsApp.
@@ -162,7 +168,7 @@ import { getConfig } from './data/config.js';
       total += subtotal;
       const row = document.createElement('div');
       row.className = 'oba-cart-row';
-      row.innerHTML = `${qty}x ${sanitizeText(p.nome)} — ${formatCurrency(subtotal)} <button data-id="${id}" class="oba-remove">-</button>`;
+      row.innerHTML = `${qty}x ${sanitizeText(p.nome)} â€” ${formatCurrency(subtotal)} <button data-id="${id}" class="oba-remove">-</button>`;
       list.appendChild(row);
     }
     totalEl.textContent = 'Total: ' + formatCurrency(total);
@@ -220,9 +226,16 @@ import { getConfig } from './data/config.js';
   }
 
   async function init() {
+    await initializeCatalogService();
+
+    console.info(
+      '[Cardápio] Modelo Mestre inicializado:',
+      getCatalogVersion()
+    );
+
     config = await getConfig();
     buildLayout();
-    state.products = await getProducts(); // Carrega os produtos para o estado
+    state.products = buildLegacyProductsFromViewItems(getAllViewItems()); // ponte temporaria para a UI legada
     renderProducts(state.products);
     renderCart(state.products, state.cart);
 

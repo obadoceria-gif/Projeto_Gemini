@@ -35,19 +35,26 @@ Live Server do Cardápio:
 - [x] Live Server funcionando.
 - [x] Porta 5501 registrada.
 
-## Em andamento
+## Concluído recentemente
 
 ### Governança 0.1
-- [ ] Consolidar Plano Mestre.
-- [ ] Consolidar Metodologia.
-- [ ] Consolidar Automação.
-- [ ] Criar diagnóstico da governança.
+- [x] Plano Mestre consolidado.
+- [x] Metodologia consolidada.
+- [x] Estratégia de automação consolidada.
+- [x] Diagnóstico de governança aprovado.
+
+## Em andamento
+
+### Sprint 1.4 — Integração incremental do Catalog Service
+- [x] Catalog Service disponível.
+- [ ] Inicializar Catalog Service no `src/app.js`.
+- [ ] Validar integração automaticamente.
+- [ ] Validar carregamento visual do cardápio.
+- [ ] Commit e push.
 
 ## Próxima tarefa técnica
 
-Sprint 1.4:
-
-Inicializar o `Catalog Service` dentro do `src/app.js` sem substituir ainda o fluxo legado de produtos.
+Concluir a Sprint 1.4 sem substituir ainda o fluxo legado de produtos.
 
 ## Não fazer ainda
 
