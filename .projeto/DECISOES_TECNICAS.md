@@ -1,39 +1,31 @@
-# Decisões Técnicas
+# DECISÕES TÉCNICAS
 
-**Versão:** 1.0  
-**Última atualização:** 06/08/2026
+## DT-001 — Código real como fonte técnica
+O desenvolvimento deve trabalhar sobre o repositório real e atualizado.
 
-## DT-001 — Independência do Cline e OpenRouter
+## DT-002 — Cline não é dependência
+Cline/OpenRouter podem ser usados opcionalmente, mas o projeto deve evoluir sem depender de créditos externos.
 
-**Decisão:** o projeto não dependerá de agentes pagos para evoluir.  
-**Motivo:** indisponibilidade de créditos e risco de bloqueio do desenvolvimento.  
-**Consequência:** VS Code, Git e ChatGPT passam a compor o fluxo principal; o Cline é opcional.
+## DT-003 — Modelo Mestre
+`data/catalog-v1/` é a fonte oficial de dados comerciais da nova arquitetura.
 
-## DT-002 — Código real como fonte da verdade
+## DT-004 — Migração incremental
+O legado será substituído por partes pequenas, testadas e commitadas individualmente.
 
-**Decisão:** alterações significativas serão baseadas nos arquivos reais e em uma linha de base identificável.  
-**Motivo:** evitar decisões baseadas em memória ou descrições desatualizadas.
+## DT-005 — Diagnósticos antes do commit
+Toda camada importante deve possuir validação independente antes de ser integrada.
 
-## DT-003 — Preservação do cardápio publicado
+## DT-006 — Live Server na porta 5501
+O Cardápio Virtual usa a porta 5501 no ambiente atual para evitar conflito com outro projeto local.
 
-**Decisão:** o repositório `obadoceria-gif/cardapio` permanecerá como referência funcional e comercial até o aceite da nova versão.  
-**Motivo:** ele contém catálogo, imagens, regras e deploy funcionando.
+## DT-007 — Automação antes de trabalho manual
+Sempre que possível, validações e tarefas repetitivas devem ser automatizadas com ferramentas disponíveis no ambiente.
 
-## DT-004 — Catálogo orientado por dados
+## DT-008 — Instruções manuais com localização exata
+Toda alteração manual deve informar arquivo, caminho, linhas e local preciso de inserção/substituição.
 
-**Decisão:** produtos, sabores, preços, caixas, combos, imagens, contatos e disponibilidade serão mantidos fora do HTML.  
-**Motivo:** permitir atualizações periódicas com menor risco e esforço.
+## DT-009 — Mudanças de metodologia devem ser documentadas
+Qualquer mudança relevante no fluxo de desenvolvimento deve atualizar a documentação de governança antes ou junto com a implementação.
 
-## DT-005 — Modelo Mestre de Catálogo
-
-**Decisão:** a nova versão usará um modelo único e validável de dados.  
-**Motivo:** eliminar fontes duplicadas e possibilitar um painel administrativo futuro.
-
-## DT-006 — Governança em `.projeto/`
-
-**Decisão:** a pasta `.projeto/` será a memória técnica oficial.  
-**Motivo:** facilitar manutenção, transferência e assistência de outras IAs ou desenvolvedores.
-
-## DT-007 — Aprovação antes de alterações estruturais
-
-**Decisão:** mudanças estruturais relevantes exigem plano e aprovação do usuário antes da implementação.
+## DT-010 — Evitar substituição ampla de arquivos grandes
+Arquivos grandes, especialmente `src/app.js`, devem ser migrados incrementalmente, uma responsabilidade por vez.
