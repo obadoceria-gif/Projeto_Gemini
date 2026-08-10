@@ -1,5 +1,4 @@
 
-import { getProducts } from './data.js';
 import { getConfig } from './data/config.js';
 import {
   initializeCatalogService,
@@ -258,7 +257,7 @@ import {
     });
   }
 
-  // aguarda função getProducts exportada por src/data.js
+  // Inicializa o app usando o Catalog Service como fonte principal de produtos.
   try { await init(); } catch (err) { console.error('Erro iniciando app Oba:', err); }
 
 })();
