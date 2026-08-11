@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Diagnóstico Sprint 1.5 — Etapa 2.4</title>
+  <style>
+    body { max-width: 900px; margin: 0 auto; padding: 24px; font-family: system-ui, sans-serif; line-height: 1.5; }
+    pre { overflow: auto; padding: 16px; background: #f4f4f4; border-radius: 8px; white-space: pre-wrap; }
+    .ok { font-weight: 700; }
+  </style>
+</head>
+<body>
+  <h1>Diagnóstico Sprint 1.5 — Etapa 2.4</h1>
+  <div id="result">Executando...</div>
+  <script type="module">
+    import { initializeCatalogService, getAllViewItems } from '../src/services/index.js';
+    const result = document.querySelector('#result');
+    function assert(condition, message) { if (!condition) throw new Error(message); }
+    try {
+      await initializeCatalogService();
+      const items = getAllViewItems();
+      assert(Array.isArray(items), 'getAllViewItems() não retornou um array.');
+      assert(items.length === 8, `Esperados 8 itens; encontrados ${items.length}.`);
+
+      const appSource = await (await fetch('../src/app.js', { cache: 'no-store' })).text();
+      const indexSource = await (await fetch('../src/services/index.js', { cache: 'no-store' })).text();
+
+      assert(!appSource.includes('buildLegacyProductsFromViewItems'), 'app.js ainda referencia o adaptador legado.');
+      assert(!indexSource.includes('legacy-product-adapter'), 'src/services/index.js ainda exporta o adaptador legado.');
+      assert(appSource.includes('state.products = getAllViewItems()'), 'app.js ainda não usa getAllViewItems() diretamente.');
+
+      const configurable = items.filter(item => item.configuravel === true || item.kind === 'caixa-montavel');
+      const fixed = items.filter(item => !(item.configuravel === true || item.kind === 'caixa-montavel') && Number.isFinite(item.preco));
+
+      assert(configurable.length === 4, 'Esperadas 4 caixas montáveis.');
+      assert(fixed.length === 4, 'Esperados 4 itens de preço fixo.');
+
+      result.innerHTML = `
+        <p class="ok">✅ Etapa 2.4 validada: adaptador legado removido com sucesso.</p>
+        <pre>${JSON.stringify({
+          totalItens: items.length,
+          caixasMontaveis: configurable.map(i => i.id),
+          itensPrecoFixo: fixed.map(i => ({ id: i.id, preco: i.preco })),
+          appUsaViewModelNativo: true,
+          adaptadorLegadoReferenciado: false
+        }, null, 2)}</pre>
+      `;
+    } catch (error) {
+      result.innerHTML = `<p><strong>❌ Falha na Etapa 2.4.</strong></p><pre>${String(error?.stack || error)}</pre>`;
+    }
+  </script>
+</body>
+</html>

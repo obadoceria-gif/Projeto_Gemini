@@ -4,7 +4,6 @@ import {
   initializeCatalogService,
   getCatalogVersion,
   getAllViewItems,
-  buildLegacyProductsFromViewItems
 } from './services/index.js';
 
 /*
@@ -114,23 +113,47 @@ import {
   function renderProducts(products) {
     const container = qs('#oba-products');
     container.innerHTML = '';
+
     products.forEach(p => {
       const card = document.createElement('article');
       card.className = 'oba-product';
-      const imgMarkup = p.img ? `<img src="${sanitizeText(p.img)}" alt="${sanitizeText(p.nome)}" />` : '<div class="oba-image-placeholder">Imagem não disponível</div>';
-      const disabled = !p.disponivel ? 'disabled' : '';
-      const buttonText = p.disponivel ? 'Adicionar' : 'Indisponível';
+
+      const isConfigurableBox =
+        p.configuravel === true || p.kind === 'caixa-montavel';
+
+      const isPurchasable =
+        !isConfigurableBox && Number.isFinite(p.preco);
+
+      // Assets oficiais ainda não foram incorporados ao projeto.
+      // Mantemos o fallback para evitar requisições 404.
+      const imgMarkup =
+        '<div class="oba-image-placeholder">Imagem não disponível</div>';
+
+      const priceMarkup = isConfigurableBox
+        ? 'Preço conforme sabores'
+        : formatCurrency(p.preco);
+
+      const disabled = !isPurchasable ? 'disabled' : '';
+
+      const buttonText = isConfigurableBox
+        ? 'Montagem em breve'
+        : (isPurchasable ? 'Adicionar' : 'Indisponível');
+
       card.innerHTML = `
         ${imgMarkup}
         <h4>${sanitizeText(p.nome)}</h4>
-        <div class="oba-price">${formatCurrency(p.preco)}</div>
+        <div class="oba-price">${priceMarkup}</div>
         <div class="oba-actions">
           <button data-id="${p.id}" class="oba-add" ${disabled}>${buttonText}</button>
         </div>
       `;
+
       container.appendChild(card);
     });
-    qsa('.oba-add').forEach(btn => btn.addEventListener('click', onAdd));
+
+    qsa('.oba-add').forEach(btn =>
+      btn.addEventListener('click', onAdd)
+    );
   }
 
   function onAdd(e) {
@@ -167,7 +190,7 @@ import {
       total += subtotal;
       const row = document.createElement('div');
       row.className = 'oba-cart-row';
-      row.innerHTML = `${qty}x ${sanitizeText(p.nome)} â€” ${formatCurrency(subtotal)} <button data-id="${id}" class="oba-remove">-</button>`;
+      row.innerHTML = `${qty}x ${sanitizeText(p.nome)} — ${formatCurrency(subtotal)} <button data-id="${id}" class="oba-remove">-</button>`;
       list.appendChild(row);
     }
     totalEl.textContent = 'Total: ' + formatCurrency(total);
@@ -234,7 +257,7 @@ import {
 
     config = await getConfig();
     buildLayout();
-    state.products = buildLegacyProductsFromViewItems(getAllViewItems()); // ponte temporaria para a UI legada
+    state.products = getAllViewItems(); // View Model nativo
     renderProducts(state.products);
     renderCart(state.products, state.cart);
 

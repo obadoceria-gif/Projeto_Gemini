@@ -1,93 +1,25 @@
-# METODOLOGIA DE DESENVOLVIMENTO
+# Metodologia de Desenvolvimento
 
-**Versão:** 1.0  
-**Status:** Ativa  
-**Última atualização:** 2026-08-10
+## Ciclo obrigatório
+diagnosticar → documentar → automatizar → aplicar → validar → testar visualmente → commit → push
 
-## 1. Fonte da verdade
+## Regras
+1. Código real é a fonte da verdade.
+2. Git registra o histórico.
+3. Mudanças pequenas e reversíveis.
+4. Nenhum commit antes de validação.
+5. Sempre que possível, usar scripts de aplicação e rollback.
+6. Evitar edição manual repetitiva.
+7. Não reconstruir algo que já existe e funciona.
+8. UI oficial deve ser preservada durante a migração.
+9. Mudanças de metodologia devem ser documentadas antes de continuar.
+10. O workspace deve terminar limpo após cada etapa concluída.
 
-- Código atual: repositório Git oficial `Projeto_Gemini`.
-- Histórico: Git / GitHub.
-- Dados comerciais: `data/catalog-v1/`.
-- Planejamento: `.projeto/PLANO_MESTRE.md`.
-- Estado atual: `.projeto/STATUS.md`.
-- Regras de negócio: `.projeto/REGRAS_DE_NEGOCIO.md`.
+## Instruções manuais
+Sempre informar arquivo exato, linhas exatas quando conhecidas, trecho a substituir, local de colagem e validação esperada.
 
-## 2. Fluxo oficial de cada tarefa
+## Automação
+Priorizar backup, snapshots, diagnósticos, busca de referências, criação de documentação, limpeza de artefatos, preparação para commit e checagens pré-deploy.
 
-1. Consultar o Plano Mestre.
-2. Definir uma tarefa pequena e verificável.
-3. Identificar os arquivos afetados.
-4. Procurar automação antes de pedir trabalho manual.
-5. Alterar o mínimo necessário.
-6. Executar diagnóstico automático.
-7. Executar teste manual apenas do comportamento que não possa ser automatizado.
-8. Corrigir antes de qualquer commit.
-9. Atualizar documentação afetada.
-10. Executar `git status`.
-11. Fazer commit atômico.
-12. Fazer `git push`.
-13. Confirmar `working tree clean`.
-14. Atualizar STATUS.
-
-## 3. Regra das alterações manuais
-
-Toda instrução manual deve informar:
-
-- arquivo exato;
-- caminho exato;
-- intervalo de linhas;
-- trecho atual a localizar;
-- ação: inserir, substituir ou remover;
-- trecho final esperado;
-- teste a executar.
-
-Não serão usadas instruções vagas como “altere a função” sem localizar o trecho.
-
-## 4. Regra de incremento pequeno
-
-Arquivos grandes, especialmente `src/app.js`, devem ser alterados de forma incremental.
-
-Objetivo por tarefa:
-
-- uma responsabilidade;
-- uma alteração pequena;
-- um diagnóstico;
-- um commit.
-
-## 5. Regra de diagnóstico
-
-Toda camada importante deve possuir diagnóstico próprio em `diagnostics/`.
-
-Diagnósticos atuais:
-
-- `catalog-check.html`;
-- `view-model-check.html`;
-- `catalog-service-check.html`.
-
-Diagnósticos futuros:
-
-- integração com `app.js`;
-- carrinho;
-- preço;
-- montagem de caixa;
-- checkout;
-- WhatsApp;
-- pré-deploy.
-
-## 6. Regra de aprovação
-
-Uma Sprint só é concluída quando:
-
-- diagnóstico aprovado;
-- teste manual mínimo aprovado;
-- commit criado;
-- push concluído;
-- `git status` limpo;
-- documentação atualizada.
-
-## 7. Mudanças de metodologia
-
-Qualquer mudança deste documento exige registro em `DECISOES_TECNICAS.md`.
-
-Não alterar metodologia apenas na conversa.
+## Segurança
+Automação nunca deve encerrar o terminal com `exit`, usar `git add .` indiscriminadamente, apagar sem backup, commitar antes dos testes ou sobrescrever a UI oficial sem snapshot.
