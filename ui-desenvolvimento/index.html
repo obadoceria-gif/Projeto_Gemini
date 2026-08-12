@@ -588,6 +588,92 @@ const catalogo = [
 ];
 
 // ================================================================
+// R1.4-B: CATALOGO VIA MODELO MESTRE
+// Mantem o catalogo hardcoded anterior como fallback seguro.
+// ================================================================
+async function hidratarCatalogoDoModeloMestre() {
+  try {
+    const [categoriasResp, saboresResp] = await Promise.all([
+      fetch('../data/catalog-v1/categories.json', { cache: 'no-store' }),
+      fetch('../data/catalog-v1/flavors.json', { cache: 'no-store' })
+    ]);
+
+    if (!categoriasResp.ok || !saboresResp.ok) {
+      throw new Error('Falha HTTP ao carregar categorias/sabores.');
+    }
+
+    const [categoriasMestre, saboresMestre] = await Promise.all([
+      categoriasResp.json(),
+      saboresResp.json()
+    ]);
+
+    if (!Array.isArray(categoriasMestre) || !Array.isArray(saboresMestre)) {
+      throw new Error('Formato invalido do catalogo mestre.');
+    }
+
+    const idLegadoPorNome = new Map(
+      catalogo.flatMap(grupo => grupo.itens.map(item => [item.nome, item.id]))
+    );
+
+    const categoriasAtivas = categoriasMestre
+      .filter(c => c && c.ativo !== false)
+      .sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0));
+
+    const saboresAtivos = saboresMestre
+      .filter(s => s && s.ativo !== false && s.disponivel !== false)
+      .sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0));
+
+    const novoCatalogo = categoriasAtivas.map(categoria => {
+      const precoRef = Number(categoria.precoReferencia);
+      const rotuloPreco = Number.isFinite(precoRef)
+        ? ` (R$ ${precoRef.toFixed(2).replace('.', ',')})`
+        : '';
+
+      return {
+        categoria: `${categoria.nome}${rotuloPreco}`,
+        idFiltro: String(categoria.id).replace(/-/g, '_'),
+        itens: saboresAtivos
+          .filter(sabor => sabor.categoriaId === categoria.id)
+          .map(sabor => ({
+            id: idLegadoPorNome.get(sabor.nome) || sabor.id,
+            nome: sabor.nome,
+            preco: Number(sabor.preco),
+            img: sabor.imagem
+          }))
+      };
+    }).filter(grupo => grupo.itens.length > 0);
+
+    const totalSabores = novoCatalogo.reduce((n, g) => n + g.itens.length, 0);
+
+    if (novoCatalogo.length !== 6 || totalSabores !== 55) {
+      throw new Error('Catalogo mestre incompleto; fallback preservado.');
+    }
+
+    catalogo.splice(0, catalogo.length, ...novoCatalogo);
+
+    window.__OBA_R14B_CATALOGO__ = {
+      fonte: 'modelo-mestre',
+      categorias: novoCatalogo.length,
+      sabores: totalSabores
+    };
+
+    if (typeof renderizarAbasCategorias === 'function') renderizarAbasCategorias();
+    if (typeof renderizarDoces === 'function') renderizarDoces();
+
+    console.info('[R1.4-B] Catalogo carregado do Modelo Mestre.', window.__OBA_R14B_CATALOGO__);
+  } catch (erro) {
+    window.__OBA_R14B_CATALOGO__ = {
+      fonte: 'fallback',
+      erro: String(erro)
+    };
+    console.error('[R1.4-B] Fallback do catalogo preservado.', erro);
+  }
+}
+
+hidratarCatalogoDoModeloMestre();
+
+
+// ================================================================
 // ESTADO GLOBAL
 // ================================================================
 let caixaAtiva       = null;   // caixa em montagem
