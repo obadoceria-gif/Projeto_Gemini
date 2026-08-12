@@ -439,8 +439,14 @@ async function carregarConfigModeloMestre() {
     OBA_CONFIG = config;
     atualizarLinksWhatsApp();
 
+    const endpointPedidos = OBA_CONFIG?.integrations?.orders?.googleSheetsEndpoint;
+    if (endpointPedidos) {
+      SHEETS_URL = endpointPedidos;
+    }
+
     console.info('[R1.4-C] Config operacional carregada do Modelo Mestre.', {
-      whatsapp: whatsappLoja()
+      whatsapp: whatsappLoja(),
+      googleSheetsEndpoint: SHEETS_URL
     });
   } catch (erro) {
     atualizarLinksWhatsApp();
@@ -449,7 +455,7 @@ async function carregarConfigModeloMestre() {
 }
 
 carregarConfigModeloMestre();
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzzexSBR6WVLjcWH2Fp5TfKuZivAR-BoT4m3CufvgnBoz_ku45ITasE1SxnuJ3HQxFXpw/exec';
+let SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzzexSBR6WVLjcWH2Fp5TfKuZivAR-BoT4m3CufvgnBoz_ku45ITasE1SxnuJ3HQxFXpw/exec'; // fallback R1.4-C.9
 const BASE_URL   = 'https://raw.githubusercontent.com/obadoceria-gif/cardapio/main/Images/';
 const S          = BASE_URL + 'Sabores_Doces/';
 

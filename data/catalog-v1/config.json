@@ -1,33 +1,38 @@
 {
-  "schemaVersion": 1,
-  "catalogVersion": "2026.08.06-baseline",
-  "updatedAt": "2026-08-06",
-  "status": "proposto-nao-integrado",
-  "store": {
-    "name": "Oba Doceria",
-    "whatsapp": "5555999117626",
-    "currency": "BRL",
-    "locale": "pt-BR"
-  },
-  "assets": {
-    "basePath": "./",
-    "imageRoot": "Images/"
-  },
-  "checkout": {
-    "requiredFields": [
-      "nome",
-      "data",
-      "hora",
-      "formaPagamento"
-    ],
-    "paymentMethods": [
-      "Pix",
-      "Dinheiro"
-    ],
-    "includeCatalogVersionInMessage": true
-  },
-  "businessChannels": {
-    "personalizados": true,
-    "eventos": true
-  }
+    "schemaVersion":  1,
+    "catalogVersion":  "2026.08.06-baseline",
+    "updatedAt":  "2026-08-12",
+    "status":  "proposto-nao-integrado",
+    "store":  {
+                  "name":  "Oba Doceria",
+                  "whatsapp":  "5555999117626",
+                  "currency":  "BRL",
+                  "locale":  "pt-BR"
+              },
+    "assets":  {
+                   "basePath":  "./",
+                   "imageRoot":  "Images/"
+               },
+    "checkout":  {
+                     "requiredFields":  [
+                                            "nome",
+                                            "data",
+                                            "hora",
+                                            "formaPagamento"
+                                        ],
+                     "paymentMethods":  [
+                                            "Pix",
+                                            "Dinheiro"
+                                        ],
+                     "includeCatalogVersionInMessage":  true
+                 },
+    "businessChannels":  {
+                             "personalizados":  true,
+                             "eventos":  true
+                         },
+    "integrations":  {
+                         "orders":  {
+                                        "googleSheetsEndpoint":  "https://script.google.com/macros/s/AKfycbzzexSBR6WVLjcWH2Fp5TfKuZivAR-BoT4m3CufvgnBoz_ku45ITasE1SxnuJ3HQxFXpw/exec"
+                                    }
+                     }
 }
