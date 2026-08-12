@@ -22,7 +22,7 @@
 <body class="antialiased selection:bg-[#8B4513] selection:text-white pb-24">
 
 <!-- BOTÃO WPP FLUTUANTE — some no fluxo principal -->
-<a id="btn-wpp-flutuante" href="https://wa.me/5555999117626" target="_blank"
+<a id="btn-wpp-flutuante" href="https://wa.me/5555999117626" data-oba-whatsapp-link target="_blank"
    class="fixed bottom-6 right-6 z-[60] bg-[#25D366] text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl hover:bg-green-600 transition-all">
   <i class="fa-brands fa-whatsapp"></i>
 </a>
@@ -203,7 +203,7 @@
         </button>
       </div>
       <div class="text-center">
-        <a href="https://wa.me/5555999117626" target="_blank" class="text-[10px] text-green-600 font-bold uppercase tracking-widest hover:underline flex items-center justify-center gap-1">
+        <a href="https://wa.me/5555999117626" data-oba-whatsapp-link target="_blank" class="text-[10px] text-green-600 font-bold uppercase tracking-widest hover:underline flex items-center justify-center gap-1">
           <i class="fa-brands fa-whatsapp text-sm"></i> Dúvidas? Fale com a gente
         </a>
       </div>
@@ -400,6 +400,55 @@
 // ================================================================
 // CONSTANTES E DADOS
 // ================================================================
+/* ================================================================
+   R1.4-C: CONFIG OPERACIONAL VIA MODELO MESTRE
+   O telefone hardcoded permanece somente como fallback de seguranca.
+   ================================================================ */
+let OBA_CONFIG = {
+  store: {
+    whatsapp: '5555999117626'
+  }
+};
+
+function whatsappLoja() {
+  return OBA_CONFIG?.store?.whatsapp || '5555999117626';
+}
+
+function atualizarLinksWhatsApp() {
+  document.querySelectorAll('[data-oba-whatsapp-link]').forEach(link => {
+    link.href = `https://wa.me/${whatsappLoja()}`;
+  });
+}
+
+async function carregarConfigModeloMestre() {
+  try {
+    const response = await fetch('../data/catalog-v1/config.json', {
+      cache: 'no-store'
+    });
+
+    if (!response.ok) {
+      throw new Error('Falha HTTP ao carregar config.json: ' + response.status);
+    }
+
+    const config = await response.json();
+
+    if (!config?.store?.whatsapp) {
+      throw new Error('store.whatsapp ausente no Modelo Mestre.');
+    }
+
+    OBA_CONFIG = config;
+    atualizarLinksWhatsApp();
+
+    console.info('[R1.4-C] Config operacional carregada do Modelo Mestre.', {
+      whatsapp: whatsappLoja()
+    });
+  } catch (erro) {
+    atualizarLinksWhatsApp();
+    console.error('[R1.4-C] Fallback da configuracao operacional preservado.', erro);
+  }
+}
+
+carregarConfigModeloMestre();
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzzexSBR6WVLjcWH2Fp5TfKuZivAR-BoT4m3CufvgnBoz_ku45ITasE1SxnuJ3HQxFXpw/exec';
 const BASE_URL   = 'https://raw.githubusercontent.com/obadoceria-gif/cardapio/main/Images/';
 const S          = BASE_URL + 'Sabores_Doces/';
@@ -1001,7 +1050,7 @@ function finalizarPedidoBlindado() {
     .catch(()=>{})
     .finally(()=>{
       btn.innerHTML = orig; btn.disabled = false;
-      window.open(`https://api.whatsapp.com/send?phone=5555999117626&text=${encodeURIComponent(wppTxt)}`, '_blank');
+      window.open(`https://api.whatsapp.com/send?phone=${whatsappLoja()}&text=${encodeURIComponent(wppTxt)}`, '_blank');
       fecharModalCarrinho();
       carrinhoDeCaixasConcluidas = [];
       atualizarPainelLateral();
@@ -1200,13 +1249,13 @@ function enviarOrcamentoEspecial(tipo) {
     const tema=document.getElementById('pers-tema').value.trim(), data=document.getElementById('pers-data').value;
     if (!tema||!data) { alert('Preencha os campos!'); return; }
     const d=data.split('-');
-    window.open(`https://api.whatsapp.com/send?phone=5555999117626&text=${encodeURIComponent(`Olá! Solicito reserva de *Doces Personalizados*:\n\n*Tema:* ${tema}\n*Data:* ${d[2]}/${d[1]}/${d[0]}`)}`, '_blank');
+    window.open(`https://api.whatsapp.com/send?phone=${whatsappLoja()}&text=${encodeURIComponent(`Olá! Solicito reserva de *Doces Personalizados*:\n\n*Tema:* ${tema}\n*Data:* ${d[2]}/${d[1]}/${d[0]}`)}`, '_blank');
     fecharModalPersonalizados();
   } else {
     const nome=document.getElementById('eve-nome').value.trim(), tipo_ev=document.getElementById('eve-tipo').value.trim(), data=document.getElementById('eve-data').value;
     if (!nome||!tipo_ev||!data) { alert('Preencha os campos!'); return; }
     const d=data.split('-');
-    window.open(`https://api.whatsapp.com/send?phone=5555999117626&text=${encodeURIComponent(`Olá! Solicito orçamento para *Eventos*:\n\n*Nome:* ${nome}\n*Tipo:* ${tipo_ev}\n*Data:* ${d[2]}/${d[1]}/${d[0]}`)}`, '_blank');
+    window.open(`https://api.whatsapp.com/send?phone=${whatsappLoja()}&text=${encodeURIComponent(`Olá! Solicito orçamento para *Eventos*:\n\n*Nome:* ${nome}\n*Tipo:* ${tipo_ev}\n*Data:* ${d[2]}/${d[1]}/${d[0]}`)}`, '_blank');
     fecharModalEventos();
   }
 }
@@ -1361,7 +1410,7 @@ function finalizarPedidoBlindado() {
   let textoWpp = `Olá, OBA Doceria!\n\n*CÓDIGO:* ${cod}\n*CLIENTE:* ${nome}\n*ENTREGA:* ${dataFmt} às ${hora}\n*PAGAMENTO:* ${pag}\n\n*ITENS:*\n`;
   carrinhoDeCaixasConcluidas.forEach((item,i) => { const qtd=item.quantidade||1; const sub=(item.precoCalculadoUnitario||item.precoCalculado)*qtd; textoWpp+=`\n*${i+1}. ${qtd}x ${item.titulo}*\n   ${item.detalhes}\n   Subtotal: R$ ${sub.toFixed(2).replace('.',',')}\n`; });
   textoWpp += `\n*TOTAL: R$ ${total.toFixed(2).replace('.',',')}*`;
-  const urlWpp = `https://api.whatsapp.com/send?phone=5555999117626&text=${encodeURIComponent(textoWpp)}`;
+  const urlWpp = `https://api.whatsapp.com/send?phone=${whatsappLoja()}&text=${encodeURIComponent(textoWpp)}`;
   const btn = document.getElementById('btn-finalizar-modal');
   const orig = btn.innerHTML; btn.disabled=true; btn.innerHTML='<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Enviando...';
   fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
@@ -1402,7 +1451,7 @@ function enviarOrcamentoEspecial(tipo) {
     const data = document.getElementById('pers-data').value;
     if (!tema || !data) { alert('Preencha os campos!'); return; }
     const d = data.split('-');
-    window.open(`https://api.whatsapp.com/send?phone=5555999117626&text=${encodeURIComponent(`Olá! Solicito reserva de *Doces Personalizados*:\n\n*Tema:* ${tema}\n*Data:* ${d[2]}/${d[1]}/${d[0]}`)}`, '_blank');
+    window.open(`https://api.whatsapp.com/send?phone=${whatsappLoja()}&text=${encodeURIComponent(`Olá! Solicito reserva de *Doces Personalizados*:\n\n*Tema:* ${tema}\n*Data:* ${d[2]}/${d[1]}/${d[0]}`)}`, '_blank');
     fecharModalPersonalizados();
   } else {
     const nome = document.getElementById('eve-nome').value.trim();
@@ -1410,7 +1459,7 @@ function enviarOrcamentoEspecial(tipo) {
     const data = document.getElementById('eve-data').value;
     if (!nome || !tev || !data) { alert('Preencha os campos!'); return; }
     const d = data.split('-');
-    window.open(`https://api.whatsapp.com/send?phone=5555999117626&text=${encodeURIComponent(`Olá! Solicito orçamento para *Eventos*:\n\n*Nome:* ${nome}\n*Tipo:* ${tev}\n*Data:* ${d[2]}/${d[1]}/${d[0]}`)}`, '_blank');
+    window.open(`https://api.whatsapp.com/send?phone=${whatsappLoja()}&text=${encodeURIComponent(`Olá! Solicito orçamento para *Eventos*:\n\n*Nome:* ${nome}\n*Tipo:* ${tev}\n*Data:* ${d[2]}/${d[1]}/${d[0]}`)}`, '_blank');
     fecharModalEventos();
   }
 }
