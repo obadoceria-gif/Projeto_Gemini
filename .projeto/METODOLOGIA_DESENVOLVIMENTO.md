@@ -1,25 +1,59 @@
 # Metodologia de Desenvolvimento
 
 ## Ciclo obrigatório
-diagnosticar → documentar → automatizar → aplicar → validar → testar visualmente → commit → push
 
-## Regras
+diagnosticar
+→ documentar
+→ automatizar
+→ aplicar
+→ validar tecnicamente
+→ validar visualmente
+→ commit
+→ push
+
+## Princípios
+
 1. Código real é a fonte da verdade.
-2. Git registra o histórico.
-3. Mudanças pequenas e reversíveis.
-4. Nenhum commit antes de validação.
-5. Sempre que possível, usar scripts de aplicação e rollback.
-6. Evitar edição manual repetitiva.
-7. Não reconstruir algo que já existe e funciona.
-8. UI oficial deve ser preservada durante a migração.
-9. Mudanças de metodologia devem ser documentadas antes de continuar.
-10. O workspace deve terminar limpo após cada etapa concluída.
+2. Git é o histórico.
+3. A UI oficial não será reconstruída se já existir.
+4. Alterações devem ser pequenas e reversíveis.
+5. Sempre criar backup antes de mudanças destrutivas.
+6. Nunca commitar antes dos testes.
+7. Mudança metodológica exige atualização da documentação.
+8. O workspace deve terminar limpo ao final da etapa.
 
-## Instruções manuais
-Sempre informar arquivo exato, linhas exatas quando conhecidas, trecho a substituir, local de colagem e validação esperada.
+## Instruções de alteração manual
+
+Sempre informar:
+- arquivo exato;
+- linhas exatas quando conhecidas;
+- trecho atual;
+- trecho novo;
+- onde substituir;
+- validação esperada.
 
 ## Automação
-Priorizar backup, snapshots, diagnósticos, busca de referências, criação de documentação, limpeza de artefatos, preparação para commit e checagens pré-deploy.
 
-## Segurança
-Automação nunca deve encerrar o terminal com `exit`, usar `git add .` indiscriminadamente, apagar sem backup, commitar antes dos testes ou sobrescrever a UI oficial sem snapshot.
+Automatizar sempre que possível:
+- busca de arquivos;
+- busca de referências;
+- snapshots;
+- backups;
+- instalação de patches;
+- rollback;
+- diagnósticos;
+- inventário;
+- comparação;
+- limpeza temporária;
+- preparação Git;
+- pré-deploy.
+
+## Regras de segurança para scripts
+
+Scripts não devem:
+- usar `exit` quando executados no terminal interativo;
+- usar `git add .`;
+- apagar sem backup;
+- criar commit automático sem validação;
+- fazer push se a etapa anterior falhar;
+- sobrescrever a UI oficial sem snapshot.

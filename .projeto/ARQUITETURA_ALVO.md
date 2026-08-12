@@ -1,19 +1,35 @@
 # Arquitetura Alvo
 
-## Dados
-`data/catalog-v1/` — caixas, sabores, categorias, presenteáveis, opcionais e configuração comercial.
+## Camada 1 — Dados
+`data/catalog-v1/`
 
-## Catálogo
-`src/catalog/` — carregar, validar, normalizar e montar View Model.
+Responsável por dados comerciais e configuração.
 
-## Serviços
-`src/services/` — disponibilizar dados para a aplicação e evitar leitura direta de JSON pela UI.
+## Camada 2 — Catálogo
+`src/catalog/`
 
-## Interface
-UI moderna reaproveitada. A UI não deve conhecer a estrutura bruta dos JSONs; deve consumir serviços/View Model.
+Responsável por:
+- carregar;
+- validar;
+- normalizar;
+- montar View Model.
 
-## Integrações
-WhatsApp, Google Sheets ou substituto futuro, assets e configurações externas.
+## Camada 3 — Serviços
+`src/services/`
 
-## Fonte única de verdade
-Dados comerciais devem existir em um único lugar.
+Responsável por expor dados e regras de acesso para a UI.
+
+## Camada 4 — UI oficial
+Interface moderna recuperada do projeto publicado.
+
+A UI deve consumir serviços/View Model e não ler diretamente a estrutura bruta dos JSONs.
+
+## Camada 5 — Operação
+- carrinho;
+- checkout;
+- WhatsApp;
+- integrações.
+
+## Resultado desejado
+
+UI moderna desacoplada dos dados comerciais.

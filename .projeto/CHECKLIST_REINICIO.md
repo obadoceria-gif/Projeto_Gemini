@@ -1,30 +1,30 @@
-# Checklist — Reinício Controlado
+# Checklist — Continuação do Projeto
 
-## Antes de começar
-- [ ] Git limpo;
-- [ ] documentação instalada;
-- [ ] checkpoint criado;
-- [ ] branch de integração criada;
-- [ ] UI moderna preservada;
-- [ ] arquitetura nova preservada.
+## Antes da R1
+- [x] checkpoint criado;
+- [x] branch dedicada criada;
+- [x] arquitetura nova preservada;
+- [x] documentação realinhada;
+- [ ] origem da UI oficial confirmada.
 
-## Primeiro objetivo
-Executar a UI moderna localmente sem alteração visual.
+## R1
+- [ ] identificar fonte da UI;
+- [ ] criar snapshot;
+- [ ] inventariar arquivos;
+- [ ] executar localmente;
+- [ ] validar paridade visual;
+- [ ] validar Console;
+- [ ] registrar checkpoint R1.
 
-## Segundo objetivo
-Substituir uma única fonte hardcoded por vez.
-
-## Ordem
+## Depois da R1
+Migrar uma fonte de dados por etapa:
 1. caixas;
 2. sabores;
 3. categorias;
-4. imagens;
-5. presenteáveis;
+4. assets;
+5. kits;
 6. opcionais;
 7. carrinho;
 8. checkout;
 9. WhatsApp;
 10. integrações.
-
-## Critério de avanço
-Só avançar quando diagnóstico passar, UI não regredir, Console estiver limpo e Git estiver controlado.

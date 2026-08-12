@@ -1,26 +1,26 @@
 # Status do Projeto
 
 **Data:** 2026-08-11
-**Estado:** realinhamento aprovado
+**Branch de desenvolvimento:** `feature/integracao-ui-oficial-modelo-mestre`
 
 ## Concluído
-- Modelo Mestre estruturado;
-- loader e validator implementados;
-- Catalog Service implementado;
-- View Model implementado;
-- diagnósticos criados;
-- dependência direta de `src/data.js` removida do app principal;
-- migração técnica validada;
-- governança documentada.
+Modelo Mestre, loader, validator, View Model, Catalog Service, diagnósticos, governança, realinhamento, checkpoint técnico e branch dedicada.
 
-## Problema identificado
-A UI mínima de transição divergiu da experiência moderna já existente.
-
-## Decisão vigente
-Parar a evolução visual da UI mínima.
+## Decisão
+A produção oficial será intocável. O desenvolvimento seguirá a partir de uma cópia controlada da UI oficial.
 
 ## Próxima ação
-Criar checkpoint e iniciar Sprint R1 para incorporar a UI oficial moderna ao projeto, preservando a arquitetura nova.
+Criar Marco Zero da UI em `ui-oficial/` sem sobrescrever o root atual.
 
-## Regra
-Nenhuma nova funcionalidade visual será criada do zero enquanto houver equivalente funcional reaproveitável na UI oficial.
+---
+
+## CHECKPOINT-R1.4-A-VALIDADO
+
+- R1.4-A validada visual e funcionalmente.
+- UI moderna preservada em ui-desenvolvimento.
+- Caixas passam a ser hidratadas a partir de data/catalog-v1/boxes.json.
+- Fallback local de caixas permanece temporariamente por seguranca.
+- Caixa de 25 validada com limite de 7 sabores.
+- Calculo visual validado: 25 x R$ 2,50 = R$ 62,50.
+- ui-oficial e producao permaneceram intocadas.
+- Proximo passo: R1.4-B - sabores, categorias, precos e imagens.

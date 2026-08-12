@@ -1,65 +1,53 @@
 # Plano Mestre — Cardápio Virtual Oba Doceria
 
-**Versão:** 2026-08-11-realinhamento
-**Status:** aprovado para realinhamento técnico e visual
+**Versão:** 2026-08-11-R1-marco-zero
+**Status:** estratégia de preservação da produção aprovada
 
-## Objetivo
-Construir o Cardápio Virtual da Oba Doceria preservando a experiência moderna já existente e substituindo progressivamente dados e regras hardcoded por uma arquitetura orientada a dados, validável, automatizada e sustentável.
+## Objetivo final
+Entregar uma nova versão do Cardápio Virtual que preserve a experiência moderna já existente e substitua progressivamente dados e regras hardcoded por uma arquitetura orientada a dados.
 
-## Princípio central
-O projeto NÃO será reconstruído visualmente do zero. A interface moderna já existente passa a ser a referência oficial de UX/UI.
+## Regra de ouro
+O repositório oficial de produção `https://github.com/obadoceria-gif/cardapio`, branch `main`, permanece intocado durante o desenvolvimento.
 
-## Arquitetura alvo
-Modelo Mestre → Loader → Validator → Catalog Service → View Model → Interface Oficial Moderna → Carrinho → Checkout → WhatsApp / integrações.
+## Arquitetura de trabalho
+PRODUÇÃO OFICIAL (intocável)
+→ cópia controlada / Marco Zero
+→ Projeto_Gemini
+→ integração com Modelo Mestre + Catalog Service + View Model
+→ testes
+→ aprovação
+→ somente então publicação controlada
 
 ## Fases
-### Fase 0 — Realinhamento
-- congelar a interface mínima como laboratório técnico;
-- preservar Catalog Service, View Model, loader, validator, diagnósticos e governança;
-- registrar a UI oficial como referência de produto;
-- não continuar evoluindo visualmente a interface mínima.
+### R0 — Realinhamento
+Concluído.
 
-### Fase 1 — Recuperação da UI oficial
-- incorporar a interface moderna ao projeto;
-- executar localmente;
-- validar paridade visual e funcional com a versão publicada;
-- preservar navegação, modais, fluxo de caixas, filtros, fotos, carrinho e checkout.
+### R1 — Recuperação segura da UI oficial
+1. registrar política de proteção da produção;
+2. clonar a `main` somente para leitura;
+3. registrar hash exato do commit de origem;
+4. copiar a UI para `ui-oficial/` dentro do Projeto_Gemini;
+5. executar localmente sem alterar o root atual;
+6. comparar com GitHub Pages;
+7. declarar Marco Zero quando houver paridade visual e funcional.
 
-### Fase 2 — Integração progressiva com o Modelo Mestre
-- substituir `caixasConfigs`;
-- substituir `catalogo`;
-- substituir `kitsPresenteaveis`;
-- substituir URLs e configurações comerciais hardcoded;
-- conectar a UI ao Catalog Service sem regressão visual.
+### R2 — Caixas
+Substituir `caixasConfigs` por dados do Catalog Service.
 
-### Fase 3 — Regras e serviços
-- capacidade de caixas;
-- limite de sabores;
-- preços;
-- disponibilidade;
-- opcionais;
-- pedidos;
-- WhatsApp;
-- integrações externas.
+### R3 — Sabores e categorias
+Substituir `catalogo` hardcoded pelo Modelo Mestre.
 
-### Fase 4 — Eliminação do legado
-- remover dados duplicados;
-- remover funções obsoletas;
-- remover código de transição;
-- garantir fonte única de verdade.
+### R4 — Kits e opcionais
+Migrar presenteáveis e opcionais.
 
-### Fase 5 — Automação e qualidade
-- diagnósticos automáticos;
-- validação de catálogo;
-- validação de assets;
-- smoke tests;
-- pré-deploy automatizado;
-- checklist de regressão.
+### R5 — Carrinho e checkout
+Integrar estado, totais e persistência.
 
-### Fase 6 — Polimento e deploy
-- responsividade;
-- acessibilidade;
-- performance;
-- revisão visual;
-- deploy controlado;
-- validação em produção.
+### R6 — WhatsApp e integrações
+Centralizar telefone, mensagens e integrações externas.
+
+### R7 — Limpeza do legado
+Remover hardcodes, duplicações e código temporário.
+
+### R8 — Qualidade e publicação
+Responsividade, acessibilidade, performance, testes e deploy controlado.

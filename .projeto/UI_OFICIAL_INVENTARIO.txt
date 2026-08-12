@@ -1,0 +1,108 @@
+ORIGEM=https://github.com/obadoceria-gif/cardapio.git
+BRANCH=main
+COMMIT=27b050b2db5e1a5cfc03fe6105b221dae77ae33a
+DESTINO=ui-oficial
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Catalogo 2026
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\index.html
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\README.md
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\update
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Catalogo 2026\CARDAPIO_2026_1.pdf
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Catalogo 2026\CARDAPIO_2026_10.pdf
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Catalogo 2026\CARDAPIO_2026_11.pdf
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Catalogo 2026\CARDAPIO_2026_12.pdf
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Catalogo 2026\CARDAPIO_2026_2.pdf
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Catalogo 2026\CARDAPIO_2026_3.pdf
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Catalogo 2026\CARDAPIO_2026_4.pdf
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Catalogo 2026\CARDAPIO_2026_5.pdf
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Catalogo 2026\CARDAPIO_2026_6.pdf
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Catalogo 2026\CARDAPIO_2026_7.pdf
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Catalogo 2026\CARDAPIO_2026_8.pdf
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Catalogo 2026\CARDAPIO_2026_9.pdf
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Caixa_Degustacao
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Imagens_Layout
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Logo_Oba
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Presenteaveis
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Caixa_Degustacao\Degustacao_12_Sabores.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Caixa_Degustacao\Degustacao_25_Sabores.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Imagens_Layout\Captura de tela 2026-06-23 131033.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Imagens_Layout\Captura de tela 2026-06-23 131048.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Imagens_Layout\Captura de tela 2026-06-23 131059.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Imagens_Layout\Captura de tela 2026-06-23 131116.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Imagens_Layout\Captura de tela 2026-06-23 131136.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Imagens_Layout\Captura de tela 2026-06-23 131151.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Imagens_Layout\Captura de tela 2026-06-23 131202.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Imagens_Layout\Captura de tela 2026-06-23 131212.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Imagens_Layout\Captura de tela 2026-06-23 131226.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Imagens_Layout\Captura de tela 2026-06-23 131235.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Imagens_Layout\Captura de tela 2026-06-23 131245.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Imagens_Layout\Captura de tela 2026-06-23 131254.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Imagens_Layout\Captura de tela 2026-06-23 131303.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Imagens_Layout\Captura de tela 2026-06-23 131312.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Imagens_Layout\Captura de tela 2026-06-23 131321.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Imagens_Layout\Captura de tela 2026-06-23 131333.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Logo_Oba\logo (fundo transparente).png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Logo_Oba\logo-circular (fundo transparente).png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Logo_Oba\logo-circular.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Logo_Oba\logo-horizontal (fundo transparente).png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Logo_Oba\logo-horizontal.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Logo_Oba\logo-vertical (fundo transparente).png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Logo_Oba\logo-vertical.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Presenteaveis\Opcao_1.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Presenteaveis\Opcao_2.png
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Abacaxi com Coco.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Amargo.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Ameixa.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Amendoim.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Ao Leite.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Bacon com Abacaxi.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Bacon com Chocolate.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Branco.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Café.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Cappuccino.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Caramelo Salgado.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Caramelo.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Casadinho.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Charge.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Cheesecake.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Cocadinha.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Coco Queimado.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Coco.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Confete.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Crocante de Nutella.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Damasco e Amêndoas.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Damasco.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Dois Amores.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Duo Amargo.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Duo Ao Leite.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Ferrero.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Gorgonzola e Damasco.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Gorgonzola e Geleia.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Laranja com Amêndoas.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Laranja com Coco.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Leite Ninho.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Maracujá ao Leite.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Maracujá e Nutella.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Maracujá.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Mega.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Meio Amargo.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Morango - Ao Leite.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Morango - Branco.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Morango - Meio Amargo.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Napolitano.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Nesquik com Nutella.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Nesquik.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Ninho com Nutella.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Nozes e Figo.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Nozes.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Oreo.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Pistache com Geleia.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Pistache.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Prestígio.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Queijadinha.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Queijo e Doce de Leite.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Queijo e Goiabada.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Uva com Brigadeiro ao Leite.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Uva com Brigadeiro Branco.jpeg
+C:\Users\pc_fa\Documents\Projeto_Gemini\ui-oficial\Images\Sabores_Doces\Uva com Brigadeiro Meio Amargo.jpeg

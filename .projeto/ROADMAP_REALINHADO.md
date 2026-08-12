@@ -1,52 +1,37 @@
 # Roadmap Realinhado
 
-## Sprint R0 — Realinhamento e checkpoint
-- [ ] registrar documentação;
-- [ ] criar checkpoint Git;
-- [ ] preservar estado técnico atual;
-- [ ] definir UI oficial.
+## R0 — Realinhamento
+Concluído.
 
-## Sprint R1 — Recuperar UI oficial
-- [ ] trazer UI moderna para o projeto;
-- [ ] executar em localhost;
-- [ ] comparar com produção;
-- [ ] validar navegação, modais e imagens.
+## R1 — Marco Zero da UI oficial
+### R1.1 Proteção
+- [x] produção definida como intocável;
+- [x] branch de integração criada.
 
-## Sprint R2 — Fonte única de caixas
-- [ ] UI lê caixas do Catalog Service;
-- [ ] remover `caixasConfigs`;
-- [ ] validar limites e capacidades.
+### R1.2 Cópia segura
+- [ ] clonar `cardapio/main` somente para leitura;
+- [ ] registrar hash do commit;
+- [ ] copiar snapshot para `ui-oficial/`;
+- [ ] não sobrescrever root.
 
-## Sprint R3 — Fonte única de sabores
-- [ ] UI lê sabores do Modelo Mestre;
-- [ ] remover `catalogo`;
-- [ ] preservar filtros, fotos e preços.
+### R1.3 Validação local
+- [ ] abrir `/ui-oficial/`;
+- [ ] comparar com GitHub Pages;
+- [ ] validar imagens, navegação, modais, carrinho e checkout.
 
-## Sprint R4 — Presenteáveis e opcionais
-- [ ] migrar kits;
-- [ ] migrar opcionais;
-- [ ] remover dados hardcoded.
+### R1.4 Marco Zero
+- [ ] registrar aprovação;
+- [ ] checkpoint Git do snapshot;
+- [ ] iniciar integração arquitetural.
 
-## Sprint R5 — Carrinho e checkout
-- [ ] integrar carrinho à arquitetura nova;
-- [ ] validar totais, quantidade e persistência.
+## R2–R8
+Caixas → sabores → kits → carrinho → checkout → integrações → limpeza → deploy.
 
-## Sprint R6 — WhatsApp e integrações
-- [ ] centralizar telefone;
-- [ ] centralizar mensagens;
-- [ ] revisar Google Sheets;
-- [ ] remover URLs comerciais dispersas.
+---
 
-## Sprint R7 — Limpeza do legado
-- [ ] remover código duplicado;
-- [ ] remover adaptadores temporários;
-- [ ] eliminar hardcodes remanescentes.
+## R1.4-A - CONCLUIDA
 
-## Sprint R8 — Qualidade e deploy
-- [ ] diagnósticos;
-- [ ] smoke tests;
-- [ ] responsividade;
-- [ ] acessibilidade;
-- [ ] performance;
-- [ ] deploy;
-- [ ] validação em produção.
+- Integracao das caixas com o Modelo Mestre: concluida.
+- Validacao funcional: concluida.
+- Validacao visual: concluida.
+- Proxima etapa: R1.4-B - integrar sabores, categorias, precos e imagens.
