@@ -150,3 +150,46 @@ A proposta deve seguir três frentes principais:
 - Validação: o frontend valida tipos e faixa de preço (número >= 0). Mesmo assim, preços exibidos no cliente são apenas referenciais — confirme manualmente via WhatsApp até integrar backend.
 - Proteção básica: restrinja quem pode commitar no repositório, use revisão por pares e mantenha cópias estáveis em `.auditoria/v_estavel/` e em um branch de backup.
 
+---
+
+## 10. Marco R1.5 - Integracao real de pedidos
+
+**Status: concluido e validado.**
+
+O plano original previa a integracao futura com Google Sheets. Essa integracao deixou de ser futura e foi validada em ambiente real.
+
+### Concluido
+
+- [x] Integrar UI ao Modelo Mestre.
+- [x] Integrar caixas ao catalogo oficial.
+- [x] Integrar sabores e composicoes.
+- [x] Integrar endpoint Google Apps Script.
+- [x] Implementar payload Schema V2.
+- [x] Registrar pedido no Google Sheets.
+- [x] Registrar itens individualmente em `Itens_Pedido`.
+- [x] Validar pedidos com mais de um item.
+- [x] Validar quantidade total de caixas.
+- [x] Validar totais financeiros.
+- [x] Integrar finalizacao ao WhatsApp.
+- [x] Validar mensagem final do WhatsApp.
+- [x] Executar teste E2E real UI -> Sheets -> WhatsApp.
+- [x] Preservar UI oficial como Marco Zero.
+- [x] Separar UI oficial de UI de desenvolvimento.
+- [x] Consolidar governanca do workspace.
+
+### Metodologia vigente
+
+A partir deste marco:
+
+1. `ui-oficial/` permanece como referencia protegida.
+2. `ui-desenvolvimento/` recebe as evolucoes.
+3. Alteracoes funcionais devem ser automatizadas sempre que tecnicamente seguro.
+4. Testes de leitura devem preceder alteracoes estruturais.
+5. Alteracoes devem possuir backup ou rollback.
+6. Git deve ser validado antes e depois de cada etapa.
+7. Commit e push somente ocorrem apos validacao funcional.
+8. Mudancas de metodologia devem ser registradas na documentacao.
+
+### Proximo passo
+
+Planejar e executar a R1.6 sobre a baseline funcional aprovada da R1.5.
