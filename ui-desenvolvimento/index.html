@@ -464,6 +464,108 @@ const kitsPresenteaveis = [
   { id:'kit_classico', nome:'Caixa Presente Clássica', desc:'12 brigadeiros em caixa com laço.', precoFixo:75.00, img:BASE_URL+'Presenteaveis/Opcao_2.png' }
 ];
 
+// ============================================================
+// R1.7 - KITS VIA MODELO MESTRE
+// O array acima permanece como fallback seguro.
+// products.json passa a ser a fonte primaria em runtime.
+// ============================================================
+window.__OBA_R17_KITS__ = {
+  status: 'carregando',
+  fonte: 'fallback-ui',
+  quantidade: kitsPresenteaveis.length,
+  erro: null
+};
+
+async function hidratarKitsDoModeloMestre() {
+  try {
+    const response = await fetch('../data/catalog-v1/products.json', {
+      cache: 'no-store'
+    });
+
+    if (!response.ok) {
+      throw new Error('Falha HTTP ao carregar products.json: ' + response.status);
+    }
+
+    const produtosMestre = await response.json();
+
+    if (!Array.isArray(produtosMestre)) {
+      throw new Error('Formato invalido de products.json.');
+    }
+
+    const kitsMestre = produtosMestre
+      .filter(produto =>
+        produto &&
+        produto.tipo === 'kit' &&
+        produto.ativo !== false &&
+        produto.disponivel !== false
+      )
+      .sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+      .map(produto => ({
+        id: produto.id,
+        nome: produto.nome,
+        desc: produto.descricao || '',
+        precoFixo: Number(produto.preco),
+        img: produto.imagem
+          ? BASE_URL + produto.imagem.replace(/^Images\//, '')
+          : '',
+        opcionaisPermitidos: Array.isArray(produto.opcionaisPermitidos)
+          ? [...produto.opcionaisPermitidos]
+          : []
+      }));
+
+    if (kitsMestre.length === 0) {
+      throw new Error('Nenhum kit ativo e disponivel no Modelo Mestre.');
+    }
+
+    if (kitsMestre.some(kit =>
+      !kit.id ||
+      !kit.nome ||
+      !Number.isFinite(kit.precoFixo) ||
+      kit.precoFixo < 0
+    )) {
+      throw new Error('Kit invalido encontrado no Modelo Mestre.');
+    }
+
+    kitsPresenteaveis.splice(
+      0,
+      kitsPresenteaveis.length,
+      ...kitsMestre
+    );
+
+    window.__OBA_R17_KITS__ = {
+      status: 'ok',
+      fonte: 'modelo-mestre',
+      quantidade: kitsPresenteaveis.length,
+      ids: kitsPresenteaveis.map(kit => kit.id),
+      erro: null
+    };
+
+    console.info(
+      '[R1.7] Kits carregados do Modelo Mestre.',
+      window.__OBA_R17_KITS__
+    );
+
+    if (typeof renderizarKits === 'function') {
+      renderizarKits();
+    }
+  }
+  catch (erro) {
+    window.__OBA_R17_KITS__ = {
+      status: 'fallback',
+      fonte: 'fallback-ui',
+      quantidade: kitsPresenteaveis.length,
+      erro: String(erro?.message || erro)
+    };
+
+    console.error(
+      '[R1.7] Fallback dos kits preservado.',
+      erro
+    );
+  }
+}
+
+hidratarKitsDoModeloMestre();
+
 const caixasConfigs = {
     degustacao: {
         id: 'degustacao',
