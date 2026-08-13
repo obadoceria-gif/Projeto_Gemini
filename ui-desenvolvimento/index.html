@@ -94,19 +94,19 @@
     <!-- Opcionais -->
     <p class="text-[11px] text-amber-800 font-bold bg-amber-50 py-1.5 px-3 rounded-lg">Deseja adicionar detalhes para presente?</p>
     <div class="space-y-2 text-left">
-      <div onclick="toggleOpcional('laco')" class="border border-orange-100 p-3 rounded-2xl flex items-center justify-between cursor-pointer select-none hover:border-orange-300 transition-all active:scale-[0.98]">
+      <div id="opt-laco-card" onclick="toggleOpcional('laco')" class="border border-orange-100 p-3 rounded-2xl flex items-center justify-between cursor-pointer select-none hover:border-orange-300 transition-all active:scale-[0.98]">
         <div class="flex items-center gap-3">
           <div id="chk-laco" class="w-5 h-5 rounded border-2 border-[#8B4513] flex items-center justify-center text-white text-xs bg-white"><i class="fa-solid fa-check opacity-0 transition-opacity"></i></div>
-          <h4 class="text-[11px] font-bold text-[#8B4513] uppercase">Laço Decorativo 🎀</h4>
+          <h4 id="opt-laco-titulo" class="text-[11px] font-bold text-[#8B4513] uppercase">Laço Decorativo</h4>
         </div>
-        <span class="text-[11px] font-black text-[#8B4513]">+ R$ 4,50</span>
+        <span id="opt-laco-preco" class="text-[11px] font-black text-[#8B4513]">+ R$ 4,50</span>
       </div>
-      <div onclick="toggleOpcional('placa')" class="border border-orange-100 p-3 rounded-2xl flex items-center justify-between cursor-pointer select-none hover:border-orange-300 transition-all active:scale-[0.98]">
+      <div id="opt-placa-card" onclick="toggleOpcional('placa')" class="border border-orange-100 p-3 rounded-2xl flex items-center justify-between cursor-pointer select-none hover:border-orange-300 transition-all active:scale-[0.98]">
         <div class="flex items-center gap-3">
           <div id="chk-placa" class="w-5 h-5 rounded border-2 border-[#8B4513] flex items-center justify-center text-white text-xs bg-white"><i class="fa-solid fa-check opacity-0 transition-opacity"></i></div>
-          <h4 class="text-[11px] font-bold text-[#8B4513] uppercase">Placa Personalizada 🏷️</h4>
+          <h4 id="opt-placa-titulo" class="text-[11px] font-bold text-[#8B4513] uppercase">Placa Personalizada</h4>
         </div>
-        <span class="text-[11px] font-black text-[#8B4513]">+ R$ 3,50</span>
+        <span id="opt-placa-preco" class="text-[11px] font-black text-[#8B4513]">+ R$ 3,50</span>
       </div>
     </div>
     <!-- Botões -->
@@ -565,6 +565,172 @@ async function hidratarKitsDoModeloMestre() {
 }
 
 hidratarKitsDoModeloMestre();
+// ============================================================
+// R1.8 - OPCIONAIS VIA MODELO MESTRE
+// options.json passa a ser a fonte primaria em runtime.
+// ============================================================
+const opcionaisConfigs = {
+  laco: {
+    id: 'laco',
+    nome: 'Laço Decorativo',
+    preco: 4.50,
+    ativo: true,
+    disponivel: true
+  },
+  placa: {
+    id: 'placa',
+    nome: 'Placa Personalizada',
+    preco: 3.50,
+    ativo: true,
+    disponivel: true
+  }
+};
+
+window.__OBA_R18_OPTIONS__ = {
+  status: 'carregando',
+  fonte: 'fallback-ui',
+  quantidade: Object.keys(opcionaisConfigs).length,
+  erro: null
+};
+
+function encontrarOpcional(id) {
+  return opcionaisConfigs[id] || null;
+}
+
+function precoOpcional(id) {
+  const opcional = encontrarOpcional(id);
+  return opcional ? Number(opcional.preco || 0) : 0;
+}
+
+function opcionalPermitidoNoKit(id) {
+  if (!caixaAtiva) return false;
+
+  const permitidos = Array.isArray(caixaAtiva.opcionaisPermitidos)
+    ? caixaAtiva.opcionaisPermitidos
+    : [];
+
+  return permitidos.includes(id);
+}
+
+function atualizarOpcionaisDoModal() {
+  const refs = {
+    laco: {
+      titulo: document.getElementById('opt-laco-titulo'),
+      preco: document.getElementById('opt-laco-preco'),
+      card: document.getElementById('opt-laco-card')
+    },
+    placa: {
+      titulo: document.getElementById('opt-placa-titulo'),
+      preco: document.getElementById('opt-placa-preco'),
+      card: document.getElementById('opt-placa-card')
+    }
+  };
+
+  Object.entries(refs).forEach(([id, ref]) => {
+    const opcional = encontrarOpcional(id);
+    if (!opcional) return;
+
+    if (ref.titulo) {
+      ref.titulo.textContent = opcional.nome;
+    }
+
+    if (ref.preco) {
+      ref.preco.textContent =
+        '+ R$ ' + Number(opcional.preco || 0)
+          .toFixed(2)
+          .replace('.', ',');
+    }
+
+    if (ref.card) {
+      const permitido = opcionalPermitidoNoKit(id);
+      const disponivel =
+        opcional.ativo !== false &&
+        opcional.disponivel !== false;
+
+      const habilitado = permitido && disponivel;
+
+      ref.card.classList.toggle('opacity-40', !habilitado);
+      ref.card.classList.toggle('pointer-events-none', !habilitado);
+      ref.card.dataset.habilitado = habilitado ? 'true' : 'false';
+    }
+  });
+}
+
+async function hidratarOpcionaisDoModeloMestre() {
+  try {
+    const response = await fetch('../data/catalog-v1/options.json', {
+      cache: 'no-store'
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        'Falha HTTP ao carregar options.json: ' + response.status
+      );
+    }
+
+    const opcoes = await response.json();
+
+    if (!Array.isArray(opcoes)) {
+      throw new Error('Formato invalido de options.json.');
+    }
+
+    const ativos = opcoes
+      .filter(opcao =>
+        opcao &&
+        opcao.id &&
+        opcao.ativo !== false &&
+        opcao.disponivel !== false
+      )
+      .sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
+
+    if (ativos.length === 0) {
+      throw new Error(
+        'Nenhum opcional ativo e disponivel no Modelo Mestre.'
+      );
+    }
+
+    ativos.forEach(opcao => {
+      opcionaisConfigs[opcao.id] = {
+        id: opcao.id,
+        nome: opcao.nome || opcao.id,
+        preco: Number(opcao.preco || 0),
+        ativo: opcao.ativo !== false,
+        disponivel: opcao.disponivel !== false,
+        ordem: opcao.ordem ?? null
+      };
+    });
+
+    window.__OBA_R18_OPTIONS__ = {
+      status: 'ok',
+      fonte: 'modelo-mestre',
+      quantidade: ativos.length,
+      ids: ativos.map(opcao => opcao.id),
+      erro: null
+    };
+
+    atualizarOpcionaisDoModal();
+
+    console.info(
+      '[R1.8] Opcionais carregados do Modelo Mestre.',
+      window.__OBA_R18_OPTIONS__
+    );
+  }
+  catch (erro) {
+    window.__OBA_R18_OPTIONS__ = {
+      status: 'fallback',
+      fonte: 'fallback-ui',
+      quantidade: Object.keys(opcionaisConfigs).length,
+      erro: String(erro?.message || erro)
+    };
+
+    console.error(
+      '[R1.8] Fallback dos opcionais preservado.',
+      erro
+    );
+  }
+}
+
+hidratarOpcionaisDoModeloMestre();
 
 const caixasConfigs = {
     degustacao: {
@@ -977,6 +1143,7 @@ function abrirModalConfigKit(idKit) {
   document.getElementById('mck-titulo').innerText = kit.nome;
   document.getElementById('mck-desc').innerText   = kit.desc;
   document.getElementById('mck-preco').innerText  = 'R$ ' + kit.precoFixo.toFixed(2).replace('.', ',');
+  atualizarOpcionaisDoModal();
   document.getElementById('modal-config-kit').classList.remove('hidden');
 }
 
@@ -999,7 +1166,10 @@ function toggleOpcional(tipo) {
     box.querySelector('i').classList.toggle('opacity-0', !placaSelecionada);
   }
   if (caixaAtiva) {
-    const total = caixaAtiva.precoFixo + (lacoSelecionado ? 4.50 : 0) + (placaSelecionada ? 3.50 : 0);
+    const total =
+      caixaAtiva.precoFixo +
+      (lacoSelecionado ? precoOpcional('laco') : 0) +
+      (placaSelecionada ? precoOpcional('placa') : 0);
     document.getElementById('mck-preco').innerText = 'R$ ' + total.toFixed(2).replace('.', ',');
   }
 }
@@ -1007,7 +1177,10 @@ function toggleOpcional(tipo) {
 function adicionarKitAoCarrinho(acao) {
   if (!caixaAtiva) return;
   const nomeItem = caixaAtiva.nome || caixaAtiva.titulo;
-  const preco    = (caixaAtiva.precoFixo||0) + (lacoSelecionado?4.50:0) + (placaSelecionada?3.50:0);
+  const preco =
+    (caixaAtiva.precoFixo || 0) +
+    (lacoSelecionado ? precoOpcional('laco') : 0) +
+    (placaSelecionada ? precoOpcional('placa') : 0);
   let detalhes   = 'Kit Fechado';
   if (lacoSelecionado)  detalhes += ' + Laço Decorativo';
   if (placaSelecionada) detalhes += ' + Placa Personalizada';
