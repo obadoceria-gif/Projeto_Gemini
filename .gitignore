@@ -1,0 +1,26 @@
+# ============================================================
+# OBA DOCERIA - ARQUIVOS LOCAIS / TEMPORARIOS
+# ============================================================
+
+# Auditorias e evidencias locais
+.auditoria/
+
+# Workspace historico local
+.workspace-local/
+
+# UI oficial congelada usada somente como referencia
+ui-oficial/
+
+# Backups e temporarios
+*.backup
+*.backup-*
+*.bak
+*.tmp
+*.temp
+
+# Compactados gerados por auditorias
+*.zip
+
+# Sistema / editor
+.DS_Store
+Thumbs.db
