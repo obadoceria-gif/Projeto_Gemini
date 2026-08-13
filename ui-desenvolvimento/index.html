@@ -465,13 +465,14 @@ const kitsPresenteaveis = [
 ];
 
 const caixasConfigs = {
-  '25':          { id:'25',          titulo:'Caixa de 25 Doces',          totalDoces:25,  maxSabores:7,    precoFixo:null, proximoId:'35'  },
-  '35':          { id:'35',          titulo:'Caixa de 35 Doces',          totalDoces:35,  maxSabores:7,    precoFixo:null, proximoId:'50'  },
-  '50':          { id:'50',          titulo:'Caixa de 50 Doces',          totalDoces:50,  maxSabores:10,   precoFixo:null, proximoId:'100' },
-  '100':         { id:'100',         titulo:'Caixa de 100 Doces',         totalDoces:100, maxSabores:14,   precoFixo:null, proximoId:null  },
-  'degustacao':  { id:'degustacao',  titulo:'Caixa Degustação',           totalDoces:0,   maxSabores:null, precoFixo:null, proximoId:null  },
-  'degustacao_12':{ id:'degustacao_12', titulo:'Caixa Degustação 12 Sabores', totalDoces:12, maxSabores:null, precoFixo:40.00, imgDeg:BASE_URL+'Caixa_Degustacao/Degustacao_12_Sabores.jpeg' },
-  'degustacao_25':{ id:'degustacao_25', titulo:'Caixa Degustação 25 Sabores', totalDoces:25, maxSabores:null, precoFixo:75.00, imgDeg:BASE_URL+'Caixa_Degustacao/Degustacao_25_Sabores.jpeg' }
+    degustacao: {
+        id: 'degustacao',
+        titulo: 'Caixa Degustação',
+        totalDoces: 0,
+        maxSabores: null,
+        precoFixo: null,
+        proximoId: null
+    }
 };
     // ============================================================
     // R1.4-A: CAIXAS VIA MODELO MESTRE
@@ -521,10 +522,15 @@ const caixasConfigs = {
         }
 
         const sync = (key, item) => {
-            const target = caixasConfigs[key];
-            if (!target) {
-                throw new Error("Configuracao da UI ausente: " + key);
-            }
+            const target = caixasConfigs[key] ?? (caixasConfigs[key] = {
+                id: key,
+                titulo: '',
+                totalDoces: 0,
+                maxSabores: null,
+                precoFixo: null,
+                proximoId: null,
+                imgDeg: null
+            });
             target.titulo = item.nome ?? target.titulo;
             target.totalDoces = Number(item.capacidade ?? target.totalDoces);
             target.maxSabores = Number(item.maxSabores ?? target.maxSabores);
@@ -538,6 +544,11 @@ const caixasConfigs = {
         sync("100", c100);
         sync("degustacao_12", d12);
         sync("degustacao_25", d25);
+
+        caixasConfigs["25"].proximoId = "35";
+        caixasConfigs["35"].proximoId = "50";
+        caixasConfigs["50"].proximoId = "100";
+        caixasConfigs["100"].proximoId = null;
 
         ["25", "35", "50", "100"].forEach((id) => {
             const button = document.querySelector(
