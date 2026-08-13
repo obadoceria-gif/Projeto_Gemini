@@ -32,7 +32,7 @@
                          },
     "integrations":  {
                          "orders":  {
-                                        "googleSheetsEndpoint":  "https://script.google.com/macros/s/AKfycbzzexSBR6WVLjcWH2Fp5TfKuZivAR-BoT4m3CufvgnBoz_ku45ITasE1SxnuJ3HQxFXpw/exec"
+                                        "googleSheetsEndpoint":  "https://script.google.com/macros/s/AKfycbzvdGnmbQbcbmNVKlA34oozlTZ7tsfEt8hjVrxs3Odup1yZavzVbORj9MCvUuX2Rdlf/exec"
                                     }
                      }
 }
