@@ -189,8 +189,6 @@
         </div>
         <select id="forma-pagamento" class="w-full p-3 bg-[#FFF8F0] border border-[#E8D5B5] rounded-xl text-xs outline-none" onchange="atualizarBotaoFinalizar()">
           <option value="">Forma de pagamento *</option>
-          <option value="Pix">Pix</option>
-          <option value="Dinheiro">Dinheiro</option>
         </select>
       </div>
       <div class="flex gap-2 pt-1">
@@ -420,6 +418,52 @@ function atualizarLinksWhatsApp() {
   });
 }
 
+/* ================================================================
+   R1.9 - PAYMENT METHODS VIA MODELO MESTRE
+   ================================================================ */
+function hidratarFormasPagamentoDoModeloMestre() {
+  const select = document.getElementById('forma-pagamento');
+
+  if (!select) {
+    console.warn('[R1.9] Select forma-pagamento nao encontrado.');
+    return;
+  }
+
+  const metodos = OBA_CONFIG?.checkout?.paymentMethods;
+
+  if (!Array.isArray(metodos) || metodos.length === 0) {
+    console.warn('[R1.9] paymentMethods ausente ou vazio no Modelo Mestre.');
+    return;
+  }
+
+  const metodosValidos = metodos
+    .filter(metodo => typeof metodo === 'string')
+    .map(metodo => metodo.trim())
+    .filter(Boolean);
+
+  if (metodosValidos.length === 0) {
+    console.warn('[R1.9] Nenhuma forma de pagamento valida no Modelo Mestre.');
+    return;
+  }
+
+  const valorAtual = select.value;
+
+  select.innerHTML = '<option value="">Forma de pagamento *</option>';
+
+  metodosValidos.forEach(metodo => {
+    const option = document.createElement('option');
+    option.value = metodo;
+    option.textContent = metodo;
+    select.appendChild(option);
+  });
+
+  if (metodosValidos.includes(valorAtual)) {
+    select.value = valorAtual;
+  }
+
+  console.info('[R1.9] Formas de pagamento carregadas do Modelo Mestre.', metodosValidos);
+}
+
 async function carregarConfigModeloMestre() {
   try {
     const response = await fetch('../data/catalog-v1/config.json', {
@@ -438,6 +482,7 @@ async function carregarConfigModeloMestre() {
 
     OBA_CONFIG = config;
     atualizarLinksWhatsApp();
+    hidratarFormasPagamentoDoModeloMestre();
 
     const endpointPedidos = OBA_CONFIG?.integrations?.orders?.googleSheetsEndpoint;
     if (endpointPedidos) {
