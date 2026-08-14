@@ -1338,42 +1338,99 @@ function alterarQtdCarrinho(i, delta) {
 }
 function removerItemCarrinho(i) { carrinhoDeCaixasConcluidas.splice(i,1); renderizarListaCarrinho(); atualizarPainelLateral(); }
 
-function atualizarBotaoFinalizar() {
-  const btn  = document.getElementById('btn-finalizar-modal');
-  if (!btn) return;
-  const nome = (document.getElementById('nome-cliente')?.value||'').trim();
-  const data = document.getElementById('data-desejada')?.value||'';
-  const hora = document.getElementById('hora-desejada')?.value||'';
-  const pag  = document.getElementById('forma-pagamento')?.value||'';
-  btn.disabled = !(nome && data && hora && pag && carrinhoDeCaixasConcluidas.length > 0);
+/* ================================================================
+   R1.10 - REQUIRED FIELDS VIA MODELO MESTRE
+   ================================================================ */
+
+const CHECKOUT_FIELD_MAP = Object.freeze({
+  nome: 'nome-cliente',
+  data: 'data-desejada',
+  hora: 'hora-desejada',
+  formaPagamento: 'forma-pagamento'
+});
+
+const CHECKOUT_REQUIRED_FIELDS_FALLBACK = Object.freeze([
+  'nome',
+  'data',
+  'hora',
+  'formaPagamento'
+]);
+
+function obterRequiredFieldsCheckout() {
+  const configurados = OBA_CONFIG?.checkout?.requiredFields;
+
+  if (!Array.isArray(configurados) || configurados.length === 0) {
+    return [...CHECKOUT_REQUIRED_FIELDS_FALLBACK];
+  }
+
+  const validos = configurados
+    .filter(campo => typeof campo === 'string')
+    .map(campo => campo.trim())
+    .filter(campo => Object.prototype.hasOwnProperty.call(CHECKOUT_FIELD_MAP, campo));
+
+  if (validos.length === 0) {
+    console.warn('[R1.10] requiredFields sem campos reconhecidos. Fallback preservado.');
+    return [...CHECKOUT_REQUIRED_FIELDS_FALLBACK];
+  }
+
+  return [...new Set(validos)];
 }
 
-// ================================================================
-// FINALIZAÇÃO BLINDADA
-// ================================================================
+function obterValoresCheckout() {
+  return {
+    nome: (document.getElementById('nome-cliente')?.value || '').trim(),
+    data: document.getElementById('data-desejada')?.value || '',
+    hora: document.getElementById('hora-desejada')?.value || '',
+    formaPagamento: document.getElementById('forma-pagamento')?.value || ''
+  };
+}
+
+function validarCamposObrigatoriosCheckout(valores = obterValoresCheckout()) {
+  const requiredFields = obterRequiredFieldsCheckout();
+
+  const faltantes = requiredFields.filter(campo => {
+    const valor = valores[campo];
+    return typeof valor !== 'string' || valor.trim() === '';
+  });
+
+  return {
+    valido: faltantes.length === 0,
+    requiredFields,
+    faltantes
+  };
+}
+
+function atualizarBotaoFinalizar() {
+  const btn = document.getElementById('btn-finalizar-modal');
+  if (!btn) return;
+
+  const validacao = validarCamposObrigatoriosCheckout();
+
+  btn.disabled = !(
+    validacao.valido &&
+    carrinhoDeCaixasConcluidas.length > 0
+  );
+}
+
 function finalizarPedidoBlindado() {
   if (carrinhoDeCaixasConcluidas.length === 0) {
     alert('Adicione produtos primeiro.');
     return;
   }
 
-  const nome =
-    (document.getElementById('nome-cliente')?.value || '').trim();
+  const valores = obterValoresCheckout();
 
-  const dataRaw =
-    document.getElementById('data-desejada')?.value || '';
+  const nome = valores.nome;
+  const dataRaw = valores.data;
+  const hora = valores.hora;
+  const pag = valores.formaPagamento;
 
-  const hora =
-    document.getElementById('hora-desejada')?.value || '';
+  const validacao = validarCamposObrigatoriosCheckout(valores);
 
-  const pag =
-    document.getElementById('forma-pagamento')?.value || '';
-
-  if (!nome || !dataRaw || !hora || !pag) {
-    alert('Preencha todos os campos de entrega.');
+  if (!validacao.valido) {
+    alert('Preencha todos os campos obrigatorios de entrega.');
     return;
   }
-
   const d = dataRaw.split('-');
 
   const dataFmt =
