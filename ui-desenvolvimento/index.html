@@ -296,11 +296,11 @@
         <div><span class="block text-[9px] uppercase tracking-widest opacity-50 mb-1">Kits & Presentes</span><span class="text-sm font-medium">Presenteáveis / Especiais</span></div>
         <i class="fa-solid fa-gift text-xl opacity-20"></i>
       </button>
-      <button onclick="abrirModalEspecial('personalizados')" class="w-full p-6 bg-white border border-[#8B4513]/10 text-[#8B4513] rounded-[2rem] text-left flex justify-between items-center active:scale-95 transition-all shadow-sm">
+      <button data-oba-business-channel="personalizados" onclick="abrirModalEspecial('personalizados')" class="w-full p-6 bg-white border border-[#8B4513]/10 text-[#8B4513] rounded-[2rem] text-left flex justify-between items-center active:scale-95 transition-all shadow-sm">
         <div><span class="block text-[9px] uppercase tracking-widest opacity-50 mb-1">Exclusivo</span><span class="text-sm font-medium">Doces Personalizados</span></div>
         <i class="fa-solid fa-wand-magic-sparkles text-xl opacity-20"></i>
       </button>
-      <button onclick="abrirModalEspecial('eventos')" class="w-full p-6 bg-white border border-[#8B4513]/10 text-[#8B4513] rounded-[2rem] text-left flex justify-between items-center active:scale-95 transition-all shadow-sm">
+      <button data-oba-business-channel="eventos" onclick="abrirModalEspecial('eventos')" class="w-full p-6 bg-white border border-[#8B4513]/10 text-[#8B4513] rounded-[2rem] text-left flex justify-between items-center active:scale-95 transition-all shadow-sm">
         <div><span class="block text-[9px] uppercase tracking-widest opacity-50 mb-1">Proposta</span><span class="text-sm font-medium">Grandes Eventos</span></div>
         <i class="fa-solid fa-champagne-glasses text-xl opacity-20"></i>
       </button>
@@ -421,6 +421,29 @@ function atualizarLinksWhatsApp() {
 /* ================================================================
    R1.9 - PAYMENT METHODS VIA MODELO MESTRE
    ================================================================ */
+/* ================================================================
+   R1.11 - BUSINESS CHANNELS VIA MODELO MESTRE
+   ================================================================ */
+function canalNegocioAtivo(tipo) {
+  return OBA_CONFIG?.businessChannels?.[tipo] === true;
+}
+
+function hidratarBusinessChannelsDoModeloMestre() {
+  document
+    .querySelectorAll('[data-oba-business-channel]')
+    .forEach(elemento => {
+      const tipo = elemento.dataset.obaBusinessChannel;
+      const ativo = canalNegocioAtivo(tipo);
+
+      elemento.classList.toggle('hidden', !ativo);
+      elemento.setAttribute('aria-hidden', String(!ativo));
+    });
+
+  console.info('[R1.11] Business channels carregados do Modelo Mestre.', {
+    personalizados: canalNegocioAtivo('personalizados'),
+    eventos: canalNegocioAtivo('eventos')
+  });
+}
 function hidratarFormasPagamentoDoModeloMestre() {
   const select = document.getElementById('forma-pagamento');
 
@@ -482,6 +505,7 @@ async function carregarConfigModeloMestre() {
 
     OBA_CONFIG = config;
     atualizarLinksWhatsApp();
+    hidratarBusinessChannelsDoModeloMestre();
     hidratarFormasPagamentoDoModeloMestre();
 
     const endpointPedidos = OBA_CONFIG?.integrations?.orders?.googleSheetsEndpoint;
@@ -1752,8 +1776,21 @@ function verCarrinhoComVerificacao() {
 // MODAIS ESPECIAIS + UTILITÁRIOS
 // ================================================================
 function abrirModalEspecial(tipo) {
-  if (tipo==='personalizados') { document.getElementById('pers-view-inputs').classList.add('hidden'); document.getElementById('pers-view-info').classList.remove('hidden'); document.getElementById('modal-decorados').classList.remove('hidden'); }
-  else document.getElementById('modal-eventos').classList.remove('hidden');
+  if (!canalNegocioAtivo(tipo)) {
+    console.warn(`[R1.11] Canal de negocio inativo: ${tipo}`);
+    return;
+  }
+
+  if (tipo === 'personalizados') {
+    document.getElementById('pers-view-inputs').classList.add('hidden');
+    document.getElementById('pers-view-info').classList.remove('hidden');
+    document.getElementById('modal-decorados').classList.remove('hidden');
+    return;
+  }
+
+  if (tipo === 'eventos') {
+    document.getElementById('modal-eventos').classList.remove('hidden');
+  }
 }
 function avancarFormularioPersonalizados() { document.getElementById('pers-view-info').classList.add('hidden'); document.getElementById('pers-view-inputs').classList.remove('hidden'); }
 function voltarLAteralPersonalizados()     { document.getElementById('pers-view-inputs').classList.add('hidden'); document.getElementById('pers-view-info').classList.remove('hidden'); }
