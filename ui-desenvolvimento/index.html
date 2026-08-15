@@ -546,14 +546,62 @@ async function carregarConfigModeloMestre() {
   }
 }
 
-carregarConfigModeloMestre();
+const CONFIG_MODELO_MESTRE_PROMISE = carregarConfigModeloMestre();
 let SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzzexSBR6WVLjcWH2Fp5TfKuZivAR-BoT4m3CufvgnBoz_ku45ITasE1SxnuJ3HQxFXpw/exec'; // fallback R1.4-C.9
-const BASE_URL   = 'https://raw.githubusercontent.com/obadoceria-gif/cardapio/main/Images/';
-const S          = BASE_URL + 'Sabores_Doces/';
+const LEGACY_ASSET_BASE_URL = 'https://raw.githubusercontent.com/obadoceria-gif/cardapio/main/Images/';
+
+/* ================================================================
+   R1.14 - ASSETS VIA MODELO MESTRE
+   O GitHub Raw permanece exclusivamente como fallback de seguranca.
+   ================================================================ */
+function resolverAssetModeloMestre(caminho) {
+  const valor = String(caminho || '').trim().replace(/\\/g, '/');
+
+  if (!valor) return '';
+
+  if (
+    /^(?:https?:|data:|blob:)/i.test(valor) ||
+    valor.startsWith('//')
+  ) {
+    return valor;
+  }
+
+  const basePath = OBA_CONFIG?.assets?.basePath;
+  const imageRoot = OBA_CONFIG?.assets?.imageRoot;
+
+  if (!basePath || !imageRoot) {
+    return LEGACY_ASSET_BASE_URL +
+      valor
+        .replace(/^\.?\//, '')
+        .replace(/^Images\//, '');
+  }
+
+  const base =
+    basePath.endsWith('/')
+      ? basePath
+      : basePath + '/';
+
+  const root =
+    imageRoot
+      .replace(/^\.?\//, '')
+      .replace(/\/?$/, '/');
+
+  const relativo =
+    valor.replace(/^\.?\//, '');
+
+  const semRaiz =
+    relativo.startsWith(root)
+      ? relativo.slice(root.length)
+      : relativo;
+
+  return base + root + semRaiz;
+}
+
+const S = LEGACY_ASSET_BASE_URL + 'Sabores_Doces/';
 
 const kitsPresenteaveis = [
-  { id:'kit_tabua',   nome:'Tábua Doce Artesanal',    desc:'Mini naked cake de brigadeiro, uva verde, morangos e doces variados em tábua redonda de MDF.', precoFixo:180.00, img:BASE_URL+'Presenteaveis/Opcao_1.png' },
-  { id:'kit_classico', nome:'Caixa Presente Clássica', desc:'12 brigadeiros em caixa com laço.', precoFixo:75.00, img:BASE_URL+'Presenteaveis/Opcao_2.png' }
+  { id:'kit_tabua',   nome:'Tábua Doce Artesanal',    desc:'Mini naked cake de brigadeiro, uva verde, morangos e doces variados em tábua redonda de MDF.', precoFixo:180.00, img:LEGACY_ASSET_BASE_URL+'Presenteaveis/Opcao_1.png' },
+  { id:'kit_classico', nome:'Caixa Presente Clássica', desc:'12 brigadeiros em caixa com laço.', precoFixo:75.00, img:LEGACY_ASSET_BASE_URL+'Presenteaveis/Opcao_2.png' }
 ];
 
 // ============================================================
@@ -569,6 +617,7 @@ window.__OBA_R17_KITS__ = {
 };
 
 async function hidratarKitsDoModeloMestre() {
+  await CONFIG_MODELO_MESTRE_PROMISE;
   try {
     const response = await fetch('../data/catalog-v1/products.json', {
       cache: 'no-store'
@@ -597,9 +646,7 @@ async function hidratarKitsDoModeloMestre() {
         nome: produto.nome,
         desc: produto.descricao || '',
         precoFixo: Number(produto.preco),
-        img: produto.imagem
-          ? BASE_URL + produto.imagem.replace(/^Images\//, '')
-          : '',
+        img: resolverAssetModeloMestre(produto.imagem),
         opcionaisPermitidos: Array.isArray(produto.opcionaisPermitidos)
           ? [...produto.opcionaisPermitidos]
           : []
@@ -845,6 +892,7 @@ const caixasConfigs = {
     };
 
     async function hidratarCaixasDoModeloMestre() {
+  await CONFIG_MODELO_MESTRE_PROMISE;
         const response = await fetch("../data/catalog-v1/boxes.json", { cache: "no-store" });
         if (!response.ok) {
             throw new Error("Falha HTTP ao carregar boxes.json: " + response.status);
@@ -893,7 +941,7 @@ const caixasConfigs = {
             target.totalDoces = Number(item.capacidade ?? target.totalDoces);
             target.maxSabores = Number(item.maxSabores ?? target.maxSabores);
             if (item.precoFixo != null) target.precoFixo = Number(item.precoFixo);
-            if (item.imagem) target.imgDeg = item.imagem;
+            if (item.imagem) target.imgDeg = resolverAssetModeloMestre(item.imagem);
         };
 
         sync("25", c25);
@@ -1016,6 +1064,7 @@ const catalogo = [
 // Mantem o catalogo hardcoded anterior como fallback seguro.
 // ================================================================
 async function hidratarCatalogoDoModeloMestre() {
+  await CONFIG_MODELO_MESTRE_PROMISE;
   try {
     const [categoriasResp, saboresResp] = await Promise.all([
       fetch('../data/catalog-v1/categories.json', { cache: 'no-store' }),
@@ -1062,7 +1111,7 @@ async function hidratarCatalogoDoModeloMestre() {
             id: idLegadoPorNome.get(sabor.nome) || sabor.id,
             nome: sabor.nome,
             preco: Number(sabor.preco),
-            img: sabor.imagem
+            img: resolverAssetModeloMestre(sabor.imagem)
           }))
       };
     }).filter(grupo => grupo.itens.length > 0);
@@ -1237,7 +1286,12 @@ function abrirModalConfigKit(idKit) {
   document.getElementById('modal-config-kit').classList.remove('hidden');
 }
 
-function fecharModalConfigKit() { document.getElementById('modal-config-kit').classList.add('hidden'); }
+function fecharModalConfigKit() {
+  document.getElementById('modal-config-kit').classList.add('hidden');
+  caixaAtiva = null;
+  lacoSelecionado = false;
+  placaSelecionada = false;
+}
 
 function toggleOpcional(tipo) {
   if (tipo === 'laco') {
@@ -1314,6 +1368,15 @@ function fecharModalCaixaConcluida() { document.getElementById('modal-caixa-conc
 
 function _registrarCaixaNoCarrinho() {
   if (!caixaAtiva) return;
+
+  if (
+    !caixaAtiva.titulo ||
+    !Number.isFinite(Number(caixaAtiva.totalDoces)) ||
+    Number(caixaAtiva.totalDoces) <= 0
+  ) {
+    console.warn('[R1.14.5] Registro de caixa bloqueado: estado ativo nao representa uma caixa valida.', caixaAtiva);
+    return;
+  }
   let valor, detalhes;
   if (caixaAtiva.precoFixo) {
     valor    = caixaAtiva.precoFixo;
