@@ -979,7 +979,7 @@ const caixasConfigs = {
         console.info("[R1.4-A] Caixas carregadas do Modelo Mestre.");
     }
 
-    hidratarCaixasDoModeloMestre().catch((erro) => {
+    const CAIXAS_MODELO_MESTRE_PROMISE = hidratarCaixasDoModeloMestre().catch((erro) => {
         window.__OBA_R14A_CAIXAS__ = {
             status: "fallback",
             fonte: "fallback-ui",
@@ -1206,12 +1206,23 @@ function retornarParaMenuSeletor() {
 // ================================================================
 // MODAL 1 — TAMANHO DA CAIXA
 // ================================================================
-function abrirModalTamanhoCaixa(id) {
+async function abrirModalTamanhoCaixa(id) {
+  await CAIXAS_MODELO_MESTRE_PROMISE;
+
   if (id === 'degustacao') {
+    const deg12 = caixasConfigs['degustacao_12'];
+    const deg25 = caixasConfigs['degustacao_25'];
+
+    if (!deg12 || !deg25) {
+      console.warn('[R1.15.5] Degustacao indisponivel: configuracao de caixas incompleta.');
+      mostrarNotificacao('Caixas de degustação indisponíveis no momento.');
+      return;
+    }
+
     document.getElementById('mtc-titulo').innerText = 'Caixa Degustação';
     document.getElementById('mtc-desc').innerText   = 'Caixa sortida com os melhores sabores. Escolha o tamanho:';
-    document.getElementById('img-deg-12').src = caixasConfigs['degustacao_12'].imgDeg;
-    document.getElementById('img-deg-25').src = caixasConfigs['degustacao_25'].imgDeg;
+    document.getElementById('img-deg-12').src = deg12.imgDeg || '';
+    document.getElementById('img-deg-25').src = deg25.imgDeg || '';
     document.getElementById('mtc-deg-opcoes').classList.remove('hidden');
     document.getElementById('mtc-btn-confirmar').classList.add('hidden');
     // Reseta seleção visual
@@ -1221,6 +1232,13 @@ function abrirModalTamanhoCaixa(id) {
     caixaPendente = null;
   } else {
     const cfg = caixasConfigs[id];
+
+    if (!cfg) {
+      console.warn('[R1.15.5] Caixa indisponivel:', id);
+      mostrarNotificacao('Esta caixa está indisponível no momento.');
+      return;
+    }
+
     document.getElementById('mtc-titulo').innerText = cfg.titulo;
     document.getElementById('mtc-desc').innerText   = `Escolha ${cfg.totalDoces} doces com até ${cfg.maxSabores} sabores diferentes.`;
     document.getElementById('mtc-deg-opcoes').classList.add('hidden');
@@ -1232,14 +1250,22 @@ function abrirModalTamanhoCaixa(id) {
 }
 
 function selecionarTamanhoDeg(id) {
+  const cfg = caixasConfigs[id];
+
+  if (!cfg) {
+    console.warn('[R1.15.5] Tamanho de degustacao indisponivel:', id);
+    mostrarNotificacao('Este tamanho está indisponível no momento.');
+    return;
+  }
+
   ['btn-deg-12','btn-deg-25'].forEach(b => {
     document.getElementById(b).className = 'p-3 bg-white border-2 border-[#E8D5B5] rounded-2xl text-center active:scale-95 transition-all';
   });
   const suffix = id === 'degustacao_12' ? '12' : '25';
   document.getElementById(`btn-deg-${suffix}`).className = 'p-3 bg-[#FFF8F0] border-2 border-[#8B4513] rounded-2xl text-center active:scale-95 transition-all';
-  caixaPendente = caixasConfigs[id];
+  caixaPendente = cfg;
   document.getElementById('mtc-btn-confirmar').classList.remove('hidden');
-  document.getElementById('mtc-btn-confirmar').textContent = `✓ Confirmar ${caixasConfigs[id].totalDoces} doces — ${formatarMoeda(caixasConfigs[id].precoFixo)}`;
+  document.getElementById('mtc-btn-confirmar').textContent = `✓ Confirmar ${cfg.totalDoces} doces — ${formatarMoeda(cfg.precoFixo)}`;
 }
 
 function confirmarTamanhoCaixa() {
