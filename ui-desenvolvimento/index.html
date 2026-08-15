@@ -1556,6 +1556,14 @@ function finalizarPedidoBlindado() {
   wppTxt +=
     `\n*TOTAL: R$ ${total.toFixed(2).replace('.', ',')}*`;
 
+  if (
+    OBA_CONFIG?.checkout?.includeCatalogVersionInMessage === true &&
+    OBA_CONFIG?.catalogVersion
+  ) {
+    wppTxt +=
+      `\n\n*VERSÃO DO CATÁLOGO:* ${OBA_CONFIG.catalogVersion}`;
+  }
+
   const btn =
     document.getElementById('btn-finalizar-modal');
 
