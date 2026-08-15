@@ -408,6 +408,29 @@ let OBA_CONFIG = {
   }
 };
 
+/* ================================================================
+   R1.13 - LOCALE + CURRENCY VIA MODELO MESTRE
+   ================================================================ */
+function formatarMoeda(valor) {
+  const locale =
+    OBA_CONFIG?.store?.locale || 'pt-BR';
+
+  const currency =
+    OBA_CONFIG?.store?.currency || 'BRL';
+
+  const numero =
+    Number(valor);
+
+  const valorSeguro =
+    Number.isFinite(numero) ? numero : 0;
+
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency
+  })
+    .format(valorSeguro)
+    .replace(/\u00A0/g, ' ');
+}
 function whatsappLoja() {
   return OBA_CONFIG?.store?.whatsapp || '5555999117626';
 }
@@ -705,9 +728,7 @@ function atualizarOpcionaisDoModal() {
 
     if (ref.preco) {
       ref.preco.textContent =
-        '+ R$ ' + Number(opcional.preco || 0)
-          .toFixed(2)
-          .replace('.', ',');
+        '+ ' + formatarMoeda(Number(opcional.preco || 0));
     }
 
     if (ref.card) {
@@ -1029,7 +1050,7 @@ async function hidratarCatalogoDoModeloMestre() {
     const novoCatalogo = categoriasAtivas.map(categoria => {
       const precoRef = Number(categoria.precoReferencia);
       const rotuloPreco = Number.isFinite(precoRef)
-        ? ` (R$ ${precoRef.toFixed(2).replace('.', ',')})`
+        ?  ` (${formatarMoeda(precoRef)})`
         : '';
 
       return {
@@ -1169,7 +1190,7 @@ function selecionarTamanhoDeg(id) {
   document.getElementById(`btn-deg-${suffix}`).className = 'p-3 bg-[#FFF8F0] border-2 border-[#8B4513] rounded-2xl text-center active:scale-95 transition-all';
   caixaPendente = caixasConfigs[id];
   document.getElementById('mtc-btn-confirmar').classList.remove('hidden');
-  document.getElementById('mtc-btn-confirmar').textContent = `✓ Confirmar ${caixasConfigs[id].totalDoces} doces — R$ ${caixasConfigs[id].precoFixo.toFixed(2).replace('.',',')}`;
+  document.getElementById('mtc-btn-confirmar').textContent = `✓ Confirmar ${caixasConfigs[id].totalDoces} doces — ${formatarMoeda(caixasConfigs[id].precoFixo)}`;
 }
 
 function confirmarTamanhoCaixa() {
@@ -1211,7 +1232,7 @@ function abrirModalConfigKit(idKit) {
   document.getElementById('mck-img').src       = kit.img;
   document.getElementById('mck-titulo').innerText = kit.nome;
   document.getElementById('mck-desc').innerText   = kit.desc;
-  document.getElementById('mck-preco').innerText  = 'R$ ' + kit.precoFixo.toFixed(2).replace('.', ',');
+  document.getElementById('mck-preco').innerText  = formatarMoeda(kit.precoFixo);
   atualizarOpcionaisDoModal();
   document.getElementById('modal-config-kit').classList.remove('hidden');
 }
@@ -1239,7 +1260,7 @@ function toggleOpcional(tipo) {
       caixaAtiva.precoFixo +
       (lacoSelecionado ? precoOpcional('laco') : 0) +
       (placaSelecionada ? precoOpcional('placa') : 0);
-    document.getElementById('mck-preco').innerText = 'R$ ' + total.toFixed(2).replace('.', ',');
+    document.getElementById('mck-preco').innerText = formatarMoeda(total);
   }
 }
 
@@ -1279,12 +1300,12 @@ function abrirModalCaixaConcluida() {
     descricao   = `${Object.values(quantidades).reduce((a,b)=>a+b,0)} doces escolhidos`;
     saboresHtml = Object.entries(quantidades).filter(([,q])=>q>0).map(([id,q])=>{
       const d = encontrarDoce(id);
-      return `<div class="flex justify-between"><span>${d?.nome}</span><span class="font-bold">${q}x — R$ ${((d?.preco||0)*q).toFixed(2).replace('.',',')}</span></div>`;
+      return `<div class="flex justify-between"><span>${d?.nome}</span><span class="font-bold">${q}x — ${formatarMoeda((d?.preco || 0) * q)}</span></div>`;
     }).join('');
   }
   document.getElementById('mcc-titulo').innerText = `${caixaAtiva.titulo} 🎉`;
   document.getElementById('mcc-desc').innerText   = descricao;
-  document.getElementById('mcc-valor').innerText  = 'R$ ' + valor.toFixed(2).replace('.',',');
+  document.getElementById('mcc-valor').innerText  = formatarMoeda(valor);
   document.getElementById('mcc-sabores').innerHTML = saboresHtml;
   document.getElementById('modal-caixa-concluida').classList.remove('hidden');
 }
@@ -1326,7 +1347,7 @@ function renderizarListaCarrinho() {
   if (carrinhoDeCaixasConcluidas.length === 0) {
     lista.innerHTML = `<div class="text-center py-10 flex flex-col items-center"><div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4"><i class="fa-solid fa-basket-shopping text-2xl text-gray-300"></i></div><p class="text-sm font-bold text-gray-500 uppercase tracking-widest">Carrinho vazio</p></div>`;
     form.classList.add('hidden'); btnFinal.disabled = true;
-    document.getElementById('mc-total').innerText = 'R$ 0,00';
+    document.getElementById('mc-total').innerText = formatarMoeda(0);
     return;
   }
   form.classList.remove('hidden');
@@ -1346,10 +1367,10 @@ function renderizarListaCarrinho() {
             <button onclick="alterarQtdCarrinho(${i}, 1)" class="w-6 h-6 rounded-lg bg-[#8B4513] text-white font-bold">+</button>
           </div>
         </div>
-        <div class="text-right"><p class="text-[8px] font-bold text-gray-400 uppercase mb-1">Subtotal</p><p class="text-sm font-black text-[#8B4513]">R$ ${sub.toFixed(2).replace('.',',')}</p></div>
+        <div class="text-right"><p class="text-[8px] font-bold text-gray-400 uppercase mb-1">Subtotal</p><p class="text-sm font-black text-[#8B4513]">${formatarMoeda(sub)}</p></div>
       </div></div>`;
   });
-  document.getElementById('mc-total').innerText = 'R$ ' + total.toFixed(2).replace('.',',');
+  document.getElementById('mc-total').innerText = formatarMoeda(total);
   atualizarBotaoFinalizar();
 }
 
@@ -1550,11 +1571,11 @@ function finalizarPedidoBlindado() {
     wppTxt +=
       `\n*${i + 1}. ${item.quantidade}x ${item.titulo}*\n` +
       `   ${item.detalhes}\n` +
-      `   Subtotal: R$ ${item.subtotal.toFixed(2).replace('.', ',')}\n`;
+      `   Subtotal: ${formatarMoeda(item.subtotal)}\n`;
   });
 
   wppTxt +=
-    `\n*TOTAL: R$ ${total.toFixed(2).replace('.', ',')}*`;
+    `\n*TOTAL: ${formatarMoeda(total)}*`;
 
   if (
     OBA_CONFIG?.checkout?.includeCatalogVersionInMessage === true &&
@@ -1648,7 +1669,7 @@ function renderizarDoces() {
         <div class="w-full aspect-square bg-gray-50"><img src="${item.img}" alt="${item.nome}" class="h-full w-full object-cover" onerror="this.src='https://placehold.co/300x300?text=Oba'"></div>
         <div class="p-3 w-full flex flex-col flex-1">
           <h3 class="font-bold text-[11px] mb-1 text-[#3B2A1E] line-clamp-1">${item.nome}</h3>
-          <p class="text-[10px] text-gray-400 font-bold mb-2">R$ ${item.preco.toFixed(2).replace('.',',')} / un</p>
+          <p class="text-[10px] text-gray-400 font-bold mb-2">${formatarMoeda(item.preco)} / un</p>
           ${ctrl}
         </div></div>`;
     });
@@ -1700,7 +1721,7 @@ function renderizarKits() {
     grid.innerHTML += `<div class="bg-white rounded-[1.5rem] shadow-sm border border-[#E8D5B5] flex flex-col overflow-hidden hover:border-[#8B4513] transition-all">
       <div class="w-full h-56 sm:h-64 bg-gray-50 border-b border-[#E8D5B5] overflow-hidden"><img src="${kit.img}" class="h-full w-full object-cover" onerror="this.src='https://placehold.co/400x400?text=Oba'" alt="${kit.nome}"></div>
       <div class="p-5 flex flex-col justify-between flex-1">
-        <div><h3 class="font-black text-sm mb-1 text-[#3B2A1E]">${kit.nome}</h3><p class="text-[10px] text-gray-500 leading-tight mb-3 line-clamp-2">${kit.desc}</p><p class="text-sm text-[#8B4513] font-black mb-4">R$ ${kit.precoFixo.toFixed(2).replace('.',',')}</p></div>
+        <div><h3 class="font-black text-sm mb-1 text-[#3B2A1E]">${kit.nome}</h3><p class="text-[10px] text-gray-500 leading-tight mb-3 line-clamp-2">${kit.desc}</p><p class="text-sm text-[#8B4513] font-black mb-4">${formatarMoeda(kit.precoFixo)}</p></div>
         <button onclick="abrirModalConfigKit('${kit.id}')" class="w-full py-3 bg-[#8B4513] text-white rounded-xl text-[11px] font-bold uppercase tracking-wider shadow-sm active:scale-95">Configurar Presente</button>
       </div></div>`;
   });
@@ -1732,7 +1753,7 @@ function atualizarPainelLateral() {
         <button onclick="removerDoLateral(${i})" class="absolute top-1 right-2 text-red-500 font-bold text-[10px]">✕</button>
         <p class="font-extrabold text-[#8B4513] text-[11px] pr-4">${qtd>1?`${qtd}x `:''}${cx.titulo}</p>
         <p class="text-[10px] text-gray-500 line-clamp-2 mt-0.5 leading-tight">${cx.detalhes}</p>
-        <p class="text-[11px] font-black text-gray-700 mt-1">R$ ${sub.toFixed(2).replace('.',',')}</p>
+        <p class="text-[11px] font-black text-gray-700 mt-1">${formatarMoeda(sub)}</p>
       </div>`;
     });
   }
@@ -1760,7 +1781,7 @@ function atualizarInterface() {
       ? '<p class="text-gray-400 text-center py-2 italic text-[10px]">Carrinho vazio.</p>'
       : '<p class="text-green-700 font-bold text-center py-2 text-[10px]"><i class="fa-solid fa-circle-check"></i> Itens salvos!</p>';
   }
-  const fmt = 'R$ ' + total.toFixed(2).replace('.',',');
+  const fmt = formatarMoeda(total);
   document.getElementById('valor-total').innerText = fmt;
   document.getElementById('mobile-total').innerText = fmt;
   document.getElementById('mobile-label').innerText = fluxoAtivo==='presenteaveis'
