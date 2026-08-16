@@ -112,3 +112,22 @@ Os arquivos:
 possuem nomes distintos, mas atualmente possuem conteudo identico.
 
 O codigo permanece preparado para imagens distintas.
+---
+
+## D011 - Revisao de produto em etapa propria
+Status: aprovado
+
+No mobile, quando uma escolha comercial estiver concluida, o resumo e as decisoes seguintes devem preferencialmente ocupar uma etapa propria.
+
+Padrao aprovado na R1.17-A:
+
+Escolha
+-> Revisao do produto
+-> Acao explicita
+-> Carrinho ou continuidade
+
+Beneficios:
+- reduz rolagem desnecessaria;
+- separa selecao de confirmacao;
+- mantem a proxima acao visivel;
+- permite reutilizar o padrao em outras categorias.

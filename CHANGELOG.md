@@ -1,3 +1,31 @@
+## R1.17-A - Fluxo Mobile por Etapas
+Data de consolidacao: 2026-08-16
+
+### Adicionado
+- Tela dedicada de escolha da Caixa Degustacao
+- Tela dedicada de revisao do produto
+- Navegacao Voltar e alterar
+- Acoes separadas para continuar comprando, ver carrinho e finalizar
+- Controle mobile baseado em 100dvh
+
+### Alterado
+- Escolher 12/25 deixa de salvar automaticamente o produto
+- Inclusao no carrinho acontece somente apos acao explicita do usuario
+- Informacoes deixaram de ser empilhadas abaixo da foto
+- Fluxo mobile passa a operar por etapas
+
+### Validado
+- Degustacao 12
+- Degustacao 25
+- Preservacao da escolha ao voltar
+- Tela de escolha sem rolagem para encontrar a proxima acao
+- Tela de revisao sem rolagem para encontrar a proxima acao
+- Console sem TypeError
+
+### Proxima etapa
+R1.17-B - Carrinho em viewport com cabecalho e acoes persistentes.
+
+---
 # CHANGELOG
 
 ## R1.16-K - Mobile First e Carrinho Global

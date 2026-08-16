@@ -47,3 +47,21 @@ Cada nova tarefa deve:
 8. atualizar documentacao;
 9. criar commit quando autorizado;
 10. push apenas quando autorizado.
+## R1.17-A
+
+Status: CONCLUIDO
+
+Problema:
+A Caixa Degustacao concentrava escolha, detalhes e acoes em uma pagina vertical, exigindo rolagem.
+
+Solucao:
+Separar o fluxo em:
+1. escolha;
+2. revisao;
+3. acao explicita.
+
+Resultado:
+Arquitetura aprovada em viewport mobile.
+
+Proxima acao:
+R1.17-B - Reestruturar o carrinho para trabalhar em uma viewport com areas persistentes.

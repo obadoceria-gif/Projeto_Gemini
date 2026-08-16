@@ -52,3 +52,21 @@ Cada versao deve:
 - gerar documentacao;
 - gerar baseline;
 - permitir avancar para a proxima acao.
+## Checkpoint R1.17-A
+
+Status: CONCLUIDO
+
+Entregue:
+- Selecao de Degustacao em viewport mobile
+- Revisao de produto em etapa propria
+- Navegacao sem depender de rolagem para localizar acoes
+- Estado temporario separado de item efetivamente salvo
+
+Proxima entrega:
+R1.17-B - Carrinho em viewport.
+
+Objetivo:
+- header do carrinho sempre visivel;
+- area central dos itens adaptativa;
+- rolagem somente da lista quando necessario;
+- total e acoes sempre acessiveis.

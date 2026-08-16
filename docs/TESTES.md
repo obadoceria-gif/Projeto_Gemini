@@ -52,3 +52,28 @@ Toda promocao deve registrar testes executados.
 ## Desktop
 - [x] Fluxo basico funcional
 - [ ] Revisao responsiva completa apos R1.17
+## R1.17-A - Fluxo por etapas
+
+### Degustacao
+- [x] Tela de escolha em viewport mobile
+- [x] Seletor 12
+- [x] Seletor 25
+- [x] Continuar desabilitado sem escolha
+- [x] Continuar habilitado apos escolha
+- [x] Selecionar nao altera badge do carrinho
+- [x] Tela de revisao separada
+- [x] Voltar e alterar
+- [x] Escolha preservada ao voltar
+- [x] Salvar somente por acao explicita
+- [x] Preco e quantidade na revisao
+- [x] Acoes principais acessiveis sem procurar por rolagem
+- [x] Console sem TypeError
+
+### Proximo teste
+R1.17-B:
+- [ ] Carrinho com 1 item
+- [ ] Carrinho com 2 itens
+- [ ] Carrinho com muitos itens
+- [ ] Header persistente
+- [ ] Footer persistente
+- [ ] Lista interna rolavel

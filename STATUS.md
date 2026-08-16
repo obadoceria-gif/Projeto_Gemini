@@ -5,7 +5,7 @@ Cardapio Virtual Interativo & Atendimento via WhatsApp
 
 ## Estado atual
 - Branch ativa: feature/integracao-ui-oficial-modelo-mestre
-- Baseline oficial: R1.16-K
+- Baseline oficial: R1.17-A
 - Commit da baseline: 19d0395b49d601bcffb024093136892cf866683b
 - UI oficial: ui-desenvolvimento/index.html
 - Estado Git na consolidacao documental: workspace limpo
@@ -50,7 +50,7 @@ Principais entregas:
 - Checkout deve ser separado da revisao do carrinho
 
 ## Proxima fase
-R1.17 - Fluxo Mobile por Etapas
+R1.17 - Fluxo Mobile por Etapas (em andamento)
 
 Objetivos:
 1. Tela de selecao sem rolagem desnecessaria
@@ -62,4 +62,20 @@ Objetivos:
 7. Prioridade para telas 360px, 390px e 430px
 
 ## Proxima acao
-Iniciar R1.17-A com a arquitetura mobile por etapas.
+Iniciar R1.17-B: carrinho em viewport com header/footer persistentes.
+## R1.17-A - aprovado
+Entregas:
+- Caixa Degustacao convertida para fluxo mobile por etapas
+- Etapa 1 dedicada a escolha 12/25
+- Etapa 2 dedicada a revisao
+- Selecao nao salva automaticamente no carrinho
+- Acoes de salvar, ver carrinho, finalizar e voltar separadas
+- Uso de 100dvh para controlar a viewport mobile
+- Eliminacao da rolagem vazia no fluxo de Degustacao
+- Opcao preservada ao voltar para alterar
+
+Status:
+APROVADO E PROMOVIDO.
+
+Proxima acao:
+R1.17-B - Carrinho em viewport.
