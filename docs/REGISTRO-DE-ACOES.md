@@ -65,3 +65,25 @@ Arquitetura aprovada em viewport mobile.
 
 Proxima acao:
 R1.17-B - Reestruturar o carrinho para trabalhar em uma viewport com areas persistentes.
+## R1.17-B
+
+Status: CONCLUIDO
+
+Problema:
+Carrinhos com varios produtos nao comunicavam claramente a existencia de conteudo fora da area visivel.
+
+Solucao:
+- carrinho em viewport;
+- header/footer persistentes;
+- lista central rolavel;
+- produtos/unidades separados;
+- numeracao;
+- indicador explicito de continuidade;
+- toque para navegar;
+- acessibilidade de foco.
+
+Resultado:
+Arquitetura do carrinho mobile aprovada.
+
+Proxima acao:
+R1.17-C - Checkout em etapa propria.

@@ -77,3 +77,36 @@ R1.17-B:
 - [ ] Header persistente
 - [ ] Footer persistente
 - [ ] Lista interna rolavel
+## R1.17-B - Carrinho em viewport
+
+- [x] Abrir carrinho pelo icone global
+- [x] Header persistente
+- [x] Footer persistente
+- [x] Total sempre visivel
+- [x] Continuar comprando sempre visivel
+- [x] Ir para finalizacao sempre visivel
+- [x] 1 produto
+- [x] 2 produtos
+- [x] 5 produtos
+- [x] Produtos e unidades separados
+- [x] Numeracao visual
+- [x] Aumentar quantidade
+- [x] Reduzir quantidade
+- [x] Remover produto
+- [x] Atualizacao de total
+- [x] Lista central rolavel
+- [x] Indicador de produtos abaixo
+- [x] Indicador nao cobre footer
+- [x] Scroll suave
+- [x] Acessibilidade de foco revisada
+
+### Proximo teste
+R1.17-C:
+- [ ] checkout em viewport propria
+- [ ] nome
+- [ ] data
+- [ ] hora
+- [ ] pagamento
+- [ ] resumo compacto
+- [ ] validacoes
+- [ ] finalizacao

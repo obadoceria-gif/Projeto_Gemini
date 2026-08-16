@@ -1,3 +1,38 @@
+## R1.17-B - Carrinho em Viewport
+Data de consolidacao: 2026-08-16
+
+### Adicionado
+- Carrinho mobile em viewport dedicada
+- Header persistente
+- Footer persistente
+- Lista central rolavel
+- Contagem de produtos e unidades
+- Numeracao dos produtos
+- Indicador de continuidade para produtos ocultos
+- Scroll suave pelo indicador
+- Gerenciamento de foco e inert
+
+### Melhorado
+- Descoberta de produtos abaixo da area visivel
+- Total e proximas acoes permanecem acessiveis
+- Carrinhos extensos nao aumentam indefinidamente a pagina
+- Usuario nao precisa adivinhar que existem produtos abaixo
+
+### Validado
+- 1 e 2 produtos
+- multiplos produtos
+- 5 produtos
+- incremento de unidades
+- remocao
+- total
+- lista interna rolavel
+- indicador de continuidade
+- header e footer persistentes
+
+### Proxima etapa
+R1.17-C - Checkout em etapa propria.
+
+---
 ## R1.17-A - Fluxo Mobile por Etapas
 Data de consolidacao: 2026-08-16
 

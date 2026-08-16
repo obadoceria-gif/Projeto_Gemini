@@ -70,3 +70,26 @@ Objetivo:
 - area central dos itens adaptativa;
 - rolagem somente da lista quando necessario;
 - total e acoes sempre acessiveis.
+## Checkpoint R1.17-B
+
+Status: CONCLUIDO
+
+Entregue:
+- carrinho em viewport;
+- header persistente;
+- footer persistente;
+- lista central rolavel;
+- indicador explicito para produtos nao visualizados;
+- produtos e unidades diferenciados;
+- acessibilidade de foco revisada.
+
+Proxima entrega:
+R1.17-C - Checkout em etapa propria.
+
+Objetivo:
+- retirar os dados de entrega da tela de revisao do carrinho;
+- criar etapa exclusiva de finalizacao;
+- manter resumo compacto do pedido;
+- manter total sempre visivel;
+- validar nome, data, hora e pagamento;
+- finalizar pedido via fluxo oficial.

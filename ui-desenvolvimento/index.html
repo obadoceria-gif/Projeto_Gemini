@@ -97,6 +97,544 @@
   }
 
 </style>
+<style id="r117b-cart-viewport-css">
+
+  /* ==========================================================
+     R1.17-B - CARRINHO MOBILE EM VIEWPORT
+     ========================================================== */
+
+  #r117b-cart-view {
+    display: none;
+  }
+
+  #r117b-cart-view.r117b-open {
+    display: flex;
+  }
+
+  @media (max-width: 767px) {
+
+    body.r117b-cart-open {
+      overflow: hidden !important;
+      height: 100dvh !important;
+    }
+
+    #r117b-cart-view {
+      position: fixed;
+      inset: 0;
+      z-index: 250;
+      width: 100%;
+      height: 100dvh;
+      max-height: 100dvh;
+      background: #FFF9F3;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #r117b-cart-shell {
+      width: 100%;
+      height: 100%;
+      max-width: 430px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      background: #FFF9F3;
+    }
+
+    #r117b-cart-header {
+      flex: 0 0 auto;
+      padding:
+        max(14px, env(safe-area-inset-top))
+        16px
+        12px;
+      background: rgba(255, 249, 243, 0.98);
+      border-bottom: 1px solid #E8D5B5;
+    }
+
+    #r117b-cart-items {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      padding: 12px 14px;
+    }
+
+    #r117b-cart-footer {
+      flex: 0 0 auto;
+      padding:
+        12px
+        14px
+        max(14px, env(safe-area-inset-bottom));
+      background: rgba(255, 249, 243, 0.99);
+      border-top: 1px solid #E8D5B5;
+      box-shadow: 0 -8px 24px rgba(60, 35, 20, 0.06);
+    }
+
+    .r117b-cart-card {
+      background: #fff;
+      border: 1px solid #E8D5B5;
+      border-radius: 18px;
+      padding: 13px;
+      margin-bottom: 10px;
+    }
+
+    .r117b-qty-button {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      border: 1px solid #E8D5B5;
+      background: #FFF9F3;
+      font-weight: 900;
+      color: #8B4513;
+    }
+
+  }
+
+
+  @media (min-width: 768px) {
+
+    #r117b-cart-view {
+      position: fixed;
+      inset: 0;
+      z-index: 250;
+      background: rgba(0,0,0,.72);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    #r117b-cart-shell {
+      width: min(620px, 100%);
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      background: #FFF9F3;
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,.28);
+    }
+
+    #r117b-cart-header,
+    #r117b-cart-footer {
+      flex: 0 0 auto;
+      padding: 18px 22px;
+      background: #FFF9F3;
+    }
+
+    #r117b-cart-header {
+      border-bottom: 1px solid #E8D5B5;
+    }
+
+    #r117b-cart-footer {
+      border-top: 1px solid #E8D5B5;
+    }
+
+    #r117b-cart-items {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 18px 22px;
+    }
+
+    .r117b-cart-card {
+      background: #fff;
+      border: 1px solid #E8D5B5;
+      border-radius: 18px;
+      padding: 15px;
+      margin-bottom: 12px;
+    }
+
+  }
+
+</style>
+<style id="r117b2-cart-continuity">
+
+  /* ==========================================================
+     R1.17-B2
+     Continuidade explicita da lista
+     ========================================================== */
+
+  #r117b-cart-items {
+    position: relative;
+  }
+
+
+  #r117b2-more-products {
+
+    position: absolute;
+
+    left: 12px;
+    right: 12px;
+    bottom: 10px;
+
+    z-index: 40;
+
+    display: none;
+
+    min-height: 60px;
+
+    padding: 9px 14px;
+
+    border: 0;
+    border-radius: 18px;
+
+    background: #9F4A0C;
+    color: #FFFFFF;
+
+    box-shadow:
+      0 -22px 34px rgba(255,249,243,.96),
+      0 8px 22px rgba(92,44,13,.24);
+
+    font-family: inherit;
+
+    cursor: pointer;
+  }
+
+
+  #r117b2-more-products.r117b2-visible {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+
+  #r117b2-more-products .r117b2-main {
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    font-size: 12px;
+    line-height: 1.1;
+
+    font-weight: 900;
+
+    letter-spacing: .035em;
+
+    text-transform: uppercase;
+  }
+
+
+  #r117b2-more-products .r117b2-arrow {
+
+    display: inline-block;
+
+    font-size: 19px;
+    line-height: 1;
+
+    animation:
+      r117b2Arrow
+      1.05s
+      ease-in-out
+      infinite;
+  }
+
+
+  #r117b2-more-products .r117b2-help {
+
+    display: block;
+
+    margin-top: 4px;
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+    letter-spacing: .09em;
+
+    text-transform: uppercase;
+
+    opacity: .88;
+  }
+
+
+  @keyframes r117b2Arrow {
+
+    0%,
+    100% {
+      transform: translateY(-2px);
+    }
+
+    50% {
+      transform: translateY(4px);
+    }
+  }
+
+
+  #r117b2-top-products {
+
+    position: absolute;
+
+    left: 50%;
+    top: 108px;
+
+    transform: translateX(-50%);
+
+    z-index: 40;
+
+    display: none;
+
+    padding: 7px 13px;
+
+    border: 1px solid rgba(159,74,12,.25);
+    border-radius: 999px;
+
+    background: rgba(255,249,243,.96);
+
+    color: #9F4A0C;
+
+    font-family: inherit;
+
+    font-size: 8px;
+    font-weight: 900;
+
+    letter-spacing: .06em;
+
+    text-transform: uppercase;
+
+    box-shadow:
+      0 5px 16px rgba(92,44,13,.12);
+
+    cursor: pointer;
+  }
+
+
+  #r117b2-top-products.r117b2-visible {
+    display: block;
+  }
+
+
+  #r117b-cart-items.r117b2-scroll-fade::after {
+
+    content: "";
+
+    position: sticky;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    z-index: 30;
+
+    display: block;
+
+    height: 84px;
+
+    margin-top: -84px;
+
+    pointer-events: none;
+
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(255,249,243,0),
+        rgba(255,249,243,.72) 45%,
+        rgba(255,249,243,.98) 100%
+      );
+  }
+
+
+  @media (min-width: 768px) {
+
+    #r117b2-more-products,
+    #r117b2-top-products {
+      display: none !important;
+    }
+  }
+
+
+  @media (prefers-reduced-motion: reduce) {
+
+    #r117b2-more-products .r117b2-arrow {
+      animation: none;
+    }
+  }
+
+</style>
+<style id="r117b2r3-cart-final-css">
+
+  /* ==========================================================
+     R1.17-B2-R3
+     Indicador unico e fora da area dos botoes
+     ========================================================== */
+
+
+  /* DESATIVA COMPLETAMENTE OS AVISOS ANTIGOS DA B1 */
+
+  #r117b1-more-products,
+  #r117b1-above-hint {
+
+    display: none !important;
+  }
+
+
+  /*
+   * O indicador B2 deixa de flutuar sobre o conteudo.
+   * Ele passa a ocupar uma faixa propria entre:
+   *
+   * LISTA
+   * INDICADOR
+   * FOOTER
+   */
+
+  #r117b2-more-products {
+
+    position: static !important;
+
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+
+    flex: 0 0 auto;
+
+    width: auto;
+
+    min-height: 58px;
+
+    margin:
+      0
+      14px
+      9px;
+
+    padding:
+      9px
+      14px;
+
+    border-radius: 16px;
+
+    background:
+      linear-gradient(
+        135deg,
+        #A64E0B,
+        #8B4513
+      );
+
+    color: #fff;
+
+    box-shadow:
+      0 5px 15px
+      rgba(92,44,13,.18);
+
+    z-index: 50;
+  }
+
+
+  #r117b2-more-products.r117b2-visible {
+
+    display: flex !important;
+
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+
+  #r117b2-more-products .r117b2-main {
+
+    font-size: 11px;
+
+    letter-spacing: .04em;
+  }
+
+
+  #r117b2-more-products .r117b2-arrow {
+
+    font-size: 18px;
+  }
+
+
+  #r117b2-more-products .r117b2-help {
+
+    margin-top: 3px;
+
+    font-size: 7px;
+
+    letter-spacing: .08em;
+  }
+
+
+  /*
+   * O degrade fica apenas na parte inferior
+   * da lista, indicando continuidade.
+   */
+
+  #r117b-cart-items.r117b2-scroll-fade::after {
+
+    height: 44px !important;
+
+    margin-top: -44px !important;
+
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(255,249,243,0),
+        rgba(255,249,243,.78),
+        rgba(255,249,243,1)
+      ) !important;
+  }
+
+
+  /*
+   * A lista ganha respiracao quando o aviso estiver ativo.
+   */
+
+  #r117b-cart-items {
+
+    scrollbar-width: thin;
+    scrollbar-color:
+      rgba(139,69,19,.38)
+      transparent;
+  }
+
+
+  #r117b-cart-items::-webkit-scrollbar {
+
+    width: 5px;
+  }
+
+
+  #r117b-cart-items::-webkit-scrollbar-thumb {
+
+    background:
+      rgba(139,69,19,.38);
+
+    border-radius: 999px;
+  }
+
+
+  #r117b-cart-items::-webkit-scrollbar-track {
+
+    background: transparent;
+  }
+
+
+  /* indicador superior continua discreto */
+
+  #r117b2-top-products {
+
+    top: 112px !important;
+
+    font-size: 7px !important;
+  }
+
+
+  @media (min-width: 768px) {
+
+    #r117b2-more-products,
+    #r117b2-top-products {
+
+      display: none !important;
+    }
+  }
+
+</style>
 </head>
 <body class="antialiased selection:bg-[#8B4513] selection:text-white pb-24">
 
@@ -4430,6 +4968,2601 @@ function mostrarNotificacao(msg) {
   t.classList.remove('opacity-0','pointer-events-none'); t.classList.add('opacity-100');
   setTimeout(()=>{ t.classList.remove('opacity-100'); t.classList.add('opacity-0','pointer-events-none'); }, 3000);
 }
+</script>
+<!-- ================================================================
+     R1.17-B - CARRINHO EM VIEWPORT
+================================================================ -->
+<section id="r117b-cart-view"
+         aria-hidden="true">
+
+  <div id="r117b-cart-shell">
+
+
+    <!-- HEADER PERSISTENTE -->
+    <header id="r117b-cart-header">
+
+      <div class="flex items-center justify-between gap-3">
+
+        <div>
+
+          <p class="text-[8px] uppercase tracking-widest font-black text-gray-400">
+            Revise seu pedido
+          </p>
+
+          <h2 class="text-xl font-black text-[#8B4513] mt-1">
+            <i class="fa-solid fa-basket-shopping mr-1"></i>
+            Seu Carrinho
+          </h2>
+
+          <p id="r117b-cart-header-summary"
+             class="text-[10px] text-gray-500 mt-1">
+
+            0 itens
+
+          </p>
+
+        </div>
+
+
+        <button type="button"
+                onclick="fecharCarrinhoViewportR117()"
+                aria-label="Fechar carrinho"
+                class="w-11 h-11 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-lg flex-shrink-0">
+
+          <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- SOMENTE ESTA REGIAO ROLA -->
+    <main id="r117b-cart-items">
+
+      <div id="r117b-cart-empty"
+           class="hidden h-full min-h-[220px] items-center justify-center text-center">
+
+        <div>
+
+          <div class="w-16 h-16 mx-auto rounded-full bg-orange-50 text-[#8B4513] flex items-center justify-center text-xl">
+
+            <i class="fa-solid fa-basket-shopping"></i>
+
+          </div>
+
+          <h3 class="mt-4 text-lg font-black text-[#8B4513]">
+            Seu carrinho está vazio
+          </h3>
+
+          <p class="mt-1 text-xs text-gray-500">
+            Continue comprando para adicionar produtos.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div id="r117b-cart-list">
+      </div>
+
+    </main>
+
+
+    <!-- FOOTER PERSISTENTE -->
+    <footer id="r117b-cart-footer">
+
+      <div class="flex items-center justify-between gap-4 mb-3">
+
+        <div>
+
+          <p class="text-[8px] font-black uppercase tracking-widest text-gray-400">
+            Total do pedido
+          </p>
+
+          <p id="r117b-cart-footer-count"
+             class="text-[9px] text-gray-500 mt-0.5">
+            0 itens
+          </p>
+
+        </div>
+
+
+        <strong id="r117b-cart-total"
+                class="text-2xl font-black text-[#8B4513] whitespace-nowrap">
+
+          R$ 0,00
+
+        </strong>
+
+      </div>
+
+
+      <div class="grid grid-cols-[0.9fr_1.4fr] gap-2">
+
+        <button type="button"
+                onclick="fecharCarrinhoViewportR117()"
+                class="min-h-12 px-2 rounded-xl bg-white border border-gray-200 text-gray-500 text-[8px] font-black uppercase tracking-wider">
+
+          Continuar
+          <br>
+          comprando
+
+        </button>
+
+
+        <button id="r117b-cart-checkout"
+                type="button"
+                onclick="irParaFinalizacaoR117()"
+                class="min-h-12 px-3 rounded-xl bg-[#8B4513] text-white text-[8px] font-black uppercase tracking-wider shadow-md">
+
+          Ir para finalização
+          <i class="fa-solid fa-arrow-right ml-1"></i>
+
+        </button>
+
+      </div>
+
+
+      <a href="https://wa.me/5555999117626"
+         data-oba-whatsapp-link
+         target="_blank"
+         class="mt-2.5 py-1.5 flex items-center justify-center gap-1.5 text-green-600 text-[8px] font-black uppercase tracking-wider">
+
+        <i class="fa-brands fa-whatsapp text-sm"></i>
+        Dúvidas? Fale com a gente
+
+      </a>
+
+    </footer>
+
+
+  </div>
+
+</section>
+
+
+<script id="r117b-cart-viewport-runtime">
+
+/* ================================================================
+   R1.17-B - RUNTIME DO CARRINHO EM VIEWPORT
+================================================================ */
+
+(function () {
+
+  let abrirModalCarrinhoOriginalR117 =
+    null;
+
+
+  function quantidadeCarrinhoR117() {
+
+    return carrinhoDeCaixasConcluidas.reduce(
+      (total, item) =>
+        total +
+        Number(
+          item.quantidade || 1
+        ),
+      0
+    );
+  }
+
+
+  function precoUnitarioCarrinhoR117(item) {
+
+    return Number(
+      item.precoCalculadoUnitario ??
+      item.precoCalculado ??
+      item.precoFixo ??
+      item.preco ??
+      0
+    );
+  }
+
+
+  function totalCarrinhoR117() {
+
+    return carrinhoDeCaixasConcluidas.reduce(
+      (total, item) => {
+
+        const qtd =
+          Number(
+            item.quantidade || 1
+          );
+
+        return (
+          total +
+          precoUnitarioCarrinhoR117(item) * qtd
+        );
+      },
+      0
+    );
+  }
+
+
+  function tituloCarrinhoR117(item) {
+
+    return (
+      item.titulo ||
+      item.nome ||
+      'Item'
+    );
+  }
+
+
+  function descricaoCarrinhoR117(item) {
+
+    return (
+      item.subtitulo ||
+      item.detalhe ||
+      item.descricao ||
+      item.resumo ||
+      ''
+    );
+  }
+
+
+  function escaparHtmlCarrinhoR117(valor) {
+
+    return String(
+      valor ?? ''
+    )
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+
+  window.renderCarrinhoViewportR117 =
+    function () {
+
+      const lista =
+        document.getElementById(
+          'r117b-cart-list'
+        );
+
+      const vazio =
+        document.getElementById(
+          'r117b-cart-empty'
+        );
+
+      const resumo =
+        document.getElementById(
+          'r117b-cart-header-summary'
+        );
+
+      const footerCount =
+        document.getElementById(
+          'r117b-cart-footer-count'
+        );
+
+      const totalEl =
+        document.getElementById(
+          'r117b-cart-total'
+        );
+
+      const checkout =
+        document.getElementById(
+          'r117b-cart-checkout'
+        );
+
+
+      if (!lista) {
+        return;
+      }
+
+
+      const quantidade =
+        quantidadeCarrinhoR117();
+
+      const total =
+        totalCarrinhoR117();
+
+
+      const textoItens =
+        `${quantidade} ${
+          quantidade === 1
+            ? 'item'
+            : 'itens'
+        }`;
+
+
+      if (resumo) {
+
+        resumo.textContent =
+          `${textoItens} · ${formatarMoeda(total)}`;
+      }
+
+
+      if (footerCount) {
+
+        footerCount.textContent =
+          textoItens;
+      }
+
+
+      if (totalEl) {
+
+        totalEl.textContent =
+          formatarMoeda(total);
+      }
+
+
+      if (checkout) {
+
+        checkout.disabled =
+          quantidade === 0;
+
+        checkout.classList.toggle(
+          'opacity-40',
+          quantidade === 0
+        );
+      }
+
+
+      if (
+        carrinhoDeCaixasConcluidas.length === 0
+      ) {
+
+        lista.innerHTML =
+          '';
+
+        vazio?.classList.remove(
+          'hidden'
+        );
+
+        vazio?.classList.add(
+          'flex'
+        );
+
+        return;
+      }
+
+
+      vazio?.classList.add(
+        'hidden'
+      );
+
+      vazio?.classList.remove(
+        'flex'
+      );
+
+
+      lista.innerHTML =
+        carrinhoDeCaixasConcluidas
+          .map(
+            (item, indice) => {
+
+              const qtd =
+                Number(
+                  item.quantidade || 1
+                );
+
+              const unitario =
+                precoUnitarioCarrinhoR117(
+                  item
+                );
+
+              const subtotal =
+                unitario * qtd;
+
+              const titulo =
+                escaparHtmlCarrinhoR117(
+                  tituloCarrinhoR117(item)
+                );
+
+              const descricao =
+                escaparHtmlCarrinhoR117(
+                  descricaoCarrinhoR117(item)
+                );
+
+
+              return `
+                <article class="r117b-cart-card">
+
+                  <div class="flex items-start justify-between gap-3">
+
+                    <div class="min-w-0">
+
+                      <h3 class="font-black text-[#8B4513] text-sm leading-tight">
+                        ${titulo}
+                      </h3>
+
+                      ${
+                        descricao
+                          ? `
+                            <p class="mt-1 text-[9px] text-gray-500 leading-relaxed">
+                              ${descricao}
+                            </p>
+                          `
+                          : ''
+                      }
+
+                    </div>
+
+
+                    <button type="button"
+                            onclick="removerItemCarrinhoViewportR117(${indice})"
+                            aria-label="Remover item"
+                            class="w-9 h-9 flex-shrink-0 rounded-xl bg-red-50 text-red-400">
+
+                      <i class="fa-solid fa-trash-can"></i>
+
+                    </button>
+
+                  </div>
+
+
+                  <div class="mt-3 pt-3 border-t border-gray-100 flex items-end justify-between gap-3">
+
+                    <div>
+
+                      <p class="text-[7px] uppercase font-black tracking-widest text-gray-400 mb-1">
+                        Quantidade
+                      </p>
+
+
+                      <div class="flex items-center gap-2">
+
+                        <button type="button"
+                                onclick="alterarQuantidadeCarrinhoViewportR117(${indice}, -1)"
+                                class="r117b-qty-button">
+
+                          −
+
+                        </button>
+
+
+                        <strong class="min-w-5 text-center text-sm text-[#3B2A1E]">
+                          ${qtd}
+                        </strong>
+
+
+                        <button type="button"
+                                onclick="alterarQuantidadeCarrinhoViewportR117(${indice}, 1)"
+                                class="r117b-qty-button">
+
+                          +
+
+                        </button>
+
+                      </div>
+
+                    </div>
+
+
+                    <div class="text-right">
+
+                      <p class="text-[7px] uppercase font-black tracking-widest text-gray-400">
+                        Subtotal
+                      </p>
+
+                      <strong class="block mt-1 text-lg font-black text-[#8B4513]">
+                        ${formatarMoeda(subtotal)}
+                      </strong>
+
+                    </div>
+
+                  </div>
+
+                </article>
+              `;
+            }
+          )
+          .join('');
+    };
+
+
+  window.abrirCarrinhoViewportR117 =
+    function () {
+
+      if (
+        carrinhoDeCaixasConcluidas.length === 0
+      ) {
+
+        mostrarNotificacao(
+          'Seu carrinho está vazio.'
+        );
+
+        return;
+      }
+
+
+      renderCarrinhoViewportR117();
+
+
+      const view =
+        document.getElementById(
+          'r117b-cart-view'
+        );
+
+
+      view?.classList.add(
+        'r117b-open'
+      );
+
+
+      view?.setAttribute(
+        'aria-hidden',
+        'false'
+      );
+
+
+      document.body.classList.add(
+        'r117b-cart-open'
+      );
+    };
+
+
+  window.fecharCarrinhoViewportR117 =
+    function () {
+
+      const view =
+        document.getElementById(
+          'r117b-cart-view'
+        );
+
+
+      view?.classList.remove(
+        'r117b-open'
+      );
+
+
+      view?.setAttribute(
+        'aria-hidden',
+        'true'
+      );
+
+
+      document.body.classList.remove(
+        'r117b-cart-open'
+      );
+    };
+
+
+  window.alterarQuantidadeCarrinhoViewportR117 =
+    function (
+      indice,
+      delta
+    ) {
+
+      const item =
+        carrinhoDeCaixasConcluidas[
+          indice
+        ];
+
+
+      if (!item) {
+        return;
+      }
+
+
+      const atual =
+        Number(
+          item.quantidade || 1
+        );
+
+
+      const nova =
+        atual + delta;
+
+
+      if (nova <= 0) {
+
+        removerItemCarrinhoViewportR117(
+          indice
+        );
+
+        return;
+      }
+
+
+      item.quantidade =
+        nova;
+
+
+      atualizarPainelLateral?.();
+
+      atualizarCarrinhoMobilePersistente?.();
+
+      renderCarrinhoViewportR117();
+    };
+
+
+  window.removerItemCarrinhoViewportR117 =
+    function (indice) {
+
+      if (
+        !carrinhoDeCaixasConcluidas[
+          indice
+        ]
+      ) {
+
+        return;
+      }
+
+
+      carrinhoDeCaixasConcluidas.splice(
+        indice,
+        1
+      );
+
+
+      atualizarPainelLateral?.();
+
+      atualizarCarrinhoMobilePersistente?.();
+
+
+      if (
+        carrinhoDeCaixasConcluidas.length === 0
+      ) {
+
+        fecharCarrinhoViewportR117();
+
+        mostrarNotificacao(
+          'Seu carrinho está vazio.'
+        );
+
+        return;
+      }
+
+
+      renderCarrinhoViewportR117();
+    };
+
+
+  window.irParaFinalizacaoR117 =
+    function () {
+
+      if (
+        carrinhoDeCaixasConcluidas.length === 0
+      ) {
+
+        return;
+      }
+
+
+      fecharCarrinhoViewportR117();
+
+
+      /*
+       * R1.17-B:
+       * o carrinho novo e somente revisao.
+       *
+       * Nesta versao, a finalizacao continua usando
+       * temporariamente o modal oficial anterior.
+       *
+       * R1.17-C substituira essa segunda etapa
+       * por um checkout dedicado.
+       */
+      if (
+        typeof abrirModalCarrinhoOriginalR117 ===
+        'function'
+      ) {
+
+        abrirModalCarrinhoOriginalR117();
+      }
+    };
+
+
+  function instalarCarrinhoViewportR117() {
+
+    if (
+      window.__r117bCartInstalled
+    ) {
+
+      return;
+    }
+
+
+    if (
+      typeof window.abrirModalCarrinho !==
+      'function'
+    ) {
+
+      console.warn(
+        '[R1.17-B] abrirModalCarrinho ainda nao disponivel.'
+      );
+
+      return;
+    }
+
+
+    window.__r117bCartInstalled =
+      true;
+
+
+    abrirModalCarrinhoOriginalR117 =
+      window.abrirModalCarrinho;
+
+
+    /*
+     * Qualquer fluxo existente que tente abrir
+     * "meu carrinho" passa agora pela nova
+     * tela de revisao.
+     */
+    window.abrirModalCarrinho =
+      function () {
+
+        abrirCarrinhoViewportR117();
+      };
+
+
+    window.abrirCarrinhoMobilePersistente =
+      function () {
+
+        abrirCarrinhoViewportR117();
+      };
+
+
+    document.addEventListener(
+      'keydown',
+      event => {
+
+        if (
+          event.key === 'Escape' &&
+          document
+            .getElementById(
+              'r117b-cart-view'
+            )
+            ?.classList.contains(
+              'r117b-open'
+            )
+        ) {
+
+          fecharCarrinhoViewportR117();
+        }
+      }
+    );
+
+
+    console.info(
+      '[R1.17-B] Carrinho em viewport instalado.'
+    );
+  }
+
+
+  if (
+    document.readyState ===
+    'loading'
+  ) {
+
+    document.addEventListener(
+      'DOMContentLoaded',
+      () => {
+
+        setTimeout(
+          instalarCarrinhoViewportR117,
+          0
+        );
+      }
+    );
+  }
+  else {
+
+    setTimeout(
+      instalarCarrinhoViewportR117,
+      0
+    );
+  }
+
+})();
+
+</script>
+<!-- ================================================================
+     R1.17-B1 - UX DE CONTINUIDADE + ACESSIBILIDADE
+================================================================ -->
+
+<style id="r117b1-cart-ux-css">
+
+  #r117b-cart-items {
+    position: relative;
+  }
+
+
+  /* Numero visual de cada produto */
+  .r117b1-product-number {
+    width: 25px;
+    height: 25px;
+    flex: 0 0 25px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 999px;
+
+    background: #FFF3E7;
+    border: 1px solid #E8D5B5;
+
+    color: #8B4513;
+
+    font-size: 10px;
+    font-weight: 900;
+  }
+
+
+  /* Indicador de que ha produtos abaixo */
+  #r117b1-more-products {
+
+    position: sticky;
+    bottom: 0;
+
+    z-index: 15;
+
+    display: none;
+
+    width: calc(100% - 8px);
+
+    margin:
+      -56px
+      4px
+      4px;
+
+    padding:
+      34px
+      8px
+      8px;
+
+    pointer-events: none;
+
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(255,249,243,0),
+        rgba(255,249,243,.96) 58%,
+        rgba(255,249,243,1)
+      );
+  }
+
+
+  #r117b1-more-products.r117b1-visible {
+    display: block;
+  }
+
+
+  #r117b1-more-products-pill {
+
+    width: max-content;
+    max-width: 100%;
+
+    margin: 0 auto;
+
+    padding: 8px 14px;
+
+    border-radius: 999px;
+
+    background: #8B4513;
+    color: #fff;
+
+    box-shadow:
+      0 5px 18px
+      rgba(80, 45, 20, .22);
+
+    text-align: center;
+  }
+
+
+  #r117b1-more-products-count {
+
+    display: block;
+
+    font-size: 9px;
+    line-height: 1.15;
+
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+
+
+  #r117b1-more-products-help {
+
+    display: block;
+
+    margin-top: 2px;
+
+    font-size: 7px;
+    line-height: 1.1;
+
+    opacity: .78;
+
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+
+
+  /* Pequeno sinal de conteudo acima depois que o usuario rola */
+  #r117b1-above-hint {
+
+    position: sticky;
+    top: 0;
+
+    z-index: 14;
+
+    display: none;
+
+    margin:
+      -4px
+      auto
+      6px;
+
+    width: max-content;
+
+    padding: 4px 9px;
+
+    border-radius: 999px;
+
+    background: rgba(255,255,255,.94);
+    border: 1px solid #E8D5B5;
+
+    color: #8B4513;
+
+    font-size: 7px;
+    font-weight: 900;
+
+    text-transform: uppercase;
+    letter-spacing: .06em;
+
+    pointer-events: none;
+  }
+
+
+  #r117b1-above-hint.r117b1-visible {
+    display: block;
+  }
+
+
+  @media (max-width: 767px) {
+
+    #r117b-cart-header-summary {
+      max-width: 280px;
+    }
+
+  }
+
+</style>
+
+
+<script id="r117b1-cart-ux-runtime">
+
+(function () {
+
+  let focoAnteriorR117B1 =
+    null;
+
+
+  function produtosR117B1() {
+
+    return (
+      Array.isArray(
+        carrinhoDeCaixasConcluidas
+      )
+        ? carrinhoDeCaixasConcluidas.length
+        : 0
+    );
+  }
+
+
+  function unidadesR117B1() {
+
+    return carrinhoDeCaixasConcluidas.reduce(
+      (soma, item) =>
+        soma +
+        Number(
+          item.quantidade || 1
+        ),
+      0
+    );
+  }
+
+
+  function totalR117B1() {
+
+    return carrinhoDeCaixasConcluidas.reduce(
+      (soma, item) => {
+
+        const qtd =
+          Number(
+            item.quantidade || 1
+          );
+
+
+        const unitario =
+          Number(
+            item.precoCalculadoUnitario ??
+            item.precoCalculado ??
+            item.precoFixo ??
+            item.preco ??
+            0
+          );
+
+
+        return (
+          soma +
+          qtd * unitario
+        );
+      },
+      0
+    );
+  }
+
+
+  function pluralR117B1(
+    quantidade,
+    singular,
+    plural
+  ) {
+
+    return (
+      quantidade === 1
+        ? singular
+        : plural
+    );
+  }
+
+
+  function garantirIndicadoresR117B1() {
+
+    const area =
+      document.getElementById(
+        'r117b-cart-items'
+      );
+
+
+    if (!area) {
+      return;
+    }
+
+
+    if (
+      !document.getElementById(
+        'r117b1-above-hint'
+      )
+    ) {
+
+      const acima =
+        document.createElement(
+          'div'
+        );
+
+
+      acima.id =
+        'r117b1-above-hint';
+
+
+      acima.innerHTML =
+        '<i class="fa-solid fa-arrow-up mr-1"></i> produtos acima';
+
+
+      area.prepend(
+        acima
+      );
+    }
+
+
+    if (
+      !document.getElementById(
+        'r117b1-more-products'
+      )
+    ) {
+
+      const mais =
+        document.createElement(
+          'div'
+        );
+
+
+      mais.id =
+        'r117b1-more-products';
+
+
+      mais.innerHTML =
+        `
+          <div id="r117b1-more-products-pill">
+
+            <span id="r117b1-more-products-count">
+              ↓ MAIS PRODUTOS
+            </span>
+
+            <span id="r117b1-more-products-help">
+              role para ver
+            </span>
+
+          </div>
+        `;
+
+
+      area.append(
+        mais
+      );
+    }
+  }
+
+
+  function numerarCardsR117B1() {
+
+    const cards =
+      Array.from(
+        document.querySelectorAll(
+          '#r117b-cart-list .r117b-cart-card'
+        )
+      );
+
+
+    cards.forEach(
+      (card, indice) => {
+
+        const titulo =
+          card.querySelector(
+            'h3'
+          );
+
+
+        if (!titulo) {
+          return;
+        }
+
+
+        if (
+          titulo.parentElement
+            ?.querySelector(
+              '.r117b1-product-number'
+            )
+        ) {
+
+          return;
+        }
+
+
+        const wrapper =
+          document.createElement(
+            'div'
+          );
+
+
+        wrapper.className =
+          'flex items-start gap-2';
+
+
+        const numero =
+          document.createElement(
+            'span'
+          );
+
+
+        numero.className =
+          'r117b1-product-number';
+
+
+        numero.textContent =
+          String(
+            indice + 1
+          );
+
+
+        titulo.parentNode.insertBefore(
+          wrapper,
+          titulo
+        );
+
+
+        wrapper.append(
+          numero,
+          titulo
+        );
+      }
+    );
+  }
+
+
+  function atualizarSemanticaR117B1() {
+
+    const produtos =
+      produtosR117B1();
+
+    const unidades =
+      unidadesR117B1();
+
+    const total =
+      totalR117B1();
+
+
+    const resumo =
+      document.getElementById(
+        'r117b-cart-header-summary'
+      );
+
+
+    const rodape =
+      document.getElementById(
+        'r117b-cart-footer-count'
+      );
+
+
+    if (resumo) {
+
+      resumo.textContent =
+        `${produtos} ${
+          pluralR117B1(
+            produtos,
+            'produto',
+            'produtos'
+          )
+        } · ${unidades} ${
+          pluralR117B1(
+            unidades,
+            'unidade',
+            'unidades'
+          )
+        } · ${formatarMoeda(total)}`;
+    }
+
+
+    if (rodape) {
+
+      rodape.textContent =
+        `${unidades} ${
+          pluralR117B1(
+            unidades,
+            'unidade',
+            'unidades'
+          )
+        }`;
+    }
+  }
+
+
+  function atualizarContinuidadeR117B1() {
+
+    const area =
+      document.getElementById(
+        'r117b-cart-items'
+      );
+
+
+    const cards =
+      Array.from(
+        document.querySelectorAll(
+          '#r117b-cart-list .r117b-cart-card'
+        )
+      );
+
+
+    const indicador =
+      document.getElementById(
+        'r117b1-more-products'
+      );
+
+
+    const contador =
+      document.getElementById(
+        'r117b1-more-products-count'
+      );
+
+
+    const acima =
+      document.getElementById(
+        'r117b1-above-hint'
+      );
+
+
+    if (
+      !area ||
+      !indicador ||
+      !contador
+    ) {
+
+      return;
+    }
+
+
+    const areaRect =
+      area.getBoundingClientRect();
+
+
+    /*
+     * Conta os cards cujo final ainda ultrapassa
+     * a area visivel da lista.
+     */
+    const abaixo =
+      cards.filter(
+        card => {
+
+          const rect =
+            card.getBoundingClientRect();
+
+
+          return (
+            rect.bottom >
+            areaRect.bottom - 18
+          );
+        }
+      );
+
+
+    const temScrollAbaixo =
+      (
+        area.scrollTop +
+        area.clientHeight
+      ) <
+      (
+        area.scrollHeight -
+        8
+      );
+
+
+    if (
+      temScrollAbaixo &&
+      abaixo.length > 0
+    ) {
+
+      contador.textContent =
+        `↓ MAIS ${abaixo.length} ${
+          pluralR117B1(
+            abaixo.length,
+            'PRODUTO',
+            'PRODUTOS'
+          )
+        }`;
+
+
+      indicador.classList.add(
+        'r117b1-visible'
+      );
+    }
+    else {
+
+      indicador.classList.remove(
+        'r117b1-visible'
+      );
+    }
+
+
+    if (
+      acima &&
+      area.scrollTop > 50
+    ) {
+
+      acima.classList.add(
+        'r117b1-visible'
+      );
+    }
+    else {
+
+      acima?.classList.remove(
+        'r117b1-visible'
+      );
+    }
+  }
+
+
+  function posRenderR117B1() {
+
+    garantirIndicadoresR117B1();
+
+    numerarCardsR117B1();
+
+    atualizarSemanticaR117B1();
+
+
+    requestAnimationFrame(
+      () => {
+
+        atualizarContinuidadeR117B1();
+      }
+    );
+  }
+
+
+  function instalarR117B1() {
+
+    if (
+      window.__r117b1Installed
+    ) {
+
+      return;
+    }
+
+
+    /*
+     * Espera a R1.17-B instalar primeiro,
+     * pois esta versao e um refinamento dela.
+     */
+    if (
+      !window.__r117bCartInstalled ||
+      typeof window.renderCarrinhoViewportR117 !==
+        'function'
+    ) {
+
+      setTimeout(
+        instalarR117B1,
+        25
+      );
+
+      return;
+    }
+
+
+    window.__r117b1Installed =
+      true;
+
+
+    const renderOriginal =
+      window.renderCarrinhoViewportR117;
+
+
+    const abrirOriginal =
+      window.abrirCarrinhoViewportR117;
+
+
+    /*
+     * Decoracao de qualquer novo render.
+     */
+    window.renderCarrinhoViewportR117 =
+      function () {
+
+        renderOriginal();
+
+        posRenderR117B1();
+      };
+
+
+    /*
+     * ABRIR:
+     * - guarda foco anterior;
+     * - remove inert;
+     * - abre normalmente;
+     * - move foco para o botao fechar.
+     */
+    window.abrirCarrinhoViewportR117 =
+      function () {
+
+        focoAnteriorR117B1 =
+          (
+            document.activeElement instanceof
+            HTMLElement
+          )
+            ? document.activeElement
+            : null;
+
+
+        const view =
+          document.getElementById(
+            'r117b-cart-view'
+          );
+
+
+        if (view) {
+
+          view.removeAttribute(
+            'inert'
+          );
+        }
+
+
+        abrirOriginal();
+
+
+        posRenderR117B1();
+
+
+        requestAnimationFrame(
+          () => {
+
+            const fechar =
+              document.querySelector(
+                '#r117b-cart-header button'
+              );
+
+
+            fechar?.focus(
+              {
+                preventScroll: true
+              }
+            );
+
+
+            atualizarContinuidadeR117B1();
+          }
+        );
+      };
+
+
+    /*
+     * FECHAR:
+     * o foco sai do carrinho ANTES de aria-hidden.
+     * Isso elimina o warning do Chrome.
+     */
+    window.fecharCarrinhoViewportR117 =
+      function () {
+
+        const view =
+          document.getElementById(
+            'r117b-cart-view'
+          );
+
+
+        if (!view) {
+          return;
+        }
+
+
+        const focoAtual =
+          document.activeElement;
+
+
+        const focoDentro =
+          (
+            focoAtual instanceof
+            Node
+          ) &&
+          view.contains(
+            focoAtual
+          );
+
+
+        if (focoDentro) {
+
+          if (
+            focoAnteriorR117B1 &&
+            focoAnteriorR117B1.isConnected &&
+            !view.contains(
+              focoAnteriorR117B1
+            )
+          ) {
+
+            focoAnteriorR117B1.focus(
+              {
+                preventScroll: true
+              }
+            );
+          }
+          else {
+
+            document.body.focus?.();
+          }
+        }
+
+
+        view.classList.remove(
+          'r117b-open'
+        );
+
+
+        document.body.classList.remove(
+          'r117b-cart-open'
+        );
+
+
+        /*
+         * Somente DEPOIS da transferencia do foco
+         * escondemos a interface das tecnologias
+         * assistivas.
+         */
+        view.setAttribute(
+          'aria-hidden',
+          'true'
+        );
+
+
+        view.setAttribute(
+          'inert',
+          ''
+        );
+
+
+        focoAnteriorR117B1 =
+          null;
+      };
+
+
+    /*
+     * Estado inicial realmente inativo.
+     */
+    const view =
+      document.getElementById(
+        'r117b-cart-view'
+      );
+
+
+    if (
+      view &&
+      !view.classList.contains(
+        'r117b-open'
+      )
+    ) {
+
+      view.setAttribute(
+        'inert',
+        ''
+      );
+    }
+
+
+    /*
+     * Scroll da lista atualiza automaticamente
+     * "mais X produtos".
+     */
+    const area =
+      document.getElementById(
+        'r117b-cart-items'
+      );
+
+
+    area?.addEventListener(
+      'scroll',
+      atualizarContinuidadeR117B1,
+      {
+        passive: true
+      }
+    );
+
+
+    window.addEventListener(
+      'resize',
+      atualizarContinuidadeR117B1
+    );
+
+
+    console.info(
+      '[R1.17-B1] UX de continuidade e acessibilidade instalada.'
+    );
+  }
+
+
+  setTimeout(
+    instalarR117B1,
+    25
+  );
+
+})();
+
+</script>
+<script id="r117b2-cart-continuity-runtime">
+
+(() => {
+
+  'use strict';
+
+
+  const estado =
+    {
+      viewport: null,
+      scroller: null,
+      more: null,
+      top: null,
+      cards: []
+    };
+
+
+  function visivel(el) {
+
+    if (!el) {
+      return false;
+    }
+
+
+    const style =
+      window.getComputedStyle(
+        el
+      );
+
+
+    return (
+      style.display !== 'none' &&
+      style.visibility !== 'hidden' &&
+      el.getClientRects().length > 0
+    );
+  }
+
+
+  function encontrarViewport() {
+
+    return (
+      document.getElementById(
+        'r117b-cart-view'
+      ) ||
+      document.querySelector(
+        '[id*="cart-view"]'
+      )
+    );
+  }
+
+
+  function encontrarScroller(viewport) {
+
+    if (!viewport) {
+      return null;
+    }
+
+
+    const oficial =
+      viewport.querySelector(
+        '#r117b-cart-items'
+      );
+
+
+    if (oficial) {
+      return oficial;
+    }
+
+
+    return Array
+      .from(
+        viewport.querySelectorAll(
+          'section, main, div'
+        )
+      )
+      .find(
+        el => {
+
+          const style =
+            getComputedStyle(
+              el
+            );
+
+
+          return (
+            /(auto|scroll)/.test(
+              style.overflowY
+            ) &&
+            el.scrollHeight >
+              el.clientHeight + 10
+          );
+        }
+      ) || null;
+  }
+
+
+  function encontrarCards(scroller) {
+
+    if (!scroller) {
+      return [];
+    }
+
+
+    const oficiais =
+      Array.from(
+        scroller.querySelectorAll(
+          '.r117b-cart-card'
+        )
+      );
+
+
+    if (oficiais.length) {
+      return oficiais;
+    }
+
+
+    return Array
+      .from(
+        scroller.querySelectorAll(
+          'article'
+        )
+      )
+      .filter(
+        el => {
+
+          const texto =
+            (
+              el.textContent ||
+              ''
+            ).trim();
+
+
+          return (
+            /subtotal/i.test(
+              texto
+            ) &&
+            /quantidade/i.test(
+              texto
+            )
+          );
+        }
+      );
+  }
+
+
+  function criarControles(viewport) {
+
+    if (!viewport) {
+      return;
+    }
+
+
+    let more =
+      viewport.querySelector(
+        '#r117b2-more-products'
+      );
+
+
+    if (!more) {
+
+      more =
+        document.createElement(
+          'button'
+        );
+
+
+      more.id =
+        'r117b2-more-products';
+
+
+      more.type =
+        'button';
+
+
+      more.setAttribute(
+        'aria-label',
+        'Ver mais produtos do carrinho'
+      );
+
+
+      more.innerHTML =
+        `
+          <span class="r117b2-main">
+
+            <span class="r117b2-arrow">
+              ↓
+            </span>
+
+            <span class="r117b2-label">
+              AINDA HÁ PRODUTOS
+            </span>
+
+          </span>
+
+          <span class="r117b2-help">
+            DESLIZE OU TOQUE PARA CONTINUAR
+          </span>
+        `;
+
+
+      viewport.appendChild(
+        more
+      );
+    }
+
+
+    let top =
+      viewport.querySelector(
+        '#r117b2-top-products'
+      );
+
+
+    if (!top) {
+
+      top =
+        document.createElement(
+          'button'
+        );
+
+
+      top.id =
+        'r117b2-top-products';
+
+
+      top.type =
+        'button';
+
+
+      top.textContent =
+        '↑ HÁ PRODUTOS ACIMA';
+
+
+      viewport.appendChild(
+        top
+      );
+    }
+
+
+    estado.more =
+      more;
+
+
+    estado.top =
+      top;
+  }
+
+
+  function quantidadeOcultaAbaixo() {
+
+    if (!estado.scroller) {
+      return 0;
+    }
+
+
+    const scrollRect =
+      estado.scroller
+        .getBoundingClientRect();
+
+
+    return estado.cards.filter(
+      card => {
+
+        const rect =
+          card.getBoundingClientRect();
+
+
+        return (
+          rect.bottom >
+          scrollRect.bottom + 18
+        );
+      }
+    ).length;
+  }
+
+
+  function proximoCardOculto() {
+
+    if (!estado.scroller) {
+      return null;
+    }
+
+
+    const scrollRect =
+      estado.scroller
+        .getBoundingClientRect();
+
+
+    return estado.cards.find(
+      card => {
+
+        const rect =
+          card.getBoundingClientRect();
+
+
+        return (
+          rect.bottom >
+          scrollRect.bottom + 18
+        );
+      }
+    ) || null;
+  }
+
+
+  function atualizarIndicadores() {
+
+    if (
+      !estado.scroller ||
+      !estado.more ||
+      !estado.top
+    ) {
+
+      return;
+    }
+
+
+    estado.cards =
+      encontrarCards(
+        estado.scroller
+      );
+
+
+    const ocultos =
+      quantidadeOcultaAbaixo();
+
+
+    const aindaPodeRolar =
+      (
+        estado.scroller.scrollTop +
+        estado.scroller.clientHeight
+      ) <
+      (
+        estado.scroller.scrollHeight -
+        8
+      );
+
+
+    if (
+      ocultos > 0 &&
+      aindaPodeRolar
+    ) {
+
+      const label =
+        estado.more.querySelector(
+          '.r117b2-label'
+        );
+
+
+      if (label) {
+
+        label.textContent =
+          `AINDA HÁ ${ocultos} ${
+            ocultos === 1
+              ? 'PRODUTO'
+              : 'PRODUTOS'
+          }`;
+      }
+
+
+      estado.more.classList.add(
+        'r117b2-visible'
+      );
+
+
+      estado.scroller.classList.add(
+        'r117b2-scroll-fade'
+      );
+    }
+    else {
+
+      estado.more.classList.remove(
+        'r117b2-visible'
+      );
+
+
+      estado.scroller.classList.remove(
+        'r117b2-scroll-fade'
+      );
+    }
+
+
+    if (
+      estado.scroller.scrollTop >
+      120
+    ) {
+
+      estado.top.classList.add(
+        'r117b2-visible'
+      );
+    }
+    else {
+
+      estado.top.classList.remove(
+        'r117b2-visible'
+      );
+    }
+  }
+
+
+  function rolarProximo() {
+
+    const proximo =
+      proximoCardOculto();
+
+
+    if (!proximo) {
+      return;
+    }
+
+
+    proximo.scrollIntoView(
+      {
+        behavior: 'smooth',
+        block: 'start'
+      }
+    );
+
+
+    setTimeout(
+      atualizarIndicadores,
+      400
+    );
+  }
+
+
+  function rolarTopo() {
+
+    if (!estado.scroller) {
+      return;
+    }
+
+
+    estado.scroller.scrollTo(
+      {
+        top: 0,
+        behavior: 'smooth'
+      }
+    );
+
+
+    setTimeout(
+      atualizarIndicadores,
+      400
+    );
+  }
+
+
+  function instalar() {
+
+    const viewport =
+      encontrarViewport();
+
+
+    if (!viewport) {
+      return;
+    }
+
+
+    const scroller =
+      encontrarScroller(
+        viewport
+      );
+
+
+    if (!scroller) {
+      return;
+    }
+
+
+    const mudou =
+      (
+        estado.viewport !==
+          viewport ||
+        estado.scroller !==
+          scroller
+      );
+
+
+    estado.viewport =
+      viewport;
+
+
+    estado.scroller =
+      scroller;
+
+
+    criarControles(
+      viewport
+    );
+
+
+    if (mudou) {
+
+      estado.more.addEventListener(
+        'click',
+        rolarProximo
+      );
+
+
+      estado.top.addEventListener(
+        'click',
+        rolarTopo
+      );
+
+
+      scroller.addEventListener(
+        'scroll',
+        atualizarIndicadores,
+        {
+          passive: true
+        }
+      );
+    }
+
+
+    requestAnimationFrame(
+      () => {
+
+        atualizarIndicadores();
+      }
+    );
+  }
+
+
+  const observer =
+    new MutationObserver(
+      () => {
+
+        requestAnimationFrame(
+          instalar
+        );
+      }
+    );
+
+
+  observer.observe(
+    document.documentElement,
+    {
+      childList: true,
+      subtree: true
+    }
+  );
+
+
+  window.addEventListener(
+    'resize',
+    instalar
+  );
+
+
+  document.addEventListener(
+    'click',
+    () => {
+
+      setTimeout(
+        instalar,
+        80
+      );
+    },
+    true
+  );
+
+
+  setTimeout(
+    instalar,
+    50
+  );
+
+
+  console.info(
+    '[R1.17-B2] Continuidade explicita instalada.'
+  );
+
+})();
+
+</script>
+<script id="r117b2r3-cart-final-runtime">
+
+(() => {
+
+  'use strict';
+
+
+  let instalado =
+    false;
+
+
+  function elementos() {
+
+    return {
+
+      view:
+        document.getElementById(
+          'r117b-cart-view'
+        ),
+
+      shell:
+        document.getElementById(
+          'r117b-cart-shell'
+        ),
+
+      lista:
+        document.getElementById(
+          'r117b-cart-items'
+        ),
+
+      footer:
+        document.getElementById(
+          'r117b-cart-footer'
+        ),
+
+      indicador:
+        document.getElementById(
+          'r117b2-more-products'
+        ),
+
+      label:
+        document.querySelector(
+          '#r117b2-more-products .r117b2-label'
+        ),
+
+      antigo:
+        document.getElementById(
+          'r117b1-more-products'
+        ),
+
+      antigoTopo:
+        document.getElementById(
+          'r117b1-above-hint'
+        )
+    };
+  }
+
+
+  function cards() {
+
+    return Array.from(
+      document.querySelectorAll(
+        '#r117b-cart-list .r117b-cart-card'
+      )
+    );
+  }
+
+
+  function ocultosOuIncompletos() {
+
+    const {
+      lista
+    } =
+      elementos();
+
+
+    if (!lista) {
+
+      return [];
+    }
+
+
+    const area =
+      lista.getBoundingClientRect();
+
+
+    return cards().filter(
+      card => {
+
+        const rect =
+          card.getBoundingClientRect();
+
+
+        /*
+         * Produto conta como pendente de visualizacao
+         * enquanto nao estiver completamente visivel.
+         *
+         * Isso produz uma unica interpretacao:
+         *
+         * card parcial + card oculto
+         * = 2 produtos para ver.
+         */
+
+        return (
+          rect.bottom >
+          area.bottom - 8
+        );
+      }
+    );
+  }
+
+
+  function reposicionarIndicador() {
+
+    const {
+      shell,
+      footer,
+      indicador
+    } =
+      elementos();
+
+
+    if (
+      !shell ||
+      !footer ||
+      !indicador
+    ) {
+
+      return;
+    }
+
+
+    if (
+      indicador.parentElement !==
+      shell ||
+      indicador.nextElementSibling !==
+      footer
+    ) {
+
+      shell.insertBefore(
+        indicador,
+        footer
+      );
+    }
+  }
+
+
+  function removerInterferenciaB1() {
+
+    const {
+      antigo,
+      antigoTopo
+    } =
+      elementos();
+
+
+    if (antigo) {
+
+      antigo.style.setProperty(
+        'display',
+        'none',
+        'important'
+      );
+    }
+
+
+    if (antigoTopo) {
+
+      antigoTopo.style.setProperty(
+        'display',
+        'none',
+        'important'
+      );
+    }
+  }
+
+
+  function atualizar() {
+
+    const {
+      lista,
+      indicador,
+      label
+    } =
+      elementos();
+
+
+    if (
+      !lista ||
+      !indicador ||
+      !label
+    ) {
+
+      return;
+    }
+
+
+    reposicionarIndicador();
+
+    removerInterferenciaB1();
+
+
+    const pendentes =
+      ocultosOuIncompletos();
+
+
+    const podeRolarMais =
+      (
+        lista.scrollTop +
+        lista.clientHeight
+      ) <
+      (
+        lista.scrollHeight -
+        5
+      );
+
+
+    if (
+      pendentes.length > 0 &&
+      podeRolarMais
+    ) {
+
+      const quantidade =
+        pendentes.length;
+
+
+      label.textContent =
+        `AINDA HÁ ${quantidade} ${
+          quantidade === 1
+            ? 'PRODUTO'
+            : 'PRODUTOS'
+        }`;
+
+
+      indicador.classList.add(
+        'r117b2-visible'
+      );
+
+
+      lista.classList.add(
+        'r117b2-scroll-fade'
+      );
+    }
+    else {
+
+      indicador.classList.remove(
+        'r117b2-visible'
+      );
+
+
+      lista.classList.remove(
+        'r117b2-scroll-fade'
+      );
+    }
+  }
+
+
+  function instalar() {
+
+    const {
+      lista,
+      indicador
+    } =
+      elementos();
+
+
+    if (
+      !lista ||
+      !indicador
+    ) {
+
+      return;
+    }
+
+
+    reposicionarIndicador();
+
+    removerInterferenciaB1();
+
+
+    if (!instalado) {
+
+      instalado =
+        true;
+
+
+      lista.addEventListener(
+        'scroll',
+        () => {
+
+          requestAnimationFrame(
+            atualizar
+          );
+        },
+        {
+          passive: true
+        }
+      );
+
+
+      window.addEventListener(
+        'resize',
+        atualizar
+      );
+    }
+
+
+    requestAnimationFrame(
+      atualizar
+    );
+  }
+
+
+  /*
+   * A lista e reconstruida quando quantidade
+   * ou produtos mudam.
+   *
+   * Observer garante reposicionamento e
+   * nova contagem automaticamente.
+   */
+
+  const observer =
+    new MutationObserver(
+      () => {
+
+        requestAnimationFrame(
+          instalar
+        );
+      }
+    );
+
+
+  observer.observe(
+    document.documentElement,
+    {
+      childList: true,
+      subtree: true
+    }
+  );
+
+
+  document.addEventListener(
+    'click',
+    () => {
+
+      setTimeout(
+        instalar,
+        80
+      );
+    },
+    true
+  );
+
+
+  setTimeout(
+    instalar,
+    100
+  );
+
+
+  console.info(
+    '[R1.17-B2-R3] Indicador unico de continuidade instalado.'
+  );
+
+})();
+
 </script>
 </body>
 </html>

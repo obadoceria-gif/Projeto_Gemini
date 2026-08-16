@@ -131,3 +131,20 @@ Beneficios:
 - separa selecao de confirmacao;
 - mantem a proxima acao visivel;
 - permite reutilizar o padrao em outras categorias.
+---
+
+## D012 - Carrinho em viewport com areas persistentes
+Status: aprovado
+
+No mobile, o carrinho deve utilizar tres regioes:
+
+1. header persistente;
+2. lista central adaptativa;
+3. footer persistente.
+
+Quando o conteudo exceder a area disponivel:
+- somente a lista de produtos deve rolar;
+- total e proximas acoes permanecem visiveis;
+- a interface deve indicar explicitamente a existencia de produtos fora da area visivel.
+
+A quantidade de produtos e de unidades deve ser apresentada separadamente.

@@ -79,3 +79,25 @@ APROVADO E PROMOVIDO.
 
 Proxima acao:
 R1.17-B - Carrinho em viewport.
+## R1.17-B - aprovado
+
+Status:
+APROVADO E PROMOVIDO.
+
+Entregas:
+- carrinho em viewport mobile dedicada;
+- header do carrinho permanentemente visivel;
+- footer com total e acoes permanentemente visivel;
+- somente a lista central rola quando necessario;
+- diferenciacao entre produtos e unidades;
+- numeracao visual dos produtos;
+- indicador explicito de produtos ainda nao visualizados;
+- faixa "AINDA HA X PRODUTOS";
+- toque no indicador para continuar navegando;
+- scroll suave;
+- eliminacao da sobreposicao entre indicador e botoes;
+- gerenciamento de foco e inert;
+- melhoria de acessibilidade do carrinho.
+
+Proxima acao:
+R1.17-C - Checkout em etapa propria.
