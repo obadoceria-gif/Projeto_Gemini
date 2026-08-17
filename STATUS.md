@@ -158,3 +158,33 @@ Validacao:
 
 Proxima acao:
 R1.18 - consolidacao e auditoria do fluxo comercial completo.
+
+## R1.18-C - CONSOLIDACAO FINAL
+
+Data: 2026-08-16 21:39:51
+
+### Resultado
+- R1.18-A: auditoria consolidada aprovada.
+- 67 checks executados.
+- 67 checks aprovados.
+- 0 falhas estruturais.
+- R1.18-B: regressao funcional aprovada em navegador real.
+- Fluxo validado: produto -> carrinho -> checkout -> voltar -> checkout -> WhatsApp.
+- Carrinho preservou produtos, quantidades, subtotais e total.
+- Checkout preservou o estado comercial.
+- Validacoes de entrega verificadas.
+- Finalizacao via WhatsApp verificada.
+- Nenhum erro funcional observado no console durante a regressao.
+- UX mobile consolidada.
+- Carrinho em viewport propria consolidado.
+- Checkout em etapa propria consolidado.
+- Continuidade entre etapas consolidada.
+
+### Decisao
+R1.18 consolidada sobre o fluxo oficial.
+
+### Seguranca
+- promocao controlada;
+- candidato temporario removido;
+- documentacao versionada;
+- push nao executado.
