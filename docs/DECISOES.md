@@ -181,3 +181,23 @@ Carrinho e checkout são estados/telas diferentes do fluxo.
 
 O usuário consegue revisar o pedido, entrar no checkout,
 retornar ao carrinho e finalizar pelo WhatsApp.
+
+---
+
+## D013 - Continuidade explicita entre etapas mobile
+
+Status: aprovado
+
+A navegacao mobile deve informar claramente:
+- em qual etapa o usuario esta;
+- qual e a proxima acao;
+- quando houve retorno para uma etapa anterior.
+
+A orientacao deve ser curta e nao competir com a acao principal.
+
+Fluxos aprovados:
+- carrinho -> checkout;
+- checkout -> carrinho;
+- checkout -> WhatsApp.
+
+O estado comercial do pedido deve ser preservado durante a navegacao entre essas etapas.

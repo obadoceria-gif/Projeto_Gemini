@@ -130,3 +130,31 @@ uma etapa própria de checkout, otimizada para viewport mobile.
 **Validação funcional:** aprovada em 2026-08-16 21:01:45.
 
 **Próxima etapa:** R1.17-D.
+
+## R1.17-D - aprovado
+
+Status:
+APROVADO E PROMOVIDO.
+
+Entregas:
+- feedback curto entre etapas do fluxo mobile;
+- indicacao de proxima acao no carrinho;
+- contexto visual de progresso no checkout;
+- retorno checkout -> carrinho sinalizado;
+- preservacao da R1.17-B;
+- preservacao da R1.17-C;
+- preservacao da finalizacao via WhatsApp;
+- fluxo mobile consolidado entre carrinho e checkout.
+
+Validacao:
+- carrinho -> checkout: OK;
+- checkout -> carrinho: OK;
+- retorno ao checkout: OK;
+- itens preservados: OK;
+- total preservado: OK;
+- finalizacao: OK;
+- WhatsApp: OK;
+- console sem TypeError: OK.
+
+Proxima acao:
+R1.18 - consolidacao e auditoria do fluxo comercial completo.

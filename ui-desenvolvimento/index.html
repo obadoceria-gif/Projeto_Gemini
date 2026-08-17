@@ -881,6 +881,301 @@
   }
 
 </style>
+<style id="r117d-flow-css">
+
+/* ==========================================================
+   R1.17-D
+   CONTINUIDADE DO FLUXO MOBILE
+   ========================================================== */
+
+#r117d-flow-status {
+    display: none;
+}
+
+@media (max-width: 767px) {
+
+    #r117d-flow-status {
+
+        position: fixed;
+
+        top:
+            max(
+                8px,
+                env(safe-area-inset-top)
+            );
+
+        left: 50%;
+
+        transform:
+            translateX(-50%)
+            translateY(-130%);
+
+        z-index: 400;
+
+        width:
+            calc(100% - 32px);
+
+        max-width: 398px;
+
+        padding:
+            10px 14px;
+
+        border:
+            1px solid
+            rgba(139,69,19,.16);
+
+        border-radius: 16px;
+
+        background:
+            rgba(255,249,243,.97);
+
+        box-shadow:
+            0 10px 30px
+            rgba(60,35,20,.13);
+
+        opacity: 0;
+
+        pointer-events: none;
+
+        transition:
+            transform .22s ease,
+            opacity .22s ease;
+    }
+
+
+    #r117d-flow-status.r117d-visible {
+
+        display: block;
+
+        transform:
+            translateX(-50%)
+            translateY(0);
+
+        opacity: 1;
+    }
+
+
+    #r117d-flow-status-inner {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+    }
+
+
+    #r117d-flow-icon {
+
+        flex: 0 0 32px;
+
+        width: 32px;
+        height: 32px;
+
+        border-radius: 50%;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        background: #EAFBF0;
+
+        color: #16A34A;
+
+        font-size: 13px;
+    }
+
+
+    #r117d-flow-copy {
+
+        min-width: 0;
+
+        flex: 1 1 auto;
+    }
+
+
+    #r117d-flow-eyebrow {
+
+        margin: 0;
+
+        color: #9CA3AF;
+
+        font-size: 7px;
+
+        font-weight: 900;
+
+        letter-spacing: .10em;
+
+        text-transform: uppercase;
+    }
+
+
+    #r117d-flow-message {
+
+        margin: 2px 0 0;
+
+        color: #8B4513;
+
+        font-size: 10px;
+
+        line-height: 1.25;
+
+        font-weight: 900;
+    }
+
+
+    .r117d-step-context {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 5px;
+
+        margin:
+            0 auto 8px;
+
+        color: #9CA3AF;
+
+        font-size: 7px;
+
+        font-weight: 900;
+
+        letter-spacing: .08em;
+
+        text-transform: uppercase;
+    }
+
+
+    .r117d-step-dot {
+
+        width: 5px;
+        height: 5px;
+
+        border-radius: 999px;
+
+        background: #D1D5DB;
+    }
+
+
+    .r117d-step-dot.r117d-active {
+
+        width: 15px;
+
+        background: #8B4513;
+    }
+
+
+    body.r117c-checkout-open
+    #r117c-checkout-header::after {
+
+        content:
+            "Carrinho  →  Entrega  →  WhatsApp";
+
+        display: block;
+
+        margin-top: 9px;
+
+        color: #A1A1AA;
+
+        font-size: 7px;
+
+        line-height: 1;
+
+        font-weight: 900;
+
+        letter-spacing: .08em;
+
+        text-transform: uppercase;
+    }
+
+
+    #r117b-cart-view.r117b-open
+    #r117b-cart-header::after {
+
+        content:
+            "Revise os itens e avance para a finalização";
+
+        display: block;
+
+        margin-top: 8px;
+
+        color: #A1A1AA;
+
+        font-size: 7px;
+
+        line-height: 1.2;
+
+        font-weight: 800;
+
+        letter-spacing: .06em;
+
+        text-transform: uppercase;
+    }
+
+
+    #r117b-cart-view.r117b-open
+    #r117b-cart-footer {
+
+        box-shadow:
+            0 -12px 28px
+            rgba(60,35,20,.07);
+    }
+
+
+    body.r117c-checkout-open
+    #r117c-checkout-footer {
+
+        box-shadow:
+            0 -12px 28px
+            rgba(60,35,20,.07);
+    }
+
+
+    #r117d-next-hint {
+
+        display: none;
+
+        margin:
+            0 0 9px;
+
+        text-align: center;
+
+        color: #9CA3AF;
+
+        font-size: 7px;
+
+        line-height: 1.2;
+
+        font-weight: 900;
+
+        letter-spacing: .08em;
+
+        text-transform: uppercase;
+    }
+
+
+    #r117b-cart-view.r117b-open
+    #r117d-next-hint {
+
+        display: block;
+    }
+
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+
+    #r117d-flow-status {
+        transition: none !important;
+    }
+
+}
+
+</style>
 </head>
 <body class="antialiased selection:bg-[#8B4513] selection:text-white pb-24">
 
@@ -8974,6 +9269,404 @@ function mostrarNotificacao(msg) {
     instalarR117C,
     40
   );
+
+})();
+
+</script>
+<!-- ================================================================
+     R1.17-D - CONTINUIDADE DO FLUXO MOBILE
+================================================================ -->
+
+<div id="r117d-flow-status"
+     role="status"
+     aria-live="polite"
+     aria-atomic="true">
+
+    <div id="r117d-flow-status-inner">
+
+        <div id="r117d-flow-icon">
+            <i class="fa-solid fa-check"></i>
+        </div>
+
+        <div id="r117d-flow-copy">
+
+            <p id="r117d-flow-eyebrow">
+                Pedido atualizado
+            </p>
+
+            <p id="r117d-flow-message">
+                Continue para a próxima etapa.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script id="r117d-flow-runtime">
+
+(() => {
+
+    'use strict';
+
+
+    let timerR117D = null;
+
+
+    function mobileR117D() {
+
+        return window.matchMedia(
+            '(max-width: 767px)'
+        ).matches;
+    }
+
+
+    function mostrarStatusR117D(
+        mensagem,
+        duracao = 1500
+    ) {
+
+        if (!mobileR117D()) {
+            return;
+        }
+
+
+        const box =
+            document.getElementById(
+                'r117d-flow-status'
+            );
+
+
+        const message =
+            document.getElementById(
+                'r117d-flow-message'
+            );
+
+
+        if (!box || !message) {
+            return;
+        }
+
+
+        if (timerR117D) {
+
+            clearTimeout(
+                timerR117D
+            );
+
+            timerR117D = null;
+        }
+
+
+        message.textContent =
+            mensagem;
+
+
+        box.classList.add(
+            'r117d-visible'
+        );
+
+
+        timerR117D =
+            setTimeout(
+                () => {
+
+                    box.classList.remove(
+                        'r117d-visible'
+                    );
+
+                    timerR117D = null;
+                },
+                duracao
+            );
+    }
+
+
+    window.mostrarStatusR117D =
+        mostrarStatusR117D;
+
+
+    function instalarHintCarrinhoR117D() {
+
+        const footer =
+            document.getElementById(
+                'r117b-cart-footer'
+            );
+
+
+        if (!footer) {
+            return false;
+        }
+
+
+        if (
+            document.getElementById(
+                'r117d-next-hint'
+            )
+        ) {
+
+            return true;
+        }
+
+
+        const hint =
+            document.createElement(
+                'div'
+            );
+
+
+        hint.id =
+            'r117d-next-hint';
+
+
+        hint.textContent =
+            'Próxima etapa: dados para entrega';
+
+
+        footer.insertBefore(
+            hint,
+            footer.firstChild
+        );
+
+
+        return true;
+    }
+
+
+    function instalarContextoCheckoutR117D() {
+
+        const header =
+            document.getElementById(
+                'r117c-checkout-header'
+            );
+
+
+        if (!header) {
+            return false;
+        }
+
+
+        if (
+            document.getElementById(
+                'r117d-checkout-progress'
+            )
+        ) {
+
+            return true;
+        }
+
+
+        const progress =
+            document.createElement(
+                'div'
+            );
+
+
+        progress.id =
+            'r117d-checkout-progress';
+
+
+        progress.className =
+            'r117d-step-context';
+
+
+        progress.innerHTML = `
+            <span class="r117d-step-dot"></span>
+            <span class="r117d-step-dot r117d-active"></span>
+            <span class="r117d-step-dot"></span>
+            <span>Entrega</span>
+        `;
+
+
+        header.appendChild(
+            progress
+        );
+
+
+        return true;
+    }
+
+
+    function instalarTransicoesR117D() {
+
+        if (
+            typeof window.abrirCarrinhoViewportR117 ===
+            'function' &&
+            !window.__r117dCartWrapped
+        ) {
+
+            const abrirCarrinhoAnterior =
+                window.abrirCarrinhoViewportR117;
+
+
+            window.abrirCarrinhoViewportR117 =
+                function (...args) {
+
+                    const resultado =
+                        abrirCarrinhoAnterior.apply(
+                            this,
+                            args
+                        );
+
+
+                    setTimeout(
+                        () => {
+
+                            instalarHintCarrinhoR117D();
+
+                            mostrarStatusR117D(
+                                'Carrinho aberto. Revise seus itens.'
+                            );
+                        },
+                        30
+                    );
+
+
+                    return resultado;
+                };
+
+
+            window.__r117dCartWrapped =
+                true;
+        }
+
+
+        if (
+            typeof window.abrirCheckoutR117C ===
+            'function' &&
+            !window.__r117dCheckoutWrapped
+        ) {
+
+            const abrirCheckoutAnterior =
+                window.abrirCheckoutR117C;
+
+
+            window.abrirCheckoutR117C =
+                function (...args) {
+
+                    const resultado =
+                        abrirCheckoutAnterior.apply(
+                            this,
+                            args
+                        );
+
+
+                    setTimeout(
+                        () => {
+
+                            instalarContextoCheckoutR117D();
+
+                            mostrarStatusR117D(
+                                'Carrinho revisado. Informe os dados de entrega.'
+                            );
+                        },
+                        30
+                    );
+
+
+                    return resultado;
+                };
+
+
+            window.__r117dCheckoutWrapped =
+                true;
+        }
+
+
+        if (
+            typeof window.voltarAoCarrinhoR117C ===
+            'function' &&
+            !window.__r117dBackWrapped
+        ) {
+
+            const voltarAnterior =
+                window.voltarAoCarrinhoR117C;
+
+
+            window.voltarAoCarrinhoR117C =
+                function (...args) {
+
+                    const resultado =
+                        voltarAnterior.apply(
+                            this,
+                            args
+                        );
+
+
+                    setTimeout(
+                        () => {
+
+                            mostrarStatusR117D(
+                                'Você voltou ao carrinho. Seus dados foram preservados.'
+                            );
+                        },
+                        40
+                    );
+
+
+                    return resultado;
+                };
+
+
+            window.__r117dBackWrapped =
+                true;
+        }
+
+
+        return (
+            window.__r117dCartWrapped === true &&
+            window.__r117dCheckoutWrapped === true &&
+            window.__r117dBackWrapped === true
+        );
+    }
+
+
+    function instalarR117D() {
+
+        if (
+            window.__r117dInstalled
+        ) {
+
+            return;
+        }
+
+
+        const pronto =
+            instalarTransicoesR117D();
+
+
+        instalarHintCarrinhoR117D();
+
+        instalarContextoCheckoutR117D();
+
+
+        if (!pronto) {
+
+            setTimeout(
+                instalarR117D,
+                50
+            );
+
+            return;
+        }
+
+
+        window.__r117dInstalled =
+            true;
+
+
+        console.info(
+            '[R1.17-D] Continuidade do fluxo mobile instalada.'
+        );
+    }
+
+
+    setTimeout(
+        instalarR117D,
+        60
+    );
 
 })();
 

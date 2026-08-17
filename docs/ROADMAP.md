@@ -117,3 +117,26 @@ A arquitetura mobile passa a separar explicitamente:
 4. finalização.
 
 Próxima evolução: **R1.17-D**.
+
+## Checkpoint R1.17-D
+
+Status: CONCLUIDO
+
+Fluxo mobile consolidado:
+
+Produto
+-> configuracao
+-> revisao
+-> carrinho
+-> checkout
+-> WhatsApp
+
+Entregue:
+- continuidade visual entre carrinho e checkout;
+- proxima acao explicitada;
+- retorno entre etapas preservando estado;
+- feedback de navegacao;
+- fluxo final funcional.
+
+Proxima fase:
+R1.18 - consolidacao e auditoria do fluxo comercial completo.

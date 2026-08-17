@@ -134,3 +134,32 @@ Validações executadas:
 - TypeError no console: NÃO IDENTIFICADO.
 
 Teste visual realizado em viewport mobile.
+
+## R1.17-D - Continuidade do fluxo
+
+- [x] Candidato isolado
+- [x] Carrinho abre normalmente
+- [x] Proxima etapa indicada
+- [x] Ir para finalizacao
+- [x] Checkout em tela propria
+- [x] Contexto de progresso
+- [x] Voltar ao carrinho
+- [x] Produtos preservados
+- [x] Total preservado
+- [x] Retornar ao checkout
+- [x] Nome
+- [x] Data
+- [x] Hora
+- [x] Pagamento
+- [x] Finalizar pedido
+- [x] WhatsApp
+- [x] Console sem TypeError
+
+### Proximo ciclo
+R1.18:
+- [ ] auditoria do fluxo completo;
+- [ ] inconsistencias remanescentes;
+- [ ] regressao funcional;
+- [ ] mobile real;
+- [ ] desktop;
+- [ ] preparacao de baseline consolidada.

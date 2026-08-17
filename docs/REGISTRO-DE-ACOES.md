@@ -116,3 +116,27 @@ Implementação e validação do checkout em etapa própria.
 ### Resultado
 
 R1.17-C concluída.
+
+## R1.17-D
+
+Data:
+2026-08-16 21:18:30
+
+Status:
+CONCLUIDO.
+
+Problema:
+As telas de carrinho e checkout estavam funcionalmente separadas, mas ainda faltava orientar explicitamente o usuario durante as transicoes.
+
+Solucao:
+- feedback curto entre etapas;
+- indicacao de proxima acao;
+- contexto de progresso;
+- retorno sinalizado;
+- preservacao integral do estado do pedido.
+
+Resultado:
+Fluxo mobile validado de carrinho ate WhatsApp.
+
+Proxima acao:
+R1.18 - consolidacao e auditoria do fluxo comercial completo.

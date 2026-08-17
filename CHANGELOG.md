@@ -1,3 +1,29 @@
+## R1.17-D - Continuidade do Fluxo Mobile
+
+### Adicionado
+- feedback visual curto entre etapas;
+- orientacao de proxima etapa no carrinho;
+- contexto de progresso no checkout;
+- feedback de retorno ao carrinho.
+
+### Preservado
+- carrinho em viewport R1.17-B;
+- checkout em etapa propria R1.17-C;
+- fluxo de finalizacao via WhatsApp;
+- estado do pedido durante navegacao.
+
+### Validado
+- carrinho -> checkout;
+- checkout -> carrinho;
+- retorno ao checkout;
+- preservacao de itens e total;
+- finalizacao do pedido;
+- console sem TypeError.
+
+### Proxima etapa
+R1.18 - consolidacao e auditoria do fluxo comercial completo.
+
+---
 ## R1.17-B - Carrinho em Viewport
 Data de consolidacao: 2026-08-16
 
