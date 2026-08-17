@@ -101,3 +101,32 @@ Entregas:
 
 Proxima acao:
 R1.17-C - Checkout em etapa propria.
+
+<!-- R1.17-C-FINAL -->
+
+## R1.17-C — Checkout em etapa própria
+
+**Estado:** APROVADA, PROMOVIDA E VERSIONADA.
+
+A R1.17-C separa a finalização do pedido do carrinho e cria
+uma etapa própria de checkout, otimizada para viewport mobile.
+
+### Entregas confirmadas
+
+- checkout em tela própria;
+- resumo de produtos e unidades;
+- total do pedido destacado;
+- campo de nome;
+- seleção de data;
+- seleção de horário;
+- forma de pagamento;
+- validação dos campos obrigatórios;
+- retorno ao carrinho;
+- preservação do carrinho R1.17-B;
+- integração com o fluxo oficial de finalização;
+- abertura do WhatsApp validada funcionalmente;
+- ausência de TypeError no teste final.
+
+**Validação funcional:** aprovada em 2026-08-16 21:01:45.
+
+**Próxima etapa:** R1.17-D.

@@ -110,3 +110,27 @@ R1.17-C:
 - [ ] resumo compacto
 - [ ] validacoes
 - [ ] finalizacao
+
+<!-- R1.17-C-TESTES -->
+
+## Testes R1.17-C
+
+**Resultado geral: APROVADO**
+
+Validações executadas:
+
+- abertura da etapa própria de checkout: OK;
+- resumo de 2 produtos / 2 unidades: OK;
+- cálculo do total: OK;
+- preenchimento do nome: OK;
+- preenchimento da data: OK;
+- preenchimento da hora: OK;
+- seleção da forma de pagamento: OK;
+- retorno ao carrinho: OK;
+- retorno ao checkout: OK;
+- preservação dos itens: OK;
+- FINALIZAR PEDIDO: OK;
+- abertura do WhatsApp: OK;
+- TypeError no console: NÃO IDENTIFICADO.
+
+Teste visual realizado em viewport mobile.

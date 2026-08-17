@@ -114,3 +114,27 @@ Data de consolidacao: 2026-08-16
 
 ## R1.14 e anteriores
 O historico tecnico completo permanece preservado no Git.
+
+<!-- R1.17-C-CHANGELOG -->
+
+## R1.17-C
+
+### Adicionado
+
+- checkout em etapa própria;
+- resumo compacto do pedido;
+- campos de entrega;
+- seleção de pagamento;
+- validação de preenchimento;
+- navegação checkout → carrinho;
+- integração checkout → fluxo oficial → WhatsApp.
+
+### UX
+
+O carrinho passa a ser dedicado à revisão dos produtos.
+Os dados de entrega e finalização passam a ocupar uma etapa
+independente, reduzindo excesso de conteúdo no mesmo viewport.
+
+### Compatibilidade
+
+A R1.17-B foi preservada como base do carrinho em viewport.

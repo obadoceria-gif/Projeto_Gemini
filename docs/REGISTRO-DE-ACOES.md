@@ -87,3 +87,32 @@ Arquitetura do carrinho mobile aprovada.
 
 Proxima acao:
 R1.17-C - Checkout em etapa propria.
+
+<!-- R1.17-C-REGISTRO -->
+
+## 2026-08-16 21:01:45 — R1.17-C
+
+### Ação
+
+Implementação e validação do checkout em etapa própria.
+
+### Sequência
+
+1. baseline R1.17-B autenticada;
+2. candidato R1.17-C criado;
+3. checkout isolado implementado;
+4. estrutura validada automaticamente;
+5. teste visual realizado;
+6. retorno ao carrinho validado;
+7. dados de entrega validados;
+8. finalização validada;
+9. WhatsApp aberto conforme esperado;
+10. candidato aprovado;
+11. candidato promovido ao index oficial;
+12. documentação consolidada;
+13. commit local criado;
+14. push deliberadamente não executado.
+
+### Resultado
+
+R1.17-C concluída.

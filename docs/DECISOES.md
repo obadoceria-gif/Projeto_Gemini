@@ -148,3 +148,36 @@ Quando o conteudo exceder a area disponivel:
 - a interface deve indicar explicitamente a existencia de produtos fora da area visivel.
 
 A quantidade de produtos e de unidades deve ser apresentada separadamente.
+
+<!-- R1.17-C-DECISAO -->
+
+## Decisão R1.17-C — Separar carrinho e checkout
+
+### Problema
+
+A combinação de produtos, controles de quantidade e dados de
+entrega no mesmo viewport aumentava a densidade visual e
+prejudicava a experiência mobile.
+
+### Decisão
+
+O carrinho permanece dedicado à revisão dos itens.
+
+A finalização passa para uma etapa própria contendo:
+
+- resumo;
+- total;
+- nome;
+- data;
+- hora;
+- pagamento;
+- ação final.
+
+### Regra arquitetural
+
+Carrinho e checkout são estados/telas diferentes do fluxo.
+
+### Resultado validado
+
+O usuário consegue revisar o pedido, entrar no checkout,
+retornar ao carrinho e finalizar pelo WhatsApp.

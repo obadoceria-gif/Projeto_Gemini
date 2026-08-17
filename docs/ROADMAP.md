@@ -93,3 +93,27 @@ Objetivo:
 - manter total sempre visivel;
 - validar nome, data, hora e pagamento;
 - finalizar pedido via fluxo oficial.
+
+<!-- R1.17-C-ROADMAP -->
+
+## R1.17-C — CONCLUÍDA
+
+Checkout em etapa própria implementado e aprovado.
+
+Fluxo consolidado:
+
+Produto
+→ seleção/configuração
+→ revisão
+→ carrinho
+→ checkout
+→ WhatsApp
+
+A arquitetura mobile passa a separar explicitamente:
+
+1. escolha;
+2. revisão;
+3. carrinho;
+4. finalização.
+
+Próxima evolução: **R1.17-D**.

@@ -635,6 +635,252 @@
   }
 
 </style>
+<style id="r117c-checkout-css">
+
+  /* ==========================================================
+     R1.17-C - CHECKOUT EM ETAPA PROPRIA
+     ========================================================== */
+
+  #r117c-checkout-view {
+    display: none;
+  }
+
+
+  #r117c-checkout-view.r117c-open {
+    display: flex;
+  }
+
+
+  @media (max-width: 767px) {
+
+    body.r117c-checkout-open {
+      height: 100dvh !important;
+      overflow: hidden !important;
+    }
+
+
+    #r117c-checkout-view {
+
+      position: fixed;
+
+      inset: 0;
+
+      z-index: 280;
+
+      width: 100%;
+
+      height: 100dvh;
+      max-height: 100dvh;
+
+      background: #FFF9F3;
+
+      flex-direction: column;
+
+      overflow: hidden;
+    }
+
+
+    #r117c-checkout-shell {
+
+      width: 100%;
+      height: 100%;
+
+      max-width: 430px;
+
+      margin: 0 auto;
+
+      display: flex;
+      flex-direction: column;
+
+      min-height: 0;
+
+      background: #FFF9F3;
+    }
+
+
+    #r117c-checkout-header {
+
+      flex: 0 0 auto;
+
+      padding:
+        max(14px, env(safe-area-inset-top))
+        16px
+        12px;
+
+      border-bottom: 1px solid #E8D5B5;
+
+      background: #FFF9F3;
+    }
+
+
+    #r117c-checkout-main {
+
+      flex: 1 1 auto;
+
+      min-height: 0;
+
+      overflow-y: auto;
+
+      padding: 14px 16px;
+    }
+
+
+    #r117c-checkout-footer {
+
+      flex: 0 0 auto;
+
+      padding:
+        12px
+        16px
+        max(14px, env(safe-area-inset-bottom));
+
+      border-top: 1px solid #E8D5B5;
+
+      background: #FFF9F3;
+
+      box-shadow:
+        0 -8px 24px
+        rgba(60,35,20,.05);
+    }
+
+
+    .r117c-field {
+
+      width: 100%;
+
+      min-height: 48px;
+
+      padding: 0 13px;
+
+      border: 1px solid #E8D5B5;
+
+      border-radius: 13px;
+
+      background: #FFF8F0;
+
+      color: #3B2A1E;
+
+      font-size: 13px;
+
+      outline: none;
+    }
+
+
+    .r117c-field:focus {
+
+      border-color: #8B4513;
+
+      box-shadow:
+        0 0 0 3px
+        rgba(139,69,19,.08);
+    }
+
+
+    .r117c-label {
+
+      display: block;
+
+      margin-bottom: 6px;
+
+      color: #9CA3AF;
+
+      font-size: 8px;
+
+      font-weight: 900;
+
+      letter-spacing: .08em;
+
+      text-transform: uppercase;
+    }
+
+
+    #r117c-checkout-error {
+
+      display: none;
+
+      margin-bottom: 10px;
+
+      padding: 10px 12px;
+
+      border-radius: 12px;
+
+      background: #FFF1F1;
+
+      color: #B42318;
+
+      font-size: 10px;
+
+      font-weight: 700;
+    }
+
+
+    #r117c-checkout-error.r117c-visible {
+      display: block;
+    }
+
+  }
+
+
+  @media (min-width: 768px) {
+
+    #r117c-checkout-view {
+
+      position: fixed;
+
+      inset: 0;
+
+      z-index: 280;
+
+      background: rgba(0,0,0,.72);
+
+      align-items: center;
+      justify-content: center;
+
+      padding: 24px;
+    }
+
+
+    #r117c-checkout-shell {
+
+      width: min(520px, 100%);
+
+      max-height: 90vh;
+
+      display: flex;
+      flex-direction: column;
+
+      background: #FFF9F3;
+
+      border-radius: 28px;
+
+      overflow: hidden;
+
+      box-shadow:
+        0 24px 80px
+        rgba(0,0,0,.28);
+    }
+
+
+    #r117c-checkout-header,
+    #r117c-checkout-footer {
+
+      padding: 18px 22px;
+
+      flex: 0 0 auto;
+    }
+
+
+    #r117c-checkout-main {
+
+      padding: 18px 22px;
+
+      flex: 1 1 auto;
+
+      overflow-y: auto;
+    }
+  }
+
+</style>
 </head>
 <body class="antialiased selection:bg-[#8B4513] selection:text-white pb-24">
 
@@ -7559,6 +7805,1174 @@ function mostrarNotificacao(msg) {
 
   console.info(
     '[R1.17-B2-R3] Indicador unico de continuidade instalado.'
+  );
+
+})();
+
+</script>
+<!-- ================================================================
+     R1.17-C - CHECKOUT EM ETAPA PROPRIA
+================================================================ -->
+
+<section id="r117c-checkout-view"
+         aria-hidden="true"
+         inert>
+
+  <div id="r117c-checkout-shell">
+
+
+    <!-- HEADER -->
+    <header id="r117c-checkout-header">
+
+      <div class="flex items-center justify-between gap-3">
+
+        <div>
+
+          <p class="text-[8px] font-black uppercase tracking-widest text-gray-400">
+            Última etapa
+          </p>
+
+          <h2 class="mt-1 text-xl font-black text-[#8B4513]">
+            Finalizar Pedido
+          </h2>
+
+          <p class="mt-1 text-[10px] text-gray-500">
+            Confira os dados para entrega.
+          </p>
+
+        </div>
+
+
+        <button type="button"
+                onclick="fecharCheckoutR117C()"
+                aria-label="Voltar ao carrinho"
+                class="w-11 h-11 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-lg">
+
+          <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- CONTEUDO -->
+    <main id="r117c-checkout-main">
+
+
+      <!-- RESUMO -->
+      <div class="bg-white border border-[#E8D5B5] rounded-2xl p-4 mb-4">
+
+        <div class="flex items-center justify-between gap-4">
+
+          <div>
+
+            <p class="text-[8px] uppercase tracking-widest font-black text-gray-400">
+              Seu pedido
+            </p>
+
+            <p id="r117c-summary-count"
+               class="mt-1 text-xs font-bold text-gray-600">
+              0 produtos
+            </p>
+
+          </div>
+
+
+          <strong id="r117c-summary-total"
+                  class="text-2xl font-black text-[#8B4513]">
+
+            R$ 0,00
+
+          </strong>
+
+        </div>
+
+
+        <button type="button"
+                onclick="voltarAoCarrinhoR117C()"
+                class="mt-3 text-[8px] font-black uppercase tracking-wider text-[#8B4513]">
+
+          ← Revisar carrinho
+
+        </button>
+
+      </div>
+
+
+      <div id="r117c-checkout-error">
+      </div>
+
+
+      <!-- NOME -->
+      <div class="mb-3">
+
+        <label for="r117c-name"
+               class="r117c-label">
+
+          Nome para entrega
+
+        </label>
+
+        <input id="r117c-name"
+               type="text"
+               autocomplete="name"
+               placeholder="Seu nome completo *"
+               class="r117c-field">
+
+      </div>
+
+
+      <!-- DATA + HORA -->
+      <div class="grid grid-cols-2 gap-2 mb-3">
+
+
+        <div>
+
+          <label for="r117c-date"
+                 class="r117c-label">
+
+            Data
+
+          </label>
+
+          <input id="r117c-date"
+                 type="date"
+                 class="r117c-field">
+
+        </div>
+
+
+        <div>
+
+          <label for="r117c-time"
+                 class="r117c-label">
+
+            Hora
+
+          </label>
+
+          <input id="r117c-time"
+                 type="time"
+                 class="r117c-field">
+
+        </div>
+
+      </div>
+
+
+      <!-- PAGAMENTO -->
+      <div class="mb-3">
+
+        <label for="r117c-payment"
+               class="r117c-label">
+
+          Forma de pagamento
+
+        </label>
+
+        <select id="r117c-payment"
+                class="r117c-field">
+
+          <option value="">
+            Selecione *
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- INFO -->
+      <div class="mt-4 p-3 rounded-xl bg-[#FFF3E7]">
+
+        <p class="text-[9px] leading-relaxed text-gray-500">
+
+          Depois de confirmar, seu pedido seguirá pelo fluxo oficial de finalização da Oba.
+
+        </p>
+
+      </div>
+
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer id="r117c-checkout-footer">
+
+      <div class="flex items-center justify-between mb-3">
+
+        <span class="text-[8px] font-black uppercase tracking-widest text-gray-400">
+          Total
+        </span>
+
+        <strong id="r117c-footer-total"
+                class="text-2xl font-black text-[#8B4513]">
+
+          R$ 0,00
+
+        </strong>
+
+      </div>
+
+
+      <button id="r117c-finish"
+              type="button"
+              onclick="finalizarCheckoutR117C()"
+              class="w-full min-h-12 rounded-xl bg-[#8B4513] text-white text-[9px] font-black uppercase tracking-wider shadow-md">
+
+        Finalizar pedido
+        <i class="fa-brands fa-whatsapp ml-1"></i>
+
+      </button>
+
+
+      <button type="button"
+              onclick="voltarAoCarrinhoR117C()"
+              class="w-full py-3 text-[8px] font-black uppercase tracking-wider text-gray-400">
+
+        ← Voltar ao carrinho
+
+      </button>
+
+    </footer>
+
+
+  </div>
+
+</section>
+
+
+<script id="r117c-checkout-runtime">
+
+(() => {
+
+  'use strict';
+
+
+  let focoAnteriorR117C =
+    null;
+
+
+  let abrirModalLegadoR117C =
+    null;
+
+
+  function precoUnitarioR117C(item) {
+
+    return Number(
+      item.precoCalculadoUnitario ??
+      item.precoCalculado ??
+      item.precoFixo ??
+      item.preco ??
+      0
+    );
+  }
+
+
+  function totalR117C() {
+
+    return carrinhoDeCaixasConcluidas.reduce(
+      (soma, item) => {
+
+        const qtd =
+          Number(
+            item.quantidade || 1
+          );
+
+
+        return (
+          soma +
+          precoUnitarioR117C(item) * qtd
+        );
+      },
+      0
+    );
+  }
+
+
+  function unidadesR117C() {
+
+    return carrinhoDeCaixasConcluidas.reduce(
+      (soma, item) =>
+        soma +
+        Number(
+          item.quantidade || 1
+        ),
+      0
+    );
+  }
+
+
+  function preencherResumoR117C() {
+
+    const produtos =
+      carrinhoDeCaixasConcluidas.length;
+
+
+    const unidades =
+      unidadesR117C();
+
+
+    const total =
+      totalR117C();
+
+
+    const resumo =
+      document.getElementById(
+        'r117c-summary-count'
+      );
+
+
+    const resumoTotal =
+      document.getElementById(
+        'r117c-summary-total'
+      );
+
+
+    const footerTotal =
+      document.getElementById(
+        'r117c-footer-total'
+      );
+
+
+    if (resumo) {
+
+      resumo.textContent =
+        `${produtos} ${
+          produtos === 1
+            ? 'produto'
+            : 'produtos'
+        } · ${unidades} ${
+          unidades === 1
+            ? 'unidade'
+            : 'unidades'
+        }`;
+    }
+
+
+    if (resumoTotal) {
+
+      resumoTotal.textContent =
+        formatarMoeda(total);
+    }
+
+
+    if (footerTotal) {
+
+      footerTotal.textContent =
+        formatarMoeda(total);
+    }
+  }
+
+
+  function preencherPagamentosR117C() {
+
+    const select =
+      document.getElementById(
+        'r117c-payment'
+      );
+
+
+    if (!select) {
+      return;
+    }
+
+
+    /*
+     * Primeiro tenta aproveitar o select oficial antigo,
+     * preservando as formas carregadas do Modelo Mestre.
+     */
+
+    const selects =
+      Array.from(
+        document.querySelectorAll(
+          'select'
+        )
+      )
+      .filter(
+        el =>
+          el !== select &&
+          !el.closest(
+            '#r117c-checkout-view'
+          )
+      );
+
+
+    const origem =
+      selects.find(
+        el => {
+
+          const texto =
+            (
+              el.innerText ||
+              el.textContent ||
+              ''
+            ).toLowerCase();
+
+
+          return (
+            texto.includes(
+              'pix'
+            ) ||
+            texto.includes(
+              'dinheiro'
+            ) ||
+            texto.includes(
+              'cart'
+            )
+          );
+        }
+      );
+
+
+    if (
+      origem &&
+      origem.options.length > 1
+    ) {
+
+      select.innerHTML =
+        '<option value="">Selecione *</option>';
+
+
+      Array
+        .from(
+          origem.options
+        )
+        .filter(
+          option =>
+            option.value ||
+            option.textContent.trim()
+        )
+        .forEach(
+          option => {
+
+            if (
+              /forma de pagamento/i.test(
+                option.textContent
+              )
+            ) {
+
+              return;
+            }
+
+
+            const nova =
+              document.createElement(
+                'option'
+              );
+
+
+            nova.value =
+              option.value;
+
+
+            nova.textContent =
+              option.textContent;
+
+
+            select.appendChild(
+              nova
+            );
+          }
+        );
+    }
+  }
+
+
+  function erroR117C(mensagem) {
+
+    const el =
+      document.getElementById(
+        'r117c-checkout-error'
+      );
+
+
+    if (!el) {
+      return;
+    }
+
+
+    if (!mensagem) {
+
+      el.textContent =
+        '';
+
+
+      el.classList.remove(
+        'r117c-visible'
+      );
+
+      return;
+    }
+
+
+    el.textContent =
+      mensagem;
+
+
+    el.classList.add(
+      'r117c-visible'
+    );
+  }
+
+
+  window.abrirCheckoutR117C =
+    function () {
+
+      if (
+        !Array.isArray(
+          carrinhoDeCaixasConcluidas
+        ) ||
+        carrinhoDeCaixasConcluidas.length === 0
+      ) {
+
+        mostrarNotificacao(
+          'Seu carrinho está vazio.'
+        );
+
+        return;
+      }
+
+
+      focoAnteriorR117C =
+        (
+          document.activeElement instanceof
+          HTMLElement
+        )
+          ? document.activeElement
+          : null;
+
+
+      if (
+        typeof window.fecharCarrinhoViewportR117 ===
+        'function'
+      ) {
+
+        window.fecharCarrinhoViewportR117();
+      }
+
+
+      preencherResumoR117C();
+
+      preencherPagamentosR117C();
+
+      erroR117C('');
+
+
+      const view =
+        document.getElementById(
+          'r117c-checkout-view'
+        );
+
+
+      if (!view) {
+        return;
+      }
+
+
+      view.removeAttribute(
+        'inert'
+      );
+
+
+      view.setAttribute(
+        'aria-hidden',
+        'false'
+      );
+
+
+      view.classList.add(
+        'r117c-open'
+      );
+
+
+      document.body.classList.add(
+        'r117c-checkout-open'
+      );
+
+
+      requestAnimationFrame(
+        () => {
+
+          document
+            .getElementById(
+              'r117c-name'
+            )
+            ?.focus(
+              {
+                preventScroll: true
+              }
+            );
+        }
+      );
+    };
+
+
+  window.fecharCheckoutR117C =
+    function () {
+
+      const view =
+        document.getElementById(
+          'r117c-checkout-view'
+        );
+
+
+      if (!view) {
+        return;
+      }
+
+
+      const ativo =
+        document.activeElement;
+
+
+      if (
+        ativo instanceof Node &&
+        view.contains(
+          ativo
+        )
+      ) {
+
+        ativo.blur?.();
+      }
+
+
+      view.classList.remove(
+        'r117c-open'
+      );
+
+
+      document.body.classList.remove(
+        'r117c-checkout-open'
+      );
+
+
+      view.setAttribute(
+        'aria-hidden',
+        'true'
+      );
+
+
+      view.setAttribute(
+        'inert',
+        ''
+      );
+
+
+      if (
+        focoAnteriorR117C &&
+        focoAnteriorR117C.isConnected
+      ) {
+
+        focoAnteriorR117C.focus(
+          {
+            preventScroll: true
+          }
+        );
+      }
+
+
+      focoAnteriorR117C =
+        null;
+    };
+
+
+  window.voltarAoCarrinhoR117C =
+    function () {
+
+      fecharCheckoutR117C();
+
+
+      if (
+        typeof window.abrirCarrinhoViewportR117 ===
+        'function'
+      ) {
+
+        window.abrirCarrinhoViewportR117();
+      }
+    };
+
+
+  function localizarCheckoutLegadoR117C() {
+
+    const candidatos =
+      Array.from(
+        document.querySelectorAll(
+          'div, section'
+        )
+      )
+      .filter(
+        el =>
+          !el.closest(
+            '#r117c-checkout-view'
+          )
+      );
+
+
+    return candidatos.find(
+      el => {
+
+        const texto =
+          (
+            el.textContent ||
+            ''
+          ).toLowerCase();
+
+
+        return (
+          texto.includes(
+            'dados para entrega'
+          ) &&
+          texto.includes(
+            'forma de pagamento'
+          ) &&
+          texto.includes(
+            'finalizar pedido'
+          )
+        );
+      }
+    ) || null;
+  }
+
+
+  function sincronizarCamposLegadosR117C(
+    nome,
+    data,
+    hora,
+    pagamento
+  ) {
+
+    const raiz =
+      localizarCheckoutLegadoR117C() ||
+      document;
+
+
+    const nomeInput =
+      Array
+        .from(
+          raiz.querySelectorAll(
+            'input[type="text"]'
+          )
+        )
+        .find(
+          el =>
+            /nome/i.test(
+              el.placeholder ||
+              el.name ||
+              el.id
+            )
+        );
+
+
+    const dateInput =
+      raiz.querySelector(
+        'input[type="date"]'
+      );
+
+
+    const timeInput =
+      raiz.querySelector(
+        'input[type="time"]'
+      );
+
+
+    const paymentSelect =
+      Array
+        .from(
+          raiz.querySelectorAll(
+            'select'
+          )
+        )
+        .find(
+          select => {
+
+            const texto =
+              (
+                select.textContent ||
+                ''
+              ).toLowerCase();
+
+
+            return (
+              texto.includes(
+                'pagamento'
+              ) ||
+              texto.includes(
+                'pix'
+              ) ||
+              texto.includes(
+                'dinheiro'
+              ) ||
+              texto.includes(
+                'cart'
+              )
+            );
+          }
+        );
+
+
+    if (nomeInput) {
+
+      nomeInput.value =
+        nome;
+
+
+      nomeInput.dispatchEvent(
+        new Event(
+          'input',
+          {
+            bubbles: true
+          }
+        )
+      );
+    }
+
+
+    if (dateInput) {
+
+      dateInput.value =
+        data;
+
+
+      dateInput.dispatchEvent(
+        new Event(
+          'change',
+          {
+            bubbles: true
+          }
+        )
+      );
+    }
+
+
+    if (timeInput) {
+
+      timeInput.value =
+        hora;
+
+
+      timeInput.dispatchEvent(
+        new Event(
+          'change',
+          {
+            bubbles: true
+          }
+        )
+      );
+    }
+
+
+    if (paymentSelect) {
+
+      const options =
+        Array.from(
+          paymentSelect.options
+        );
+
+
+      const correspondente =
+        options.find(
+          option =>
+            option.value ===
+              pagamento ||
+            option.textContent.trim() ===
+              pagamento
+        );
+
+
+      if (correspondente) {
+
+        paymentSelect.value =
+          correspondente.value;
+
+
+        paymentSelect.dispatchEvent(
+          new Event(
+            'change',
+            {
+              bubbles: true
+            }
+          )
+        );
+      }
+    }
+
+
+    return raiz;
+  }
+
+
+  window.finalizarCheckoutR117C =
+    function () {
+
+      const nome =
+        document
+          .getElementById(
+            'r117c-name'
+          )
+          ?.value
+          .trim();
+
+
+      const data =
+        document
+          .getElementById(
+            'r117c-date'
+          )
+          ?.value;
+
+
+      const hora =
+        document
+          .getElementById(
+            'r117c-time'
+          )
+          ?.value;
+
+
+      const pagamento =
+        document
+          .getElementById(
+            'r117c-payment'
+          )
+          ?.value;
+
+
+      if (!nome) {
+
+        erroR117C(
+          'Informe seu nome para continuar.'
+        );
+
+        document
+          .getElementById(
+            'r117c-name'
+          )
+          ?.focus();
+
+        return;
+      }
+
+
+      if (!data) {
+
+        erroR117C(
+          'Informe a data da entrega.'
+        );
+
+        return;
+      }
+
+
+      if (!hora) {
+
+        erroR117C(
+          'Informe o horário da entrega.'
+        );
+
+        return;
+      }
+
+
+      if (!pagamento) {
+
+        erroR117C(
+          'Escolha a forma de pagamento.'
+        );
+
+        return;
+      }
+
+
+      erroR117C('');
+
+
+      /*
+       * Nesta fase ainda preservamos o mecanismo
+       * de finalizacao oficial existente.
+       *
+       * O novo checkout coleta os dados.
+       * O fluxo legado permanece responsavel pela
+       * montagem/envio final enquanto nao for
+       * substituido definitivamente.
+       */
+
+      fecharCheckoutR117C();
+
+
+      if (
+        typeof abrirModalLegadoR117C ===
+        'function'
+      ) {
+
+        abrirModalLegadoR117C();
+
+
+        setTimeout(
+          () => {
+
+            const raiz =
+              sincronizarCamposLegadosR117C(
+                nome,
+                data,
+                hora,
+                pagamento
+              );
+
+
+            const botoes =
+              Array.from(
+                raiz.querySelectorAll(
+                  'button'
+                )
+              );
+
+
+            const finalizar =
+              botoes.find(
+                button =>
+                  /finalizar pedido/i.test(
+                    button.textContent ||
+                    ''
+                  ) &&
+                  !button.closest(
+                    '#r117c-checkout-view'
+                  )
+              );
+
+
+            if (finalizar) {
+
+              finalizar.click();
+            }
+            else {
+
+              console.warn(
+                '[R1.17-C] Botao legado de finalizacao nao localizado.'
+              );
+            }
+          },
+          120
+        );
+      }
+      else {
+
+        console.warn(
+          '[R1.17-C] Fluxo legado de finalizacao nao localizado.'
+        );
+      }
+    };
+
+
+  function instalarR117C() {
+
+    if (
+      window.__r117cInstalled
+    ) {
+
+      return;
+    }
+
+
+    if (
+      typeof window.irParaFinalizacaoR117 !==
+      'function'
+    ) {
+
+      setTimeout(
+        instalarR117C,
+        30
+      );
+
+      return;
+    }
+
+
+    window.__r117cInstalled =
+      true;
+
+
+    /*
+     * Na R1.17-B, irParaFinalizacaoR117
+     * ainda abria o checkout antigo.
+     *
+     * Guardamos uma referencia indireta ao fluxo
+     * legado por meio da funcao original de modal.
+     */
+
+    if (
+      typeof window.abrirModalCarrinho ===
+      'function'
+    ) {
+
+      /*
+       * Neste ponto abrirModalCarrinho pode estar
+       * sobrescrita pelo carrinho viewport.
+       *
+       * A R1.17-B guardou internamente o legado,
+       * portanto capturamos o comportamento antes
+       * da nova substituicao somente como fallback.
+       */
+    }
+
+
+    const finalizarAnterior =
+      window.irParaFinalizacaoR117;
+
+
+    /*
+     * Descobre o modal legado invocando uma vez
+     * a funcao anterior somente quando o checkout
+     * novo realmente precisar finalizar.
+     */
+
+    abrirModalLegadoR117C =
+      function () {
+
+        finalizarAnterior();
+      };
+
+
+    window.irParaFinalizacaoR117 =
+      function () {
+
+        abrirCheckoutR117C();
+      };
+
+
+    document.addEventListener(
+      'keydown',
+      event => {
+
+        if (
+          event.key === 'Escape' &&
+          document
+            .getElementById(
+              'r117c-checkout-view'
+            )
+            ?.classList.contains(
+              'r117c-open'
+            )
+        ) {
+
+          voltarAoCarrinhoR117C();
+        }
+      }
+    );
+
+
+    console.info(
+      '[R1.17-C] Checkout em etapa propria instalado.'
+    );
+  }
+
+
+  setTimeout(
+    instalarR117C,
+    40
   );
 
 })();
