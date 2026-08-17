@@ -170,3 +170,21 @@ R1.18 consolidada sobre o fluxo oficial.
 - candidato temporario removido;
 - documentacao versionada;
 - push nao executado.
+
+## 2026-08-16 22:11:23 — R1.19-B01
+
+Ação:
+Promoção da proteção contra duplo envio.
+
+Origem:
+R1.19-B backlog priorizado.
+
+Validação:
+- candidato estruturalmente aprovado;
+- regressão funcional aprovada;
+- WhatsApp aberto corretamente;
+- oficial promovido somente após aprovação.
+
+Git:
+commit controlado previsto nesta mesma etapa.
+push não autorizado.

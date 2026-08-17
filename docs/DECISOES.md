@@ -231,3 +231,9 @@ R1.18 consolidada sobre o fluxo oficial.
 - candidato temporario removido;
 - documentacao versionada;
 - push nao executado.
+
+## Decisão R1.19-B01 — lock de finalização
+
+Foi adotado lock de execução na função oficial de checkout para impedir múltiplos acionamentos do fluxo de finalização.
+
+A solução preserva o fluxo legado e possui fail-safe temporizado para permitir nova tentativa caso a transição externa não prossiga.

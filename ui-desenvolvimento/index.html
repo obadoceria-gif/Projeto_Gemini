@@ -9002,6 +9002,129 @@ function mostrarNotificacao(msg) {
 
   window.finalizarCheckoutR117C =
     function () {
+      /*
+       * ======================================================
+       * R1.19-B01 - PROTECAO CONTRA DUPLO ENVIO
+       * ======================================================
+       *
+       * Impede acionamentos repetidos durante a transicao
+       * para o fluxo oficial de finalizacao / WhatsApp.
+       */
+
+      if (
+        window.__obaR119FinalizacaoEmAndamento ===
+        true
+      ) {
+
+        console.warn(
+          '[R1.19-B01] Duplo envio bloqueado.'
+        );
+
+        return;
+      }
+
+
+      window.__obaR119FinalizacaoEmAndamento =
+        true;
+
+
+      const botaoFinalizarR119 =
+        document.getElementById(
+          'r117c-finish'
+        );
+
+
+      if (botaoFinalizarR119) {
+
+        botaoFinalizarR119.dataset.r119TextoOriginal =
+          botaoFinalizarR119.innerHTML;
+
+
+        botaoFinalizarR119.disabled =
+          true;
+
+
+        botaoFinalizarR119.setAttribute(
+          'aria-disabled',
+          'true'
+        );
+
+
+        botaoFinalizarR119.setAttribute(
+          'aria-busy',
+          'true'
+        );
+
+
+        botaoFinalizarR119.innerHTML =
+          '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> PROCESSANDO PEDIDO...';
+      }
+
+
+      /*
+       * Fail-safe:
+       *
+       * Caso o navegador bloqueie a navegacao externa,
+       * ou o fluxo nao prossiga por algum motivo,
+       * liberamos uma nova tentativa apos 8 segundos.
+       */
+
+      window.clearTimeout(
+        window.__obaR119FinalizacaoTimer
+      );
+
+
+      window.__obaR119FinalizacaoTimer =
+        window.setTimeout(
+          () => {
+
+            window.__obaR119FinalizacaoEmAndamento =
+              false;
+
+
+            const botao =
+              document.getElementById(
+                'r117c-finish'
+              );
+
+
+            if (!botao) {
+
+              return;
+            }
+
+
+            botao.disabled =
+              false;
+
+
+            botao.removeAttribute(
+              'aria-disabled'
+            );
+
+
+            botao.removeAttribute(
+              'aria-busy'
+            );
+
+
+            if (
+              botao.dataset.r119TextoOriginal
+            ) {
+
+              botao.innerHTML =
+                botao.dataset.r119TextoOriginal;
+            }
+
+
+            console.log(
+              '[R1.19-B01] Lock de finalizacao liberado.'
+            );
+
+          },
+          8000
+        );
+
 
       const nome =
         document

@@ -170,3 +170,9 @@ R1.18 consolidada sobre o fluxo oficial.
 - candidato temporario removido;
 - documentacao versionada;
 - push nao executado.
+
+### R1.19-B01 — concluído
+
+Proteção contra duplo envio promovida após validação estrutural e regressão funcional.
+
+Próximo foco: segundo item priorizado no backlog R1.19-B.

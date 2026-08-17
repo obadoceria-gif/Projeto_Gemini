@@ -193,3 +193,19 @@ R1.18 consolidada sobre o fluxo oficial.
 - candidato temporario removido;
 - documentacao versionada;
 - push nao executado.
+
+## R1.19-B01 — regressão funcional
+
+Resultado: APROVADO.
+
+Validado:
+- finalização de pedido;
+- abertura do WhatsApp;
+- dados do pedido preservados;
+- cliente, entrega e pagamento preservados;
+- itens e total preservados;
+- ausência de TypeError/ReferenceError no fluxo testado;
+- proteção contra acionamentos repetidos.
+
+Observação:
+404 de favicon não relacionado ao checkout/R1.19-B01.

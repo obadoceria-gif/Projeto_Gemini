@@ -194,3 +194,11 @@ R1.18 consolidada sobre o fluxo oficial.
 - candidato temporario removido;
 - documentacao versionada;
 - push nao executado.
+
+## R1.19-B01
+
+- Adicionada proteção contra duplo envio no checkout.
+- Adicionado lock temporário de finalização.
+- Adicionado feedback visual PROCESSANDO PEDIDO....
+- Adicionados ria-disabled e ria-busy durante processamento.
+- Mantida compatibilidade com o fluxo legado e WhatsApp.

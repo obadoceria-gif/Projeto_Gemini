@@ -188,3 +188,11 @@ R1.18 consolidada sobre o fluxo oficial.
 - candidato temporario removido;
 - documentacao versionada;
 - push nao executado.
+
+## R1.19-B01 — proteção contra duplo envio
+
+- Status: concluído e aprovado funcionalmente.
+- Checkout impede acionamentos repetidos durante a finalização.
+- Botão apresenta estado de processamento.
+- Fluxo oficial para WhatsApp preservado.
+- Teste funcional aprovado em 2026-08-16 22:11:23.
