@@ -188,3 +188,23 @@ Validação:
 Git:
 commit controlado previsto nesta mesma etapa.
 push não autorizado.
+## 2026-08-17 19:39:52 — R1.19-D
+
+Ação:
+Promoção do modal reutilizável de decisão e consolidação da UX do carrinho.
+
+Evolução:
+1. padrão inicial de dois toques avaliado;
+2. padrão rejeitado após teste de UX;
+3. substituído por confirmação explícita em modal;
+4. feedback de inclusão tornado persistente;
+5. corrigido foco do modal;
+6. corrigido foco da viewport do carrinho;
+7. regressão funcional executada;
+8. nenhum erro funcional remanescente identificado.
+
+Segurança:
+- candidato isolado durante desenvolvimento;
+- oficial promovido somente após aprovação;
+- staging controlado;
+- push não autorizado nesta etapa.

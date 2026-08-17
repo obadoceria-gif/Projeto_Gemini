@@ -237,3 +237,17 @@ R1.18 consolidada sobre o fluxo oficial.
 Foi adotado lock de execução na função oficial de checkout para impedir múltiplos acionamentos do fluxo de finalização.
 
 A solução preserva o fluxo legado e possui fail-safe temporizado para permitir nova tentativa caso a transição externa não prossiga.
+## Decisão R1.19-D — confirmação explícita para ações relevantes
+
+Foi rejeitado o padrão experimental de dois toques na lixeira.
+
+Decisão adotada:
+- um toque inicia a intenção;
+- modal central exige decisão explícita;
+- ações destrutivas usam REMOVER ITEM / MANTER ITEM;
+- mensagens importantes não desaparecem automaticamente;
+- toast permanece reservado para feedback secundário.
+
+A mesma infraestrutura passou a ser reutilizável para decisões futuras.
+
+Também foi definido que regiões marcadas com aria-hidden não podem manter foco em descendentes.

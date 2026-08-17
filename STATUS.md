@@ -196,3 +196,17 @@ R1.18 consolidada sobre o fluxo oficial.
 - Botão apresenta estado de processamento.
 - Fluxo oficial para WhatsApp preservado.
 - Teste funcional aprovado em 2026-08-16 22:11:23.
+## R1.19-D — UX de confirmação e acessibilidade
+
+Status: concluída e aprovada funcionalmente.
+
+Implementado:
+- modal reutilizável de decisão;
+- remoção de produto com um toque + confirmação explícita;
+- cancelamento sem alteração do carrinho;
+- feedback persistente para inclusão no carrinho;
+- correção de foco antes de aria-hidden;
+- proteção de foco do carrinho em todos os caminhos de ocultação;
+- preservação do checkout e da proteção contra duplo envio.
+
+Validação funcional concluída em 2026-08-17 19:39:52.

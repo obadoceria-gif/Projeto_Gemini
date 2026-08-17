@@ -9794,5 +9794,1426 @@ function mostrarNotificacao(msg) {
 })();
 
 </script>
+
+<!-- ================================================================
+ R1.19-D-R3 - MODAL REUTILIZAVEL DE DECISAO
+================================================================ -->
+
+<style id="oba-r119d-modal-style">
+
+#oba-r119d-modal-decisao {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+
+  display: none;
+  align-items: center;
+  justify-content: center;
+
+  padding: 18px;
+
+  background: rgba(25, 18, 14, .74);
+
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+#oba-r119d-modal-decisao.oba-r119d-aberto {
+  display: flex;
+}
+
+#oba-r119d-modal-card {
+  position: relative;
+
+  width: min(100%, 390px);
+
+  max-height: 90dvh;
+  overflow-y: auto;
+
+  padding: 28px 22px 22px;
+
+  border: 1px solid #ead2b6;
+  border-radius: 28px;
+
+  background: #fffaf5;
+
+  box-shadow:
+    0 24px 70px rgba(59, 42, 30, .30);
+
+  text-align: center;
+}
+
+#oba-r119d-modal-fechar {
+  position: absolute;
+
+  top: 14px;
+  right: 14px;
+
+  width: 38px;
+  height: 38px;
+
+  border: 0;
+  border-radius: 999px;
+
+  background: #f3f4f6;
+  color: #7c8796;
+
+  cursor: pointer;
+
+  font-size: 17px;
+  font-weight: 800;
+}
+
+#oba-r119d-modal-icone {
+  width: 62px;
+  height: 62px;
+
+  margin: 4px auto 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 999px;
+
+  background: #fff0e8;
+  color: #a34b0b;
+
+  font-size: 24px;
+}
+
+#oba-r119d-modal-titulo {
+  margin: 0;
+
+  color: #8b4513;
+
+  font-size: 21px;
+  line-height: 1.18;
+
+  font-weight: 900;
+}
+
+#oba-r119d-modal-mensagem {
+  max-width: 315px;
+
+  margin: 11px auto 0;
+
+  color: #6b625d;
+
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+#oba-r119d-modal-item {
+  display: none;
+
+  margin-top: 18px;
+
+  padding: 14px 15px;
+
+  border: 1px solid #efd3b3;
+  border-radius: 16px;
+
+  background: #fff4e8;
+  color: #8b4513;
+
+  font-size: 13px;
+  line-height: 1.35;
+
+  font-weight: 800;
+}
+
+#oba-r119d-modal-item.oba-r119d-visivel {
+  display: block;
+}
+
+#oba-r119d-modal-acoes {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+
+  gap: 10px;
+
+  margin-top: 22px;
+}
+
+.oba-r119d-btn {
+  min-height: 51px;
+
+  padding: 11px;
+
+  border-radius: 14px;
+
+  cursor: pointer;
+
+  font-size: 10px;
+  line-height: 1.25;
+
+  font-weight: 900;
+
+  text-transform: uppercase;
+
+  letter-spacing: .035em;
+}
+
+#oba-r119d-modal-cancelar {
+  border: 1px solid #ddd5cf;
+
+  background: #ffffff;
+  color: #706762;
+}
+
+#oba-r119d-modal-confirmar {
+  border: 0;
+
+  background: #a34b0b;
+  color: #ffffff;
+
+  box-shadow:
+    0 8px 20px rgba(163, 75, 11, .20);
+}
+
+#oba-r119d-modal-decisao[data-tipo="perigo"]
+#oba-r119d-modal-icone {
+  background: #fff0f0;
+  color: #ef5350;
+}
+
+#oba-r119d-modal-decisao[data-tipo="perigo"]
+#oba-r119d-modal-confirmar {
+  background: #d84b48;
+}
+
+#oba-r119d-modal-decisao[data-tipo="sucesso"]
+#oba-r119d-modal-icone {
+  background: #ecf9f0;
+  color: #16a34a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  #oba-r119d-modal-decisao *,
+  #oba-r119d-modal-decisao {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+</style>
+
+
+<div id="oba-r119d-modal-decisao"
+     role="dialog"
+     aria-modal="true"
+     aria-hidden="true"
+     aria-labelledby="oba-r119d-modal-titulo"
+     data-tipo="info">
+
+  <div id="oba-r119d-modal-card">
+
+    <button type="button"
+            id="oba-r119d-modal-fechar"
+            aria-label="Fechar">
+      ✕
+    </button>
+
+    <div id="oba-r119d-modal-icone">
+      <i class="fa-solid fa-circle-info"></i>
+    </div>
+
+    <h2 id="oba-r119d-modal-titulo">
+      Confirmar ação
+    </h2>
+
+    <p id="oba-r119d-modal-mensagem"></p>
+
+    <div id="oba-r119d-modal-item"></div>
+
+    <div id="oba-r119d-modal-acoes">
+
+      <button type="button"
+              id="oba-r119d-modal-cancelar"
+              class="oba-r119d-btn">
+        Cancelar
+      </button>
+
+      <button type="button"
+              id="oba-r119d-modal-confirmar"
+              class="oba-r119d-btn">
+        Confirmar
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script id="oba-r119d-modal-runtime">
+
+(() => {
+
+  'use strict';
+
+
+  if (
+    window.__OBA_R119D_MODAL_INSTALADO__ ===
+    true
+  ) {
+    return;
+  }
+
+
+  window.__OBA_R119D_MODAL_INSTALADO__ =
+    true;
+
+
+  const modal =
+    document.getElementById(
+      'oba-r119d-modal-decisao'
+    );
+
+
+  const titulo =
+    document.getElementById(
+      'oba-r119d-modal-titulo'
+    );
+
+
+  const mensagem =
+    document.getElementById(
+      'oba-r119d-modal-mensagem'
+    );
+
+
+  const item =
+    document.getElementById(
+      'oba-r119d-modal-item'
+    );
+
+
+  const icone =
+    document.getElementById(
+      'oba-r119d-modal-icone'
+    );
+
+
+  const acoes =
+    document.getElementById(
+      'oba-r119d-modal-acoes'
+    );
+
+
+  const cancelar =
+    document.getElementById(
+      'oba-r119d-modal-cancelar'
+    );
+
+
+  const confirmar =
+    document.getElementById(
+      'oba-r119d-modal-confirmar'
+    );
+
+
+  const fechar =
+    document.getElementById(
+      'oba-r119d-modal-fechar'
+    );
+
+
+  let callbackConfirmar =
+    null;
+
+
+  let callbackCancelar =
+    null;
+
+
+  let focoAnterior =
+    null;
+
+
+  function fecharModal(
+    confirmado = false
+  ) {
+
+    if (
+      !modal.classList.contains(
+        'oba-r119d-aberto'
+      )
+    ) {
+      return;
+    }
+
+
+    /*
+     * R1.19-D-R3-A11Y
+     *
+     * O foco precisa sair do dialog ANTES de aria-hidden=true.
+     * Isso evita ocultar de tecnologias assistivas um elemento
+     * que ainda possui foco.
+     */
+
+    const elementoAtivo =
+      document.activeElement;
+
+
+    if (
+      elementoAtivo &&
+      modal.contains(
+        elementoAtivo
+      ) &&
+      typeof elementoAtivo.blur ===
+        'function'
+    ) {
+
+      elementoAtivo.blur();
+    }
+
+
+    modal.classList.remove(
+      'oba-r119d-aberto'
+    );
+
+
+    document.body.style.overflow =
+      '';
+
+
+    const cbConfirmar =
+      callbackConfirmar;
+
+
+    const cbCancelar =
+      callbackCancelar;
+
+
+    callbackConfirmar =
+      null;
+
+
+    callbackCancelar =
+      null;
+
+
+    if (
+      focoAnterior &&
+      typeof focoAnterior.focus ===
+      'function'
+    ) {
+
+      try {
+
+        focoAnterior.focus({
+          preventScroll: true
+        });
+
+      }
+      catch (_) {
+
+        try {
+          focoAnterior.focus();
+        }
+        catch (_) {}
+      }
+    }
+
+
+    /*
+     * Somente depois de retirar/restaurar o foco
+     * o dialog deixa a arvore de acessibilidade.
+     */
+
+    modal.setAttribute(
+      'aria-hidden',
+      'true'
+    );
+
+
+    if (
+      confirmado &&
+      typeof cbConfirmar ===
+      'function'
+    ) {
+
+      cbConfirmar();
+
+      return;
+    }
+
+
+    if (
+      !confirmado &&
+      typeof cbCancelar ===
+      'function'
+    ) {
+
+      cbCancelar();
+    }
+  }
+
+
+  window.fecharModalDecisaoR119D =
+    () => {
+
+      fecharModal(
+        false
+      );
+    };
+
+
+  window.abrirModalDecisaoR119D =
+    config => {
+
+      config =
+        config || {};
+
+
+      focoAnterior =
+        document.activeElement;
+
+
+      modal.dataset.tipo =
+        config.tipo ||
+        'info';
+
+
+      titulo.textContent =
+        config.titulo ||
+        'Confirmar ação';
+
+
+      mensagem.textContent =
+        config.mensagem ||
+        '';
+
+
+      if (
+        config.item
+      ) {
+
+        item.textContent =
+          String(
+            config.item
+          );
+
+
+        item.classList.add(
+          'oba-r119d-visivel'
+        );
+      }
+      else {
+
+        item.textContent =
+          '';
+
+
+        item.classList.remove(
+          'oba-r119d-visivel'
+        );
+      }
+
+
+      confirmar.textContent =
+        config.confirmarTexto ||
+        'Confirmar';
+
+
+      cancelar.textContent =
+        config.cancelarTexto ||
+        'Cancelar';
+
+
+      callbackConfirmar =
+        typeof config.onConfirmar ===
+        'function'
+          ? config.onConfirmar
+          : null;
+
+
+      callbackCancelar =
+        typeof config.onCancelar ===
+        'function'
+          ? config.onCancelar
+          : null;
+
+
+      if (
+        config.ocultarCancelar ===
+        true
+      ) {
+
+        cancelar.style.display =
+          'none';
+
+
+        acoes.style.gridTemplateColumns =
+          '1fr';
+      }
+      else {
+
+        cancelar.style.display =
+          '';
+
+
+        acoes.style.gridTemplateColumns =
+          'minmax(0, 1fr) minmax(0, 1fr)';
+      }
+
+
+      if (
+        config.tipo ===
+        'perigo'
+      ) {
+
+        icone.innerHTML =
+          '<i class="fa-solid fa-trash-can"></i>';
+      }
+      else if (
+        config.tipo ===
+        'sucesso'
+      ) {
+
+        icone.innerHTML =
+          '<i class="fa-solid fa-circle-check"></i>';
+      }
+      else {
+
+        icone.innerHTML =
+          '<i class="fa-solid fa-circle-info"></i>';
+      }
+
+
+      modal.classList.add(
+        'oba-r119d-aberto'
+      );
+
+
+      modal.setAttribute(
+        'aria-hidden',
+        'false'
+      );
+
+
+      document.body.style.overflow =
+        'hidden';
+
+
+      window.setTimeout(
+        () => {
+
+          confirmar.focus();
+
+        },
+        30
+      );
+    };
+
+
+  cancelar.addEventListener(
+    'click',
+    () => {
+
+      fecharModal(
+        false
+      );
+    }
+  );
+
+
+  confirmar.addEventListener(
+    'click',
+    () => {
+
+      fecharModal(
+        true
+      );
+    }
+  );
+
+
+  fechar.addEventListener(
+    'click',
+    () => {
+
+      fecharModal(
+        false
+      );
+    }
+  );
+
+
+  modal.addEventListener(
+    'click',
+    event => {
+
+      if (
+        event.target ===
+        modal
+      ) {
+
+        fecharModal(
+          false
+        );
+      }
+    }
+  );
+
+
+  document.addEventListener(
+    'keydown',
+    event => {
+
+      if (
+        event.key ===
+          'Escape' &&
+        modal.classList.contains(
+          'oba-r119d-aberto'
+        )
+      ) {
+
+        event.preventDefault();
+
+
+        fecharModal(
+          false
+        );
+      }
+    }
+  );
+
+
+  function obterItem(
+    indice
+  ) {
+
+    try {
+
+      return (
+        carrinhoDeCaixasConcluidas[
+          indice
+        ] ||
+        null
+      );
+    }
+    catch (_) {
+
+      return null;
+    }
+  }
+
+
+  function obterTitulo(
+    indice
+  ) {
+
+    const registro =
+      obterItem(
+        indice
+      );
+
+
+    return (
+      registro?.titulo ||
+      'Este item'
+    );
+  }
+
+
+  function confirmarRemocao(
+    indice,
+    executar
+  ) {
+
+    const nome =
+      obterTitulo(
+        indice
+      );
+
+
+    window.abrirModalDecisaoR119D({
+      tipo:
+        'perigo',
+
+      titulo:
+        'Remover este item?',
+
+      mensagem:
+        'Ao confirmar, o produto será retirado do seu carrinho.',
+
+      item:
+        nome,
+
+      confirmarTexto:
+        'Remover item',
+
+      cancelarTexto:
+        'Manter item',
+
+      onConfirmar:
+        executar
+    });
+  }
+
+
+  /*
+   * ==========================================================
+   * REMOVER ITEM - CARRINHO ANTIGO
+   * ==========================================================
+   */
+
+  function protegerRemoverItemCarrinho() {
+
+    if (
+      typeof window.removerItemCarrinho !==
+      'function'
+    ) {
+      return false;
+    }
+
+
+    if (
+      window.removerItemCarrinho
+        .__obaR119DProtegida
+    ) {
+      return true;
+    }
+
+
+    const original =
+      window.removerItemCarrinho;
+
+
+    const protegida =
+      indice => {
+
+        confirmarRemocao(
+          indice,
+          () => {
+
+            original(
+              indice
+            );
+          }
+        );
+      };
+
+
+    protegida.__obaR119DProtegida =
+      true;
+
+
+    window.removerItemCarrinho =
+      protegida;
+
+
+    return true;
+  }
+
+
+  /*
+   * ==========================================================
+   * REMOVER ITEM - PAINEL LATERAL
+   * ==========================================================
+   */
+
+  function protegerRemoverLateral() {
+
+    if (
+      typeof window.removerDoLateral !==
+      'function'
+    ) {
+      return false;
+    }
+
+
+    if (
+      window.removerDoLateral
+        .__obaR119DProtegida
+    ) {
+      return true;
+    }
+
+
+    const original =
+      window.removerDoLateral;
+
+
+    const protegida =
+      indice => {
+
+        confirmarRemocao(
+          indice,
+          () => {
+
+            original(
+              indice
+            );
+          }
+        );
+      };
+
+
+    protegida.__obaR119DProtegida =
+      true;
+
+
+    window.removerDoLateral =
+      protegida;
+
+
+    return true;
+  }
+
+
+  /*
+   * ==========================================================
+   * REMOVER ITEM - CARRINHO MOBILE R1.17
+   * ==========================================================
+   */
+
+  function protegerRemoverViewport() {
+
+    if (
+      typeof window.removerItemCarrinhoViewportR117 !==
+      'function'
+    ) {
+      return false;
+    }
+
+
+    if (
+      window.removerItemCarrinhoViewportR117
+        .__obaR119DProtegida
+    ) {
+      return true;
+    }
+
+
+    const original =
+      window.removerItemCarrinhoViewportR117;
+
+
+    const protegida =
+      indice => {
+
+        confirmarRemocao(
+          indice,
+          () => {
+
+            original(
+              indice
+            );
+          }
+        );
+      };
+
+
+    protegida.__obaR119DProtegida =
+      true;
+
+
+    window.removerItemCarrinhoViewportR117 =
+      protegida;
+
+
+    return true;
+  }
+
+
+  /*
+   * ==========================================================
+   * FEEDBACK "ADICIONADO AO CARRINHO"
+   *
+   * Somente mensagens de adicao viram modal.
+   * Demais notificacoes continuam no toast existente.
+   * ==========================================================
+   */
+
+  function protegerNotificacao() {
+
+    if (
+      typeof window.mostrarNotificacao !==
+      'function'
+    ) {
+      return false;
+    }
+
+
+    if (
+      window.mostrarNotificacao
+        .__obaR119DProtegida
+    ) {
+      return true;
+    }
+
+
+    const original =
+      window.mostrarNotificacao;
+
+
+    const protegida =
+      msg => {
+
+        const texto =
+          String(
+            msg ||
+            ''
+          )
+            .trim();
+
+
+        const ehAdicao =
+          /adicionad[ao]\s+ao\s+carrinho/i
+            .test(
+              texto
+            ) ||
+          /adicionado!/i
+            .test(
+              texto
+            );
+
+
+        if (
+          !ehAdicao
+        ) {
+
+          original(
+            msg
+          );
+
+          return;
+        }
+
+
+        const textoLimpo =
+          texto
+            .replace(
+              /^✓\s*/,
+              ''
+            )
+            .replace(
+              /!+$/,
+              ''
+            );
+
+
+        window.abrirModalDecisaoR119D({
+          tipo:
+            'sucesso',
+
+          titulo:
+            'Adicionado ao carrinho!',
+
+          mensagem:
+            'O item foi incluído no seu pedido com sucesso.',
+
+          item:
+            textoLimpo,
+
+          confirmarTexto:
+            'Continuar',
+
+          ocultarCancelar:
+            true
+        });
+      };
+
+
+    protegida.__obaR119DProtegida =
+      true;
+
+
+    window.mostrarNotificacao =
+      protegida;
+
+
+    return true;
+  }
+
+
+  /*
+   * Os runtimes anteriores ja devem existir neste ponto,
+   * mas repetimos por alguns ciclos para garantir integracao.
+   */
+
+  let tentativas =
+    0;
+
+
+  const instalador =
+    window.setInterval(
+      () => {
+
+        tentativas +=
+          1;
+
+
+        const a =
+          protegerRemoverItemCarrinho();
+
+
+        const b =
+          protegerRemoverLateral();
+
+
+        const c =
+          protegerRemoverViewport();
+
+
+        const d =
+          protegerNotificacao();
+
+
+        if (
+          (
+            a &&
+            b &&
+            c &&
+            d
+          ) ||
+          tentativas >=
+            40
+        ) {
+
+          window.clearInterval(
+            instalador
+          );
+
+
+          console.log(
+            '[R1.19-D-R3] Integracao concluida.',
+            {
+              removerItem:
+                a,
+
+              removerLateral:
+                b,
+
+              removerViewport:
+                c,
+
+              feedbackAdicao:
+                d
+            }
+          );
+        }
+
+      },
+      100
+    );
+
+
+  console.log(
+    '[R1.19-D-R3] Modal reutilizavel instalado.'
+  );
+
+})();
+
+</script>
+
+
+<script id="r119d-a11y2-cart-guard">
+
+/* ================================================================
+   R1.19-D-R3-A11Y2-R1
+   PROTECAO GLOBAL DO FOCO DO CARRINHO
+
+   Qualquer chamada:
+       r117b-cart-view.setAttribute('aria-hidden', 'true')
+
+   passa primeiro por este guard.
+
+   Assim nenhum descendente focado permanece dentro de uma
+   regiao que esta sendo retirada da arvore de acessibilidade.
+================================================================ */
+
+(() => {
+
+  'use strict';
+
+
+  if (
+    window.__R119D_A11Y2_CART_GUARD__ ===
+    true
+  ) {
+
+    return;
+  }
+
+
+  window.__R119D_A11Y2_CART_GUARD__ =
+    true;
+
+
+  const carrinho =
+    document.getElementById(
+      'r117b-cart-view'
+    );
+
+
+  if (!carrinho) {
+
+    console.warn(
+      '[R1.19-D-R3-A11Y2] r117b-cart-view nao encontrado.'
+    );
+
+    return;
+  }
+
+
+  /*
+   * ------------------------------------------------------------
+   * Destino seguro de foco
+   * ------------------------------------------------------------
+   */
+
+  function encontrarDestinoSeguro() {
+
+    const candidatos = [
+
+      document.querySelector(
+        '[onclick*="abrirModalCarrinho"]'
+      ),
+
+      document.querySelector(
+        '#btn-carrinho-mobile'
+      ),
+
+      document.querySelector(
+        '#btn-wpp-flutuante'
+      ),
+
+      document.querySelector(
+        '#secao-passo1 button:not([disabled])'
+      ),
+
+      document.querySelector(
+        'button:not([disabled])'
+      )
+
+    ];
+
+
+    return (
+      candidatos.find(
+        elemento =>
+          elemento &&
+          !carrinho.contains(elemento)
+      ) ||
+      null
+    );
+  }
+
+
+  /*
+   * ------------------------------------------------------------
+   * Retirar foco do carrinho
+   * ------------------------------------------------------------
+   */
+
+  function liberarFocoCarrinho() {
+
+    const ativo =
+      document.activeElement;
+
+
+    if (
+      !ativo ||
+      !carrinho.contains(ativo)
+    ) {
+
+      return false;
+    }
+
+
+    /*
+     * Primeiro removemos o foco do descendente.
+     */
+
+    if (
+      typeof ativo.blur ===
+      'function'
+    ) {
+
+      ativo.blur();
+    }
+
+
+    /*
+     * Depois tentamos mover para um elemento externo.
+     */
+
+    const destino =
+      encontrarDestinoSeguro();
+
+
+    if (
+      destino &&
+      typeof destino.focus ===
+      'function'
+    ) {
+
+      try {
+
+        destino.focus({
+          preventScroll: true
+        });
+
+      }
+      catch (_) {
+
+        try {
+          destino.focus();
+        }
+        catch (_) {}
+      }
+    }
+
+
+    /*
+     * Garantia final:
+     * se por qualquer motivo o foco continuar dentro,
+     * forcamos blur novamente.
+     */
+
+    const depois =
+      document.activeElement;
+
+
+    if (
+      depois &&
+      carrinho.contains(depois) &&
+      typeof depois.blur ===
+        'function'
+    ) {
+
+      depois.blur();
+    }
+
+
+    console.info(
+      '[R1.19-D-R3-A11Y2] Foco liberado antes de ocultar carrinho.'
+    );
+
+
+    return true;
+  }
+
+
+  /*
+   * ------------------------------------------------------------
+   * INTERCEPTAR setAttribute DO PROPRIO CARRINHO
+   * ------------------------------------------------------------
+   */
+
+  const setAttributeOriginal =
+    carrinho.setAttribute.bind(
+      carrinho
+    );
+
+
+  carrinho.setAttribute =
+    function (
+      nome,
+      valor
+    ) {
+
+      const atributo =
+        String(
+          nome ||
+          ''
+        )
+          .toLowerCase();
+
+
+      const conteudo =
+        String(
+          valor
+        )
+          .toLowerCase();
+
+
+      if (
+        atributo ===
+          'aria-hidden' &&
+        conteudo ===
+          'true'
+      ) {
+
+        liberarFocoCarrinho();
+      }
+
+
+      return setAttributeOriginal(
+        nome,
+        valor
+      );
+    };
+
+
+  /*
+   * ------------------------------------------------------------
+   * PROTECAO ADICIONAL PARA setAttributeNode
+   * ------------------------------------------------------------
+   */
+
+  const setAttributeNodeOriginal =
+    carrinho.setAttributeNode
+      ? carrinho.setAttributeNode.bind(
+          carrinho
+        )
+      : null;
+
+
+  if (setAttributeNodeOriginal) {
+
+    carrinho.setAttributeNode =
+      function (attr) {
+
+        if (
+          attr &&
+          String(
+            attr.name
+          ).toLowerCase() ===
+            'aria-hidden' &&
+          String(
+            attr.value
+          ).toLowerCase() ===
+            'true'
+        ) {
+
+          liberarFocoCarrinho();
+        }
+
+
+        return setAttributeNodeOriginal(
+          attr
+        );
+      };
+  }
+
+
+  /*
+   * Disponivel para outros fluxos.
+   */
+
+  window.liberarFocoCarrinhoR119D =
+    liberarFocoCarrinho;
+
+
+  console.log(
+    '[R1.19-D-R3-A11Y2] Guard global do carrinho instalado.'
+  );
+
+})();
+
+</script>
+
 </body>
 </html>

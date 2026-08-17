@@ -202,3 +202,21 @@ R1.18 consolidada sobre o fluxo oficial.
 - Adicionado feedback visual PROCESSANDO PEDIDO....
 - Adicionados ria-disabled e ria-busy durante processamento.
 - Mantida compatibilidade com o fluxo legado e WhatsApp.
+## R1.19-D
+
+### UX
+- substituído padrão de duplo toque para exclusão;
+- lixeira agora abre modal de confirmação com um único toque;
+- adicionadas ações explícitas para manter ou remover item;
+- feedback de inclusão no carrinho passou a utilizar modal persistente.
+
+### Acessibilidade
+- corrigido foco retido dentro do modal ao aplicar aria-hidden;
+- corrigido foco retido dentro do carrinho ao ocultar a viewport;
+- adicionada proteção global antes de aria-hidden=true no carrinho.
+
+### Regressão
+- carrinho preservado;
+- checkout preservado;
+- WhatsApp preservado;
+- R1.19-B01 preservada.

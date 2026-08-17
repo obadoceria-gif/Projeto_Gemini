@@ -176,3 +176,16 @@ R1.18 consolidada sobre o fluxo oficial.
 Proteção contra duplo envio promovida após validação estrutural e regressão funcional.
 
 Próximo foco: segundo item priorizado no backlog R1.19-B.
+### R1.19-D — concluída
+
+Evolução da experiência do carrinho concluída.
+
+Entregas:
+- modal reutilizável;
+- confirmação explícita para exclusão;
+- feedback persistente de inclusão;
+- correções de foco e aria-hidden;
+- regressão funcional aprovada sem TypeError/ReferenceError.
+
+Próxima etapa:
+R1.20 — próxima evolução priorizada após consolidação R1.19.

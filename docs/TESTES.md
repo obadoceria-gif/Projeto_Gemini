@@ -209,3 +209,28 @@ Validado:
 
 Observação:
 404 de favicon não relacionado ao checkout/R1.19-B01.
+## R1.19-D — regressão funcional
+
+Resultado: APROVADO.
+
+Testado:
+- inclusão de produto;
+- modal persistente de confirmação;
+- continuar após inclusão;
+- abertura do carrinho;
+- continuar comprando;
+- lixeira com um toque;
+- manter item;
+- remover item;
+- remoção do último item;
+- fechamento e reabertura do carrinho;
+- controle de foco do modal;
+- controle de foco da viewport do carrinho.
+
+Console:
+- nenhum TypeError;
+- nenhum ReferenceError;
+- nenhum aviso Blocked aria-hidden após correções A11Y.
+
+Observação conhecida:
+favicon.ico 404 permanece independente desta implementação.
