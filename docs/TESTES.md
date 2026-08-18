@@ -300,3 +300,25 @@ CONCLUIDO E APROVADO.
 PROXIMA ACAO:
 R1.20-B03 - PROXIMO ITEM PRIORIZADO DO BACKLOG.
 ============================================================
+## R1.20-B03 — asset Degustação 25 Sabores
+
+Data: 2026-08-17 23:51:03
+
+Status: encerrado tecnicamente / pendência externa de conteúdo.
+
+Diagnóstico:
+- Degustacao_12_Sabores.jpeg e Degustacao_25_Sabores.jpeg possuem conteúdo binário idêntico;
+- inventário visual completo do ui-desenvolvimento analisado;
+- 82 imagens físicas;
+- 81 conteúdos únicos;
+- nenhuma fotografia correta da Caixa Degustação 25 Sabores foi localizada.
+
+Decisão:
+- não reutilizar conscientemente a fotografia da caixa de 12 sabores como solução definitiva;
+- não gerar ou inventar fotografia substituta;
+- não substituir por asset sem autenticação;
+- manter a referência atual até que a fotografia oficial correta seja fornecida;
+- classificar a correção como dependência externa de conteúdo, não como bloqueio técnico.
+
+Próxima ação:
+R1.20-B04 — próximo gap técnico real do backlog.
