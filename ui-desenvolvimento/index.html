@@ -1176,6 +1176,465 @@
 }
 
 </style>
+
+<style id="r120-b04-ux2-styles">
+
+/* ================================================================
+   R1.20-B04-UX2
+   BOTAO COMPACTO DURANTE MONTAGEM
+================================================================ */
+
+#r120-ux2-selection-trigger {
+  position: fixed;
+
+  left: 50%;
+  bottom: 18px;
+
+  z-index: 125;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  width: min(calc(100% - 32px), 370px);
+
+  margin: 0;
+
+  padding: 10px 13px;
+
+  transform: translateX(-50%);
+
+  border: 1px solid #d9a770;
+  border-radius: 15px;
+
+  background: rgba(255,250,244,.97);
+
+  color: #874410;
+
+  box-shadow:
+    0 8px 24px rgba(74,42,20,.15);
+
+  backdrop-filter: blur(8px);
+
+  cursor: pointer;
+}
+
+#r120-ux2-selection-trigger[hidden] {
+  display: none !important;
+}
+
+.r120-ux2-trigger-left {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.r120-ux2-trigger-label {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+#r120-ux2-trigger-status {
+  margin-top: 2px;
+
+  color: #8e96a5;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.r120-ux2-trigger-icon {
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  border-radius: 50%;
+
+  background: #a44d0a;
+  color: white;
+}
+
+
+/* ================================================================
+   MODAL DE CONSULTA
+================================================================ */
+
+#r120-ux2-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 18px;
+
+  background: rgba(38,31,27,.68);
+
+  backdrop-filter: blur(4px);
+}
+
+#r120-ux2-modal[hidden] {
+  display: none !important;
+}
+
+#r120-ux2-dialog {
+  width: min(100%,390px);
+  max-height: 82vh;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  border: 1px solid #ead0b3;
+  border-radius: 24px;
+
+  background: #fffaf5;
+
+  box-shadow:
+    0 24px 70px rgba(0,0,0,.28);
+}
+
+.r120-ux2-header {
+  position: relative;
+
+  padding: 21px 20px 15px;
+
+  border-bottom: 1px solid #ead8c5;
+}
+
+.r120-ux2-kicker {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #a1a8b5;
+
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.r120-ux2-title {
+  margin: 0;
+
+  color: #91470f;
+
+  font-size: 21px;
+  font-weight: 900;
+}
+
+.r120-ux2-subtitle {
+  margin: 5px 34px 0 0;
+
+  color: #727987;
+
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+#r120-ux2-close {
+  position: absolute;
+
+  top: 16px;
+  right: 16px;
+
+  width: 34px;
+  height: 34px;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: #f1f2f4;
+  color: #77808e;
+
+  font-size: 18px;
+  cursor: pointer;
+}
+
+#r120-ux2-list {
+  flex: 1;
+  overflow-y: auto;
+
+  padding: 9px 20px;
+}
+
+.r120-ux2-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  padding: 11px 0;
+
+  border-bottom: 1px solid #eee4da;
+}
+
+.r120-ux2-item:last-child {
+  border-bottom: 0;
+}
+
+.r120-ux2-item-name {
+  color: #643b22;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.r120-ux2-item-qtd {
+  min-width: 38px;
+
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  background: #fff0df;
+  color: #9b4a0d;
+
+  font-size: 11px;
+  font-weight: 900;
+
+  text-align: center;
+}
+
+#r120-ux2-total {
+  padding: 12px 20px;
+
+  border-top: 1px solid #ead8c5;
+
+  color: #8a4513;
+
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.r120-ux2-actions {
+  padding: 0 20px 20px;
+}
+
+.r120-ux2-actions button {
+  width: 100%;
+  min-height: 46px;
+
+  border: 1px solid #d9dde4;
+  border-radius: 13px;
+
+  background: white;
+  color: #757d8b;
+
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+
+  cursor: pointer;
+}
+
+
+/* ================================================================
+   MODAL FINAL EXISTENTE
+================================================================ */
+
+#modal-caixa-concluida.r120-ux2-review #mcc-sabores {
+  max-height: 210px;
+
+  padding: 13px 15px !important;
+
+  border: 1px solid #ead6bf;
+
+  background: #fffaf4 !important;
+}
+
+#r120-ux2-final-label {
+  margin: 0 0 7px;
+
+  color: #a1a8b5;
+
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .11em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+#r120-ux2-alterar-final {
+  width: 100%;
+
+  padding: 12px 14px;
+
+  border: 1px solid #d7dce4;
+  border-radius: 12px;
+
+  background: #ffffff;
+  color: #757d8a;
+
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+
+  cursor: pointer;
+}
+
+
+/* ação principal dentro do modal final */
+#modal-caixa-concluida.r120-ux2-review
+button[onclick*="salvarCaixaEContinuar"] {
+  background: #a34b08 !important;
+  border-color: #a34b08 !important;
+  color: white !important;
+}
+
+
+/* ================================================================
+   VER SABORES NO CARRINHO
+================================================================ */
+
+.r120-ux2-ver-carrinho {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  margin-top: 9px;
+
+  padding: 6px 9px;
+
+  border: 1px solid #e3c7a7;
+  border-radius: 9px;
+
+  background: #fffaf4;
+  color: #96501a;
+
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+
+  cursor: pointer;
+}
+
+
+/* ================================================================
+   NOTIFICACAO = STATUS, NAO BOTAO
+================================================================ */
+
+#custom-toast {
+  border: 1px solid #e7cab0 !important;
+
+  background:
+    rgba(255,250,244,.98) !important;
+
+  color: #70411f !important;
+
+  border-radius: 14px !important;
+
+  box-shadow:
+    0 10px 28px rgba(58,37,24,.18) !important;
+}
+
+</style>
+
+<style id="r120-b04-ux3-fix">
+
+/* ================================================================
+   R1.20-B04-UX3
+   CORRECAO DO BOTAO MINHA SELECAO
+================================================================ */
+
+#r120-ux2-selection-trigger {
+
+  border:
+    1px solid #c9803d !important;
+
+  background:
+    rgba(255, 249, 241, .98) !important;
+
+  box-shadow:
+    0 10px 28px rgba(68, 39, 19, .22) !important;
+}
+
+
+/*
+ * Pequena faixa superior deixa claro que se trata
+ * de uma ferramenta de acompanhamento, e nao
+ * do botao principal para avancar.
+ */
+
+#r120-ux2-selection-trigger::before {
+
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 16px;
+  right: 16px;
+
+  height: 2px;
+
+  border-radius: 0 0 4px 4px;
+
+  background: #d99a5d;
+}
+
+
+#r120-ux2-selection-trigger .r120-ux2-trigger-label {
+
+  color: #8c4511;
+
+  font-size: 10px;
+}
+
+
+#r120-ux2-selection-trigger #r120-ux2-trigger-status {
+
+  color: #787f8d;
+
+  font-size: 9px;
+}
+
+
+/*
+ * Evita conflito com o WhatsApp flutuante enquanto
+ * o seletor de sabores estiver ativo.
+ */
+
+body:has(#r120-ux2-selection-trigger:not([hidden]))
+#btn-wpp-flutuante {
+
+  bottom: 84px;
+}
+
+
+/*
+ * Em telas bem pequenas deixa o controle mais compacto.
+ */
+
+@media (max-width: 390px) {
+
+  #r120-ux2-selection-trigger {
+
+    width: calc(100% - 24px);
+
+    bottom: 12px;
+
+    padding: 9px 12px;
+  }
+}
+
+</style>
 </head>
 <body class="antialiased selection:bg-[#8B4513] selection:text-white pb-24">
 
@@ -2271,7 +2730,7 @@ async function carregarConfigModeloMestre() {
     });
   } catch (erro) {
     atualizarLinksWhatsApp();
-    console.error('[R1.4-C] Fallback da configuracao operacional preservado.', erro);
+    console.info('[R1.4-C] Fallback da configuracao operacional preservado.', erro);
   }
 }
 
@@ -2425,7 +2884,7 @@ async function hidratarKitsDoModeloMestre() {
       erro: String(erro?.message || erro)
     };
 
-    console.error(
+    console.info(
       '[R1.7] Fallback dos kits preservado.',
       erro
     );
@@ -2589,7 +3048,7 @@ async function hidratarOpcionaisDoModeloMestre() {
       erro: String(erro?.message || erro)
     };
 
-    console.error(
+    console.info(
       '[R1.8] Fallback dos opcionais preservado.',
       erro
     );
@@ -2715,7 +3174,7 @@ const caixasConfigs = {
             configs: JSON.parse(JSON.stringify(caixasConfigs)),
             erro: String(erro)
         };
-        console.error("[R1.4-A] Fallback das caixas preservado.", erro);
+        console.info("[R1.4-A] Fallback das caixas preservado.", erro);
     });
 
 const catalogo = [
@@ -2868,7 +3327,7 @@ async function hidratarCatalogoDoModeloMestre() {
       fonte: 'fallback',
       erro: String(erro)
     };
-    console.error('[R1.4-B] Fallback do catalogo preservado.', erro);
+    console.info('[R1.4-B] Fallback do catalogo preservado.', erro);
   }
 }
 
@@ -11686,7 +12145,7 @@ function mostrarNotificacao(msg) {
 
       if (!url) {
 
-        console.error(
+        console.info(
           '[R1.20-B02-WPP1] URL do WhatsApp ausente.'
         );
 
@@ -11764,7 +12223,7 @@ function mostrarNotificacao(msg) {
       }
       catch (erro) {
 
-        console.error(
+        console.info(
           '[R1.20-B02-WPP1] Falha ao abrir WhatsApp.',
           erro
         );
@@ -11777,6 +12236,1682 @@ function mostrarNotificacao(msg) {
 
   console.log(
     '[R1.20-B02-WPP1] Runtime WhatsApp robusto instalado.'
+  );
+
+})();
+
+</script>
+
+<script id="r120-b04-ux2-runtime">
+
+(() => {
+
+  'use strict';
+
+
+  if (window.__R120_B04_UX2__) {
+    return;
+  }
+
+
+  window.__R120_B04_UX2__ =
+    true;
+
+
+  const tamanhosComRevisao =
+    new Set([
+      25,
+      35,
+      50,
+      100
+    ]);
+
+
+  let ultimoFoco =
+    null;
+
+
+  function obterSelecaoAtual() {
+
+    const itens =
+      [];
+
+
+    try {
+
+      for (
+        const [id, valor]
+        of
+        Object.entries(
+          quantidades || {}
+        )
+      ) {
+
+        const quantidade =
+          Number(
+            valor || 0
+          );
+
+
+        if (
+          !Number.isFinite(quantidade) ||
+          quantidade <= 0
+        ) {
+          continue;
+        }
+
+
+        const doce =
+          typeof encontrarDoce === 'function'
+            ? encontrarDoce(id)
+            : null;
+
+
+        itens.push({
+
+          id,
+
+          nome:
+            doce?.nome ||
+            id,
+
+          quantidade
+        });
+      }
+
+    }
+    catch (_) {}
+
+
+    return itens;
+  }
+
+
+  function caixaGrandeAtiva() {
+
+    try {
+
+      if (!caixaAtiva) {
+        return false;
+      }
+
+
+      /*
+       * Degustações fechadas possuem precoFixo e
+       * não precisam deste recurso.
+       */
+
+      if (caixaAtiva.precoFixo) {
+        return false;
+      }
+
+
+      return tamanhosComRevisao.has(
+        Number(
+          caixaAtiva.totalDoces
+        )
+      );
+
+    }
+    catch (_) {
+
+      return false;
+    }
+  }
+
+
+  function totalSelecionado(itens) {
+
+    return itens.reduce(
+      (total, item) =>
+        total +
+        Number(
+          item.quantidade || 0
+        ),
+      0
+    );
+  }
+
+
+  function garantirTrigger() {
+
+    const secao =
+      document.getElementById(
+        'secao-passo2'
+      );
+
+
+    if (!secao) {
+      return null;
+    }
+
+
+    let botao =
+      document.getElementById(
+        'r120-ux2-selection-trigger'
+      );
+
+
+    if (botao) {
+      return botao;
+    }
+
+
+    botao =
+      document.createElement(
+        'button'
+      );
+
+
+    botao.type =
+      'button';
+
+
+    botao.id =
+      'r120-ux2-selection-trigger';
+
+
+    botao.hidden =
+      true;
+
+
+    botao.innerHTML =
+      `
+        <span class="r120-ux2-trigger-left">
+
+          <span class="r120-ux2-trigger-label">
+            Minha seleção
+          </span>
+
+          <span id="r120-ux2-trigger-status">
+            Ver sabores escolhidos
+          </span>
+
+        </span>
+
+        <span class="r120-ux2-trigger-icon">
+          <i class="fa-solid fa-list-check"></i>
+        </span>
+      `;
+
+
+    botao.addEventListener(
+      'click',
+      () => {
+
+        abrirResumoSelecao(
+          'Sua seleção',
+          obterSelecaoAtual()
+        );
+      }
+    );
+
+
+    secao.appendChild(
+      botao
+    );
+
+
+    return botao;
+  }
+
+
+  function atualizarTrigger() {
+
+    const botao =
+      garantirTrigger();
+
+
+    if (!botao) {
+      return;
+    }
+
+
+    const itens =
+      obterSelecaoAtual();
+
+
+    /*
+     * Somente:
+     * - caixas 25/35/50/100;
+     * - depois da primeira escolha.
+     */
+
+    const mostrar =
+      caixaGrandeAtiva() &&
+      itens.length > 0;
+
+
+    botao.hidden =
+      !mostrar;
+
+
+    if (!mostrar) {
+      return;
+    }
+
+
+    const total =
+      totalSelecionado(
+        itens
+      );
+
+
+    const capacidade =
+      Number(
+        caixaAtiva?.totalDoces ||
+        0
+      );
+
+
+    const status =
+      document.getElementById(
+        'r120-ux2-trigger-status'
+      );
+
+
+    if (status) {
+
+      status.textContent =
+        `${total}/${capacidade} doces • ${itens.length} ${itens.length === 1 ? 'sabor' : 'sabores'}`;
+    }
+  }
+
+
+  function garantirModal() {
+
+    let modal =
+      document.getElementById(
+        'r120-ux2-modal'
+      );
+
+
+    if (modal) {
+      return modal;
+    }
+
+
+    modal =
+      document.createElement(
+        'div'
+      );
+
+
+    modal.id =
+      'r120-ux2-modal';
+
+
+    modal.hidden =
+      true;
+
+
+    modal.innerHTML =
+      `
+        <div
+          id="r120-ux2-dialog"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="r120-ux2-title"
+          tabindex="-1">
+
+          <div class="r120-ux2-header">
+
+            <span class="r120-ux2-kicker">
+              Confira quando quiser
+            </span>
+
+            <h2
+              id="r120-ux2-title"
+              class="r120-ux2-title">
+              Sua seleção
+            </h2>
+
+            <p
+              id="r120-ux2-subtitle"
+              class="r120-ux2-subtitle">
+              Sabores escolhidos até agora.
+            </p>
+
+            <button
+              id="r120-ux2-close"
+              type="button"
+              aria-label="Fechar">
+              ×
+            </button>
+
+          </div>
+
+          <div id="r120-ux2-list">
+          </div>
+
+          <div id="r120-ux2-total">
+          </div>
+
+          <div class="r120-ux2-actions">
+
+            <button
+              id="r120-ux2-voltar"
+              type="button">
+              Voltar à escolha
+            </button>
+
+          </div>
+
+        </div>
+      `;
+
+
+    document.body.appendChild(
+      modal
+    );
+
+
+    document
+      .getElementById(
+        'r120-ux2-close'
+      )
+      ?.addEventListener(
+        'click',
+        fecharResumoSelecao
+      );
+
+
+    document
+      .getElementById(
+        'r120-ux2-voltar'
+      )
+      ?.addEventListener(
+        'click',
+        fecharResumoSelecao
+      );
+
+
+    modal.addEventListener(
+      'click',
+      evento => {
+
+        if (
+          evento.target === modal
+        ) {
+
+          fecharResumoSelecao();
+        }
+      }
+    );
+
+
+    return modal;
+  }
+
+
+  function abrirResumoSelecao(
+    titulo,
+    itens,
+    subtitulo = ''
+  ) {
+
+    ultimoFoco =
+      document.activeElement;
+
+
+    const modal =
+      garantirModal();
+
+
+    const tituloEl =
+      document.getElementById(
+        'r120-ux2-title'
+      );
+
+
+    const subtitleEl =
+      document.getElementById(
+        'r120-ux2-subtitle'
+      );
+
+
+    const lista =
+      document.getElementById(
+        'r120-ux2-list'
+      );
+
+
+    const totalEl =
+      document.getElementById(
+        'r120-ux2-total'
+      );
+
+
+    tituloEl.textContent =
+      titulo ||
+      'Sabores escolhidos';
+
+
+    subtitleEl.textContent =
+      subtitulo ||
+      'Confira os sabores e quantidades selecionados.';
+
+
+    lista.innerHTML =
+      '';
+
+
+    if (!itens.length) {
+
+      lista.innerHTML =
+        `
+          <div
+            style="
+              padding:18px 0;
+              text-align:center;
+              color:#9299a6;
+              font-size:11px;
+            ">
+            Nenhum sabor selecionado.
+          </div>
+        `;
+
+    }
+    else {
+
+      itens.forEach(
+        item => {
+
+          const linha =
+            document.createElement(
+              'div'
+            );
+
+
+          linha.className =
+            'r120-ux2-item';
+
+
+          linha.innerHTML =
+            `
+              <span class="r120-ux2-item-name">
+                ${item.nome}
+              </span>
+
+              <span class="r120-ux2-item-qtd">
+                ${item.quantidade}×
+              </span>
+            `;
+
+
+          lista.appendChild(
+            linha
+          );
+        }
+      );
+    }
+
+
+    const total =
+      totalSelecionado(
+        itens
+      );
+
+
+    totalEl.textContent =
+      `${total} ${total === 1 ? 'doce' : 'doces'} • ${itens.length} ${itens.length === 1 ? 'sabor' : 'sabores'}`;
+
+
+    modal.hidden =
+      false;
+
+
+    document.body.style.overflow =
+      'hidden';
+
+
+    setTimeout(
+      () => {
+
+        document
+          .getElementById(
+            'r120-ux2-dialog'
+          )
+          ?.focus();
+
+      },
+      20
+    );
+  }
+
+
+  function fecharResumoSelecao() {
+
+    const modal =
+      document.getElementById(
+        'r120-ux2-modal'
+      );
+
+
+    if (!modal) {
+      return;
+    }
+
+
+    modal.hidden =
+      true;
+
+
+    document.body.style.overflow =
+      '';
+
+
+    if (
+      ultimoFoco &&
+      typeof ultimoFoco.focus ===
+        'function'
+    ) {
+
+      try {
+        ultimoFoco.focus();
+      }
+      catch (_) {}
+    }
+
+
+    ultimoFoco =
+      null;
+  }
+
+
+  function aprimorarModalFinal() {
+
+    const modal =
+      document.getElementById(
+        'modal-caixa-concluida'
+      );
+
+
+    if (!modal) {
+      return;
+    }
+
+
+    /*
+     * Degustações prontas não recebem ALTERAR SABORES.
+     */
+
+    if (!caixaGrandeAtiva()) {
+
+      modal.classList.remove(
+        'r120-ux2-review'
+      );
+
+
+      document
+        .getElementById(
+          'r120-ux2-final-label'
+        )
+        ?.remove();
+
+
+      document
+        .getElementById(
+          'r120-ux2-alterar-final'
+        )
+        ?.remove();
+
+
+      return;
+    }
+
+
+    modal.classList.add(
+      'r120-ux2-review'
+    );
+
+
+    const titulo =
+      document.getElementById(
+        'mcc-titulo'
+      );
+
+
+    if (titulo) {
+
+      titulo.textContent =
+        'Revise sua caixa';
+    }
+
+
+    const sabores =
+      document.getElementById(
+        'mcc-sabores'
+      );
+
+
+    if (!sabores) {
+      return;
+    }
+
+
+    if (
+      !document.getElementById(
+        'r120-ux2-final-label'
+      )
+    ) {
+
+      const label =
+        document.createElement(
+          'p'
+        );
+
+
+      label.id =
+        'r120-ux2-final-label';
+
+
+      label.textContent =
+        'Sabores e quantidades';
+
+
+      sabores.insertAdjacentElement(
+        'beforebegin',
+        label
+      );
+    }
+
+
+    const acoes =
+      sabores.nextElementSibling;
+
+
+    if (
+      acoes &&
+      !document.getElementById(
+        'r120-ux2-alterar-final'
+      )
+    ) {
+
+      const alterar =
+        document.createElement(
+          'button'
+        );
+
+
+      alterar.type =
+        'button';
+
+
+      alterar.id =
+        'r120-ux2-alterar-final';
+
+
+      alterar.textContent =
+        '← Alterar sabores';
+
+
+      alterar.addEventListener(
+        'click',
+        () => {
+
+          /*
+           * Apenas fecha o modal.
+           * NÃO reseta caixaAtiva nem quantidades.
+           */
+
+          fecharModalCaixaConcluida();
+
+
+          setTimeout(
+            () => {
+
+              document
+                .getElementById(
+                  'secao-passo2'
+                )
+                ?.scrollIntoView({
+
+                  behavior:
+                    'smooth',
+
+                  block:
+                    'start'
+                });
+
+            },
+            60
+          );
+        }
+      );
+
+
+      acoes.insertBefore(
+        alterar,
+        acoes.firstChild
+      );
+    }
+  }
+
+
+  function detalhesViraramSabores(
+    detalhes
+  ) {
+
+    const texto =
+      String(
+        detalhes || ''
+      );
+
+
+    return (
+      /\b\d+x\s+/i.test(texto) &&
+      !/kit fechado/i.test(texto) &&
+      !/caixa sortida/i.test(texto)
+    );
+  }
+
+
+  function itensDeDetalhes(
+    detalhes
+  ) {
+
+    return String(
+      detalhes || ''
+    )
+      .split(',')
+      .map(
+        parte =>
+          parte.trim()
+      )
+      .filter(Boolean)
+      .map(
+        parte => {
+
+          const match =
+            parte.match(
+              /^(\d+)x\s+(.+)$/i
+            );
+
+
+          if (!match) {
+
+            return {
+              nome:
+                parte,
+
+              quantidade:
+                1
+            };
+          }
+
+
+          return {
+
+            quantidade:
+              Number(
+                match[1]
+              ),
+
+            nome:
+              match[2]
+          };
+        }
+      );
+  }
+
+
+  window.verSaboresCarrinhoR120UX2 =
+    function (indice) {
+
+      const item =
+        carrinhoDeCaixasConcluidas?.[
+          indice
+        ];
+
+
+      if (
+        !item ||
+        !detalhesViraramSabores(
+          item.detalhes
+        )
+      ) {
+
+        return;
+      }
+
+
+      abrirResumoSelecao(
+
+        item.titulo ||
+        'Sabores da caixa',
+
+        itensDeDetalhes(
+          item.detalhes
+        ),
+
+        'Esta é a composição registrada desta caixa.'
+      );
+    };
+
+
+  function enriquecerCarrinhoAntigo() {
+
+    const lista =
+      document.getElementById(
+        'mc-lista'
+      );
+
+
+    if (!lista) {
+      return;
+    }
+
+
+    const cards =
+      Array.from(
+        lista.children
+      );
+
+
+    cards.forEach(
+      (card, indice) => {
+
+        const item =
+          carrinhoDeCaixasConcluidas?.[
+            indice
+          ];
+
+
+        if (
+          !item ||
+          !detalhesViraramSabores(
+            item.detalhes
+          )
+        ) {
+
+          return;
+        }
+
+
+        if (
+          card.querySelector(
+            '.r120-ux2-ver-carrinho'
+          )
+        ) {
+
+          return;
+        }
+
+
+        const botao =
+          document.createElement(
+            'button'
+          );
+
+
+        botao.type =
+          'button';
+
+
+        botao.className =
+          'r120-ux2-ver-carrinho';
+
+
+        botao.textContent =
+          'Ver sabores';
+
+
+        botao.addEventListener(
+          'click',
+          evento => {
+
+            evento.stopPropagation();
+
+            window.verSaboresCarrinhoR120UX2(
+              indice
+            );
+          }
+        );
+
+
+        const primeiroBloco =
+          card.querySelector(
+            '.pr-8'
+          );
+
+
+        (
+          primeiroBloco ||
+          card
+        )
+          .appendChild(
+            botao
+          );
+      }
+    );
+  }
+
+
+  function enriquecerCarrinhoViewport() {
+
+    const view =
+      document.getElementById(
+        'r117b-cart-view'
+      );
+
+
+    if (!view) {
+      return;
+    }
+
+
+    const lixeiras =
+      Array.from(
+        view.querySelectorAll(
+          'button[onclick*="removerItemCarrinhoViewportR117"]'
+        )
+      );
+
+
+    lixeiras.forEach(
+      botaoLixeira => {
+
+        const onclick =
+          botaoLixeira.getAttribute(
+            'onclick'
+          ) || '';
+
+
+        const match =
+          onclick.match(
+            /removerItemCarrinhoViewportR117\((\d+)\)/
+          );
+
+
+        if (!match) {
+          return;
+        }
+
+
+        const indice =
+          Number(
+            match[1]
+          );
+
+
+        const item =
+          carrinhoDeCaixasConcluidas?.[
+            indice
+          ];
+
+
+        if (
+          !item ||
+          !detalhesViraramSabores(
+            item.detalhes
+          )
+        ) {
+
+          return;
+        }
+
+
+        /*
+         * No template atual:
+         * lixeira -> cabeçalho do card -> card.
+         */
+
+        const card =
+          botaoLixeira.parentElement
+            ?.parentElement;
+
+
+        if (!card) {
+          return;
+        }
+
+
+        if (
+          card.querySelector(
+            '.r120-ux2-ver-carrinho'
+          )
+        ) {
+
+          return;
+        }
+
+
+        const botao =
+          document.createElement(
+            'button'
+          );
+
+
+        botao.type =
+          'button';
+
+
+        botao.className =
+          'r120-ux2-ver-carrinho';
+
+
+        botao.textContent =
+          'Ver sabores';
+
+
+        botao.addEventListener(
+          'click',
+          evento => {
+
+            evento.stopPropagation();
+
+            window.verSaboresCarrinhoR120UX2(
+              indice
+            );
+          }
+        );
+
+
+        const divisoria =
+          Array.from(
+            card.children
+          )
+            .find(
+              elemento =>
+                elemento.classList
+                  ?.contains(
+                    'mt-3'
+                  )
+            );
+
+
+        if (divisoria) {
+
+          card.insertBefore(
+            botao,
+            divisoria
+          );
+
+        }
+        else {
+
+          card.appendChild(
+            botao
+          );
+        }
+      }
+    );
+  }
+
+
+  function sincronizar() {
+
+    atualizarTrigger();
+
+
+    const modalFinal =
+      document.getElementById(
+        'modal-caixa-concluida'
+      );
+
+
+    if (
+      modalFinal &&
+      !modalFinal.classList.contains(
+        'hidden'
+      )
+    ) {
+
+      aprimorarModalFinal();
+    }
+
+
+    enriquecerCarrinhoAntigo();
+
+    enriquecerCarrinhoViewport();
+  }
+
+
+  /*
+   * Atualização imediata após cliques,
+   * sem interferir no fluxo oficial.
+   */
+
+  document.addEventListener(
+    'click',
+    () => {
+
+      setTimeout(
+        sincronizar,
+        40
+      );
+
+
+      setTimeout(
+        sincronizar,
+        180
+      );
+    }
+  );
+
+
+  /*
+   * Backup leve para renders dinâmicos.
+   */
+
+  setInterval(
+    sincronizar,
+    650
+  );
+
+
+  garantirModal();
+
+  garantirTrigger();
+
+  sincronizar();
+
+
+  console.info(
+    '[R1.20-B04-UX2] UX de revisao de sabores instalada.'
+  );
+
+})();
+
+</script>
+
+<!-- ================================================================
+ R1.20-B04-UX4
+ FIX DEFINITIVO - MINHA SELECAO
+================================================================ -->
+
+<style id="r120-b04-ux4-styles">
+
+#r120-ux4-selection-trigger {
+
+  position: fixed;
+
+  left: 50%;
+  bottom: 16px;
+
+  transform: translateX(-50%);
+
+  z-index: 9990;
+
+  width: min(calc(100% - 28px), 375px);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 11px 13px;
+
+  border: 1px solid #c9803d;
+  border-radius: 15px;
+
+  background: rgba(255,250,244,.98);
+
+  color: #874410;
+
+  box-shadow:
+    0 10px 30px rgba(71,42,23,.22);
+
+  backdrop-filter: blur(8px);
+
+  cursor: pointer;
+}
+
+#r120-ux4-selection-trigger[hidden] {
+  display: none !important;
+}
+
+.r120-ux4-left {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  text-align: left;
+}
+
+.r120-ux4-title {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+#r120-ux4-status {
+  margin-top: 2px;
+
+  color: #7f8794;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.r120-ux4-icon {
+  width: 31px;
+  height: 31px;
+
+  flex: 0 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #a44d0a;
+
+  color: #fff;
+}
+
+</style>
+
+
+<script id="r120-b04-ux4-runtime">
+
+(() => {
+
+  'use strict';
+
+
+  if (window.__R120_B04_UX4__) {
+    return;
+  }
+
+
+  window.__R120_B04_UX4__ =
+    true;
+
+
+  /*
+   * Desativa visualmente o trigger antigo.
+   * Mantemos o restante do UX2/UX3 intacto.
+   */
+
+  const esconderTriggerAntigo =
+    () => {
+
+      const antigo =
+        document.getElementById(
+          'r120-ux2-selection-trigger'
+        );
+
+
+      if (antigo) {
+        antigo.hidden = true;
+        antigo.style.display = 'none';
+      }
+    };
+
+
+  function obterTotalReal() {
+
+    try {
+
+      if (
+        typeof totalDocesSelecionados ===
+        'function'
+      ) {
+
+        const total =
+          Number(
+            totalDocesSelecionados()
+          );
+
+
+        if (
+          Number.isFinite(total)
+        ) {
+
+          return total;
+        }
+      }
+
+    }
+    catch (_) {}
+
+
+    try {
+
+      return Object
+        .values(
+          quantidades || {}
+        )
+        .reduce(
+          (soma, qtd) =>
+            soma +
+            Number(qtd || 0),
+          0
+        );
+
+    }
+    catch (_) {
+
+      return 0;
+    }
+  }
+
+
+  function obterTotalSaboresReal() {
+
+    try {
+
+      if (
+        typeof totalSaboresSelecionados ===
+        'function'
+      ) {
+
+        const total =
+          Number(
+            totalSaboresSelecionados()
+          );
+
+
+        if (
+          Number.isFinite(total)
+        ) {
+
+          return total;
+        }
+      }
+
+    }
+    catch (_) {}
+
+
+    try {
+
+      return Object
+        .values(
+          quantidades || {}
+        )
+        .filter(
+          qtd =>
+            Number(qtd || 0) > 0
+        )
+        .length;
+
+    }
+    catch (_) {
+
+      return 0;
+    }
+  }
+
+
+  function obterCapacidade() {
+
+    try {
+
+      const direta =
+        Number(
+          caixaAtiva?.totalDoces
+        );
+
+
+      if (
+        [25,35,50,100]
+          .includes(direta)
+      ) {
+
+        return direta;
+      }
+
+    }
+    catch (_) {}
+
+
+    /*
+     * Fallback pelo resumo visual da caixa.
+     */
+
+    const resumo =
+      document.getElementById(
+        'resumo-caixa-selecionada'
+      );
+
+
+    const texto =
+      String(
+        resumo?.textContent ||
+        ''
+      );
+
+
+    const match =
+      texto.match(
+        /\b(25|35|50|100)\b/
+      );
+
+
+    return match
+      ? Number(match[1])
+      : 0;
+  }
+
+
+  function etapaSaboresEstaVisivel() {
+
+    const secao =
+      document.getElementById(
+        'secao-passo2'
+      );
+
+
+    if (!secao) {
+      return false;
+    }
+
+
+    if (
+      secao.classList.contains(
+        'hidden'
+      )
+    ) {
+
+      return false;
+    }
+
+
+    return true;
+  }
+
+
+  function garantirTriggerUX4() {
+
+    let botao =
+      document.getElementById(
+        'r120-ux4-selection-trigger'
+      );
+
+
+    if (botao) {
+      return botao;
+    }
+
+
+    botao =
+      document.createElement(
+        'button'
+      );
+
+
+    botao.id =
+      'r120-ux4-selection-trigger';
+
+
+    botao.type =
+      'button';
+
+
+    botao.hidden =
+      true;
+
+
+    botao.innerHTML =
+      `
+        <span class="r120-ux4-left">
+
+          <span class="r120-ux4-title">
+            Minha seleção
+          </span>
+
+          <span id="r120-ux4-status">
+            Ver sabores escolhidos
+          </span>
+
+        </span>
+
+        <span class="r120-ux4-icon">
+          <i class="fa-solid fa-list-check"></i>
+        </span>
+      `;
+
+
+    /*
+     * IMPORTANTE:
+     * fica diretamente no BODY.
+     * Não depende mais de secao-passo2.
+     */
+
+    document.body.appendChild(
+      botao
+    );
+
+
+    botao.addEventListener(
+      'click',
+      () => {
+
+        const triggerAntigo =
+          document.getElementById(
+            'r120-ux2-selection-trigger'
+          );
+
+
+        /*
+         * Reaproveita o modal já implementado no UX2.
+         */
+
+        if (
+          triggerAntigo &&
+          typeof triggerAntigo.click ===
+            'function'
+        ) {
+
+          triggerAntigo.click();
+        }
+      }
+    );
+
+
+    return botao;
+  }
+
+
+  function sincronizarUX4() {
+
+    esconderTriggerAntigo();
+
+
+    const botao =
+      garantirTriggerUX4();
+
+
+    const total =
+      obterTotalReal();
+
+
+    const sabores =
+      obterTotalSaboresReal();
+
+
+    const capacidade =
+      obterCapacidade();
+
+
+    const capacidadeValida =
+      [25,35,50,100]
+        .includes(
+          capacidade
+        );
+
+
+    const mostrar =
+      etapaSaboresEstaVisivel() &&
+      capacidadeValida &&
+      total > 0;
+
+
+    botao.hidden =
+      !mostrar;
+
+
+    if (!mostrar) {
+      return;
+    }
+
+
+    const status =
+      document.getElementById(
+        'r120-ux4-status'
+      );
+
+
+    if (status) {
+
+      status.textContent =
+        `${total}/${capacidade} doces • ${sabores} ${sabores === 1 ? 'sabor' : 'sabores'}`;
+    }
+  }
+
+
+  /*
+   * Atualiza logo depois de qualquer clique.
+   */
+
+  document.addEventListener(
+    'click',
+    () => {
+
+      setTimeout(
+        sincronizarUX4,
+        20
+      );
+
+
+      setTimeout(
+        sincronizarUX4,
+        100
+      );
+
+
+      setTimeout(
+        sincronizarUX4,
+        300
+      );
+    },
+    true
+  );
+
+
+  /*
+   * Backup para renders internos.
+   */
+
+  window.setInterval(
+    sincronizarUX4,
+    400
+  );
+
+
+  garantirTriggerUX4();
+
+  sincronizarUX4();
+
+
+  console.info(
+    '[R1.20-B04-UX4] Minha selecao instalada.'
   );
 
 })();
