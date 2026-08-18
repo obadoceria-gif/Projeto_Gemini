@@ -251,3 +251,17 @@ Decisão adotada:
 A mesma infraestrutura passou a ser reutilizável para decisões futuras.
 
 Também foi definido que regiões marcadas com aria-hidden não podem manter foco em descendentes.
+## Decisão R1.20-B01 — zero confirmação nativa
+
+Foi definido que decisões relevantes da jornada não devem utilizar a interface nativa do navegador.
+
+Padrão oficial:
+- modal reutilizável da aplicação;
+- ação explícita de confirmar;
+- ação explícita de cancelar;
+- foco e acessibilidade preservados;
+- chamadas assíncronas somente quando a decisão precisa interromper o fluxo atual.
+
+Os dois pontos legados foram migrados:
+1. saída/descartes de montagem;
+2. remoção quando quantidade chega a zero.

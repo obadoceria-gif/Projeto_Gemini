@@ -210,3 +210,17 @@ Implementado:
 - preservação do checkout e da proteção contra duplo envio.
 
 Validação funcional concluída em 2026-08-17 19:39:52.
+## R1.20-B01 — eliminação de confirmações nativas
+
+Status: concluída e aprovada funcionalmente.
+
+Implementado:
+- removidas as duas chamadas nativas de confirmação;
+- fluxo de saída/descartes de montagem migrado para modal reutilizável;
+- fluxo de quantidade zero migrado para modal reutilizável;
+- integração assíncrona via Promise;
+- UX visual consistente com R1.19-D;
+- acessibilidade preservada;
+- nenhum erro funcional identificado na regressão.
+
+Validação funcional concluída em 2026-08-17 22:12:06.

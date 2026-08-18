@@ -208,3 +208,29 @@ Segurança:
 - oficial promovido somente após aprovação;
 - staging controlado;
 - push não autorizado nesta etapa.
+## 2026-08-17 22:12:06 — R1.20-B01
+
+Ação:
+Eliminação das duas confirmações nativas remanescentes.
+
+Fluxos migrados:
+- retornarParaMenuSeletor;
+- alterarQtdCarrinho.
+
+Método:
+- candidato isolado;
+- detecção estrutural;
+- adapter Promise;
+- modal reutilizável existente;
+- regressão funcional;
+- promoção somente após aprovação.
+
+Resultado:
+- 2 chamadas nativas antes;
+- 0 chamadas nativas depois;
+- nenhum erro funcional identificado.
+
+Git:
+- staging controlado;
+- commit controlado nesta etapa;
+- push não autorizado.

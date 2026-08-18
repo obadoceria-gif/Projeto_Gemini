@@ -2965,7 +2965,7 @@ function entFluxoPresenteaveis() {
   atualizarInterface();
 }
 
-function retornarParaMenuSeletor() {
+async function retornarParaMenuSeletor() {
   const totalSelecionado =
     Object
       .values(quantidades)
@@ -2993,7 +2993,41 @@ function retornarParaMenuSeletor() {
         ? `Sua Caixa de ${totalNecessario} Doces está completa, mas ainda não foi salva no carrinho.\n\nSe voltar agora, essa montagem será descartada.\n\nDeseja voltar mesmo assim?`
         : `Você selecionou ${totalSelecionado} de ${totalNecessario} doces.\n\nFaltam ${Math.max(0, totalNecessario - totalSelecionado)} doces para concluir esta caixa.\n\nSe voltar agora, a montagem incompleta será descartada.\n\nDeseja continuar?`;
 
-    if (!confirm(mensagem)) {
+    const confirmouSaidaR120B01 =
+      await window.confirmarDecisaoR120B01({
+
+        tipo:
+          completa
+            ? 'info'
+            : 'perigo',
+
+        titulo:
+          completa
+            ? 'Sair desta montagem?'
+            : 'Descartar montagem incompleta?',
+
+        mensagem:
+          mensagem,
+
+        item:
+          completa
+            ? `${totalSelecionado} doces selecionados`
+            : `${totalSelecionado} de ${totalNecessario} doces selecionados`,
+
+        confirmarTexto:
+          completa
+            ? 'Continuar'
+            : 'Descartar montagem',
+
+        cancelarTexto:
+          'Voltar à montagem'
+      });
+
+
+    if (
+      !confirmouSaidaR120B01
+    ) {
+
       return;
     }
   }
@@ -4062,9 +4096,68 @@ function renderizarListaCarrinho() {
   atualizarBotaoFinalizar();
 }
 
-function alterarQtdCarrinho(i, delta) {
+async function alterarQtdCarrinho(i, delta) {
   const nova = (carrinhoDeCaixasConcluidas[i].quantidade||1) + delta;
-  if (nova < 1) { if (confirm('Remover este item?')) removerItemCarrinho(i); return; }
+  if (nova < 1) {
+
+    const itemR120B01 =
+      carrinhoDeCaixasConcluidas[
+        i
+      ];
+
+
+    const confirmouRemocaoR120B01 =
+      await window.confirmarDecisaoR120B01({
+
+        tipo:
+          'perigo',
+
+        titulo:
+          'Remover este item?',
+
+        mensagem:
+          'A quantidade chegou a zero. Deseja retirar este produto do carrinho?',
+
+        item:
+          itemR120B01?.titulo ||
+          'Este item',
+
+        confirmarTexto:
+          'Remover item',
+
+        cancelarTexto:
+          'Manter item'
+      });
+
+
+    if (
+      confirmouRemocaoR120B01
+    ) {
+
+      carrinhoDeCaixasConcluidas.splice(
+        i,
+        1
+      );
+
+
+      renderizarListaCarrinho();
+
+
+      atualizarPainelLateral();
+
+
+      if (
+        typeof atualizarCarrinhoMobilePersistente ===
+        'function'
+      ) {
+
+        atualizarCarrinhoMobilePersistente();
+      }
+    }
+
+
+    return;
+  }
   carrinhoDeCaixasConcluidas[i].quantidade = nova;
   carrinhoDeCaixasConcluidas[i].precoCalculado = (carrinhoDeCaixasConcluidas[i].precoCalculadoUnitario||carrinhoDeCaixasConcluidas[i].precoCalculado) * nova;
   renderizarListaCarrinho(); atualizarPainelLateral();
@@ -11215,5 +11308,85 @@ function mostrarNotificacao(msg) {
 
 </script>
 
+
+<script id="r120-b01-confirm-adapter">
+
+(() => {
+
+  'use strict';
+
+
+  if (
+    window.__R120B01_CONFIRM_ADAPTER__ ===
+    true
+  ) {
+
+    return;
+  }
+
+
+  window.__R120B01_CONFIRM_ADAPTER__ =
+    true;
+
+
+  window.confirmarDecisaoR120B01 =
+    function ({
+      tipo = 'info',
+      titulo = 'Confirmar ação',
+      mensagem = '',
+      item = '',
+      confirmarTexto = 'Confirmar',
+      cancelarTexto = 'Cancelar'
+    } = {}) {
+
+      return new Promise(
+        resolve => {
+
+          window.abrirModalDecisaoR119D({
+
+            tipo,
+            titulo,
+            mensagem,
+            item,
+            confirmarTexto,
+            cancelarTexto,
+
+            onConfirmar:
+              () => {
+
+                resolve(
+                  true
+                );
+              },
+
+            onCancelar:
+              () => {
+
+                resolve(
+                  false
+                );
+              }
+          });
+        }
+      );
+    };
+
+
+  console.log(
+    '[R1.20-B01] Adapter de decisao instalado.'
+  );
+
+})();
+
+</script>
+
+<!-- ================================================================
+ R1.20-B01
+ CONFIRMACOES NATIVAS MIGRADAS PARA MODAL REUTILIZAVEL
+
+ FLUXOS:
+ - retornarParaMenuSeletor
+ - alterarQtdCarrinho
+================================================================ -->
 </body>
 </html>

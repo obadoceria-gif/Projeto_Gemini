@@ -189,3 +189,14 @@ Entregas:
 
 Próxima etapa:
 R1.20 — próxima evolução priorizada após consolidação R1.19.
+### R1.20-B01 — concluída
+
+Eliminação das confirmações nativas concluída.
+
+Resultado:
+- 2 chamadas nativas antes;
+- 0 chamadas nativas após promoção;
+- dois fluxos migrados para modal reutilizável.
+
+Próxima prioridade:
+R1.20-B02 — substituir alert() por feedback integrado, conforme backlog R1.20-A.

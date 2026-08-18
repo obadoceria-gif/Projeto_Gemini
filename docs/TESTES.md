@@ -234,3 +234,31 @@ Console:
 
 Observação conhecida:
 favicon.ico 404 permanece independente desta implementação.
+## R1.20-B01 — regressão funcional
+
+Resultado: APROVADO.
+
+Fluxo 1 — montagem:
+- montagem incompleta;
+- tentativa de saída;
+- voltar à montagem;
+- repetir fluxo;
+- descartar montagem;
+- comportamento correto.
+
+Fluxo 2 — quantidade:
+- quantidade inicial 1;
+- redução para zero;
+- manter item;
+- repetir fluxo;
+- remover item;
+- comportamento correto.
+
+Validação estrutural:
+- chamadas nativas antes: 2;
+- chamadas nativas depois: 0.
+
+Console:
+- nenhum TypeError;
+- nenhum ReferenceError;
+- nenhum Blocked aria-hidden.

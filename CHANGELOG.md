@@ -220,3 +220,21 @@ R1.18 consolidada sobre o fluxo oficial.
 - checkout preservado;
 - WhatsApp preservado;
 - R1.19-B01 preservada.
+## R1.20-B01
+
+### UX
+- removidas confirmações nativas do navegador;
+- saída de montagem agora usa modal central;
+- quantidade zero agora usa modal central;
+- ações de cancelar/confirmar ficaram consistentes com o restante do carrinho.
+
+### Arquitetura
+- criado adapter assíncrono para reutilizar o modal R1.19-D;
+- funções dos dois fluxos tornadas assíncronas somente onde necessário.
+
+### Regressão
+- zero chamadas nativas de confirmação em código executável;
+- carrinho preservado;
+- checkout preservado;
+- acessibilidade preservada;
+- proteção contra duplo envio preservada.
