@@ -262,3 +262,41 @@ Console:
 - nenhum TypeError;
 - nenhum ReferenceError;
 - nenhum Blocked aria-hidden.
+============================================================
+R1.20-B02 - ZERO alert() NATIVO + FEEDBACK INTEGRADO
+Data: 2026-08-17 22:39:23
+============================================================
+
+RESULTADO:
+- 4 alert() nativos eliminados.
+- Checkout sem produtos migrado para feedback integrado.
+- Checkout incompleto migrado para feedback integrado.
+- Personalizados incompleto migrado para feedback integrado.
+- Eventos incompleto migrado para feedback integrado.
+- Modal reutilizavel R1.19-D preservado.
+- Foco contextual preservado.
+- Fluxos WhatsApp de Personalizados e Eventos preservados.
+
+CORRECAO WPP1:
+- Identificado window.open() da finalizacao dentro de fetch.finally().
+- Adicionado mecanismo robusto de abertura do WhatsApp.
+- Primeira tentativa: window.open().
+- Fallback: window.location.assign().
+- Teste funcional aprovado.
+- WhatsApp abriu corretamente ao finalizar pedido.
+
+VALIDACAO:
+- alert() nativo restante: 0.
+- R1.20-B01 preservado.
+- R1.19-D preservado.
+- Carrinho preservado.
+- Checkout preservado.
+- Acessibilidade preservada.
+- Teste funcional aprovado.
+
+STATUS:
+CONCLUIDO E APROVADO.
+
+PROXIMA ACAO:
+R1.20-B03 - PROXIMO ITEM PRIORIZADO DO BACKLOG.
+============================================================

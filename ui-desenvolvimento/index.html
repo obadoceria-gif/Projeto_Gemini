@@ -4240,7 +4240,19 @@ function atualizarBotaoFinalizar() {
 
 function finalizarPedidoBlindado() {
   if (carrinhoDeCaixasConcluidas.length === 0) {
-    alert('Adicione produtos primeiro.');
+    window.mostrarAvisoR120B02({
+
+      titulo:
+        'Seu carrinho está vazio',
+
+      mensagem:
+        'Adicione pelo menos um produto antes de finalizar o pedido.',
+
+      item:
+        'Escolha seus doces e depois volte para a finalização.'
+    });
+
+
     return;
   }
 
@@ -4254,7 +4266,56 @@ function finalizarPedidoBlindado() {
   const validacao = validarCamposObrigatoriosCheckout(valores);
 
   if (!validacao.valido) {
-    alert('Preencha todos os campos obrigatorios de entrega.');
+    const primeiroCampoFaltanteR120B02 =
+      Array.isArray(
+        validacao.faltantes
+      )
+        ? validacao.faltantes[0]
+        : null;
+
+
+    const mapaCamposR120B02 = {
+
+      nome:
+        'nome-cliente',
+
+      data:
+        'data-desejada',
+
+      hora:
+        'hora-desejada',
+
+      formaPagamento:
+        'forma-pagamento'
+    };
+
+
+    window.mostrarAvisoR120B02({
+
+      titulo:
+        'Faltam dados para finalizar',
+
+      mensagem:
+        'Preencha os campos obrigatórios de entrega antes de continuar.',
+
+      item:
+        Array.isArray(
+          validacao.faltantes
+        ) &&
+        validacao.faltantes.length > 0
+
+          ? `Campos pendentes: ${validacao.faltantes.join(', ')}`
+
+          : 'Confira nome, data, hora e forma de pagamento.',
+
+      focoId:
+        mapaCamposR120B02[
+          primeiroCampoFaltanteR120B02
+        ] ||
+        ''
+    });
+
+
     return;
   }
   const d = dataRaw.split('-');
@@ -4392,9 +4453,8 @@ function finalizarPedidoBlindado() {
       btn.innerHTML = orig;
       btn.disabled = false;
 
-      window.open(
-        `https://api.whatsapp.com/send?phone=${whatsappLoja()}&text=${encodeURIComponent(wppTxt)}`,
-        '_blank'
+      window.abrirWhatsAppR120B02(
+        `https://api.whatsapp.com/send?phone=${whatsappLoja()}&text=${encodeURIComponent(wppTxt)}`
       );
 
       fecharModalCarrinho();
@@ -5582,13 +5642,97 @@ function fecharModalEventos()              { document.getElementById('modal-even
 function enviarOrcamentoEspecial(tipo) {
   if (tipo==='personalizados') {
     const tema=document.getElementById('pers-tema').value.trim(), data=document.getElementById('pers-data').value;
-    if (!tema||!data) { alert('Preencha os campos!'); return; }
+    if (!tema || !data) {
+
+      const focoPersonalizadosR120B02 =
+        !tema
+          ? 'pers-tema'
+          : 'pers-data';
+
+
+      window.mostrarAvisoR120B02({
+
+        titulo:
+          'Complete seu pedido personalizado',
+
+        mensagem:
+          'Precisamos dessas informações antes de abrir o WhatsApp.',
+
+        item:
+          !tema && !data
+            ? 'Informe o tema e a data desejada.'
+            : !tema
+              ? 'Informe o tema dos doces personalizados.'
+              : 'Informe a data desejada.',
+
+        focoId:
+          focoPersonalizadosR120B02
+      });
+
+
+      return;
+    }
     const d=data.split('-');
     window.open(`https://api.whatsapp.com/send?phone=${whatsappLoja()}&text=${encodeURIComponent(`Olá! Solicito reserva de *Doces Personalizados*:\n\n*Tema:* ${tema}\n*Data:* ${d[2]}/${d[1]}/${d[0]}`)}`, '_blank');
     fecharModalPersonalizados();
   } else {
     const nome=document.getElementById('eve-nome').value.trim(), tipo_ev=document.getElementById('eve-tipo').value.trim(), data=document.getElementById('eve-data').value;
-    if (!nome||!tipo_ev||!data) { alert('Preencha os campos!'); return; }
+    if (!nome || !tipo_ev || !data) {
+
+      let focoEventosR120B02 =
+        'eve-nome';
+
+
+      let pendenciaEventosR120B02 =
+        'Informe seu nome.';
+
+
+      if (!nome) {
+
+        focoEventosR120B02 =
+          'eve-nome';
+
+        pendenciaEventosR120B02 =
+          'Informe seu nome.';
+
+      }
+      else if (!tipo_ev) {
+
+        focoEventosR120B02 =
+          'eve-tipo';
+
+        pendenciaEventosR120B02 =
+          'Informe o tipo de evento.';
+
+      }
+      else {
+
+        focoEventosR120B02 =
+          'eve-data';
+
+        pendenciaEventosR120B02 =
+          'Informe a data do evento.';
+      }
+
+
+      window.mostrarAvisoR120B02({
+
+        titulo:
+          'Complete os dados do evento',
+
+        mensagem:
+          'Precisamos concluir essas informações antes de abrir o WhatsApp.',
+
+        item:
+          pendenciaEventosR120B02,
+
+        focoId:
+          focoEventosR120B02
+      });
+
+
+      return;
+    }
     const d=data.split('-');
     window.open(`https://api.whatsapp.com/send?phone=${whatsappLoja()}&text=${encodeURIComponent(`Olá! Solicito orçamento para *Eventos*:\n\n*Nome:* ${nome}\n*Tipo:* ${tipo_ev}\n*Data:* ${d[2]}/${d[1]}/${d[0]}`)}`, '_blank');
     fecharModalEventos();
@@ -11388,5 +11532,255 @@ function mostrarNotificacao(msg) {
  - retornarParaMenuSeletor
  - alterarQtdCarrinho
 ================================================================ -->
+
+<!-- ================================================================
+ R1.20-B02
+ FEEDBACK INTEGRADO EM SUBSTITUICAO AO ALERT NATIVO
+================================================================ -->
+
+<script id="r120-b02-feedback-runtime">
+
+(() => {
+
+  'use strict';
+
+
+  if (
+    window.__R120B02_FEEDBACK__ ===
+    true
+  ) {
+
+    return;
+  }
+
+
+  window.__R120B02_FEEDBACK__ =
+    true;
+
+
+  window.mostrarAvisoR120B02 =
+    function ({
+      titulo = 'Atenção',
+      mensagem = '',
+      item = '',
+      focoId = ''
+    } = {}) {
+
+      window.abrirModalDecisaoR119D({
+
+        tipo:
+          'info',
+
+        titulo,
+
+        mensagem,
+
+        item,
+
+        confirmarTexto:
+          'Entendi',
+
+        ocultarCancelar:
+          true,
+
+        onConfirmar:
+          () => {
+
+            if (!focoId) {
+              return;
+            }
+
+
+            const campo =
+              document.getElementById(
+                focoId
+              );
+
+
+            if (
+              !campo ||
+              typeof campo.focus !==
+                'function'
+            ) {
+
+              return;
+            }
+
+
+            window.setTimeout(
+              () => {
+
+                try {
+
+                  campo.focus({
+                    preventScroll: false
+                  });
+
+                }
+                catch (_) {
+
+                  try {
+                    campo.focus();
+                  }
+                  catch (_) {}
+                }
+
+              },
+              60
+            );
+          }
+      });
+    };
+
+
+  console.log(
+    '[R1.20-B02] Feedback integrado instalado.'
+  );
+
+})();
+
+</script>
+
+<!-- ================================================================
+ R1.20-B02
+ ALERTAS NATIVOS MIGRADOS PARA FEEDBACK INTEGRADO
+
+ FLUXOS:
+ - checkout sem produtos
+ - checkout incompleto
+ - personalizados incompleto
+ - eventos incompleto
+================================================================ -->
+
+<!-- ================================================================
+ R1.20-B02-WPP1
+ ABERTURA ROBUSTA DO WHATSAPP
+
+ Tenta nova aba.
+ Se o navegador bloquear por perda do gesto do usuario,
+ usa navegacao direta na aba atual.
+================================================================ -->
+
+<script id="r120-b02-whatsapp-runtime">
+
+(() => {
+
+  'use strict';
+
+
+  if (
+    window.__R120B02_WHATSAPP_RUNTIME__ ===
+    true
+  ) {
+
+    return;
+  }
+
+
+  window.__R120B02_WHATSAPP_RUNTIME__ =
+    true;
+
+
+  window.abrirWhatsAppR120B02 =
+    function (url) {
+
+      if (!url) {
+
+        console.error(
+          '[R1.20-B02-WPP1] URL do WhatsApp ausente.'
+        );
+
+        return false;
+      }
+
+
+      let janela =
+        null;
+
+
+      try {
+
+        janela =
+          window.open(
+            url,
+            '_blank'
+          );
+
+      }
+      catch (erro) {
+
+        console.warn(
+          '[R1.20-B02-WPP1] window.open indisponivel; usando fallback.',
+          erro
+        );
+      }
+
+
+      /*
+       * Popup bloqueado normalmente retorna null.
+       */
+
+      if (
+        janela &&
+        !janela.closed
+      ) {
+
+        console.info(
+          '[R1.20-B02-WPP1] WhatsApp aberto em nova aba.'
+        );
+
+
+        try {
+          janela.focus();
+        }
+        catch (_) {}
+
+
+        return true;
+      }
+
+
+      /*
+       * FALLBACK DEFINITIVO
+       *
+       * Navegacao da propria aba nao depende da permissao
+       * para popup e funciona melhor apos fluxo assincrono.
+       */
+
+      console.info(
+        '[R1.20-B02-WPP1] Popup bloqueado. Usando navegacao direta.'
+      );
+
+
+      try {
+
+        window.location.assign(
+          url
+        );
+
+
+        return true;
+
+      }
+      catch (erro) {
+
+        console.error(
+          '[R1.20-B02-WPP1] Falha ao abrir WhatsApp.',
+          erro
+        );
+
+
+        return false;
+      }
+    };
+
+
+  console.log(
+    '[R1.20-B02-WPP1] Runtime WhatsApp robusto instalado.'
+  );
+
+})();
+
+</script>
 </body>
 </html>
