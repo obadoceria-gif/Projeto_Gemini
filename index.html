@@ -1,19 +1,27 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cardápio Virtual - Oba Doceria</title>
-  <link rel="stylesheet" href="src/styles.css" />
-  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oba Doceria</title>
+  <meta
+    http-equiv="refresh"
+    content="0; url=ui-desenvolvimento/index.html"
+  >
+  <script>
+    window.location.replace(
+      "ui-desenvolvimento/index.html" +
+      window.location.search +
+      window.location.hash
+    );
+  </script>
 </head>
 <body>
-  <main>
-    <header style="padding: 24px; text-align: center;">
-      <h1>Cardápio Virtual - Oba Doceria</h1>
-      <p>Escolha seus doces, envie o pedido por WhatsApp e confirme com a loja.</p>
-    </header>
-  </main>
-  <script type="module" src="src/app.js"></script>
+  <p>
+    Abrindo o cardápio da Oba Doceria…
+    <a href="ui-desenvolvimento/index.html">
+      Clique aqui se não abrir automaticamente.
+    </a>
+  </p>
 </body>
 </html>
