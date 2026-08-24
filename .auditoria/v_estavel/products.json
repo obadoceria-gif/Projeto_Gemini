@@ -1,0 +1,90 @@
+[
+  {
+    "id": "brigadeiro-tradicional",
+    "nome": "Brigadeiro Tradicional",
+    "categoria": "brigadeiros",
+    "preco": 2.5,
+    "img": "",
+    "disponivel": true
+  },
+  {
+    "id": "brigadeiro-doce-de-leite",
+    "nome": "Brigadeiro Doce de Leite",
+    "categoria": "brigadeiros",
+    "preco": 3.0,
+    "img": "",
+    "disponivel": true
+  },
+  {
+    "id": "palha-italiana",
+    "nome": "Palha Italiana",
+    "categoria": "doces",
+    "preco": 4.5,
+    "img": "",
+    "disponivel": true
+  },
+  {
+    "id": "caixa-6",
+    "nome": "Caixa 6 Unidades",
+    "categoria": "embalagens",
+    "preco": 5.0,
+    "img": "",
+    "disponivel": true
+  },
+  {
+    "id": "caixa-4",
+    "nome": "Caixa 4 Unidades",
+    "categoria": "embalagens",
+    "preco": 3.0,
+    "img": "",
+    "disponivel": true
+  },
+  {
+    "id": "caixa-12",
+    "nome": "Caixa 12 Unidades",
+    "categoria": "embalagens",
+    "preco": 7.0,
+    "img": "",
+    "disponivel": true
+  },
+  {
+    "id": "mini-naked-cake",
+    "nome": "Mini Naked Cake",
+    "categoria": "kits",
+    "preco": 35.0,
+    "img": "",
+    "disponivel": true
+  },
+  {
+    "id": "uvas-verdes",
+    "nome": "Uvas Verdes",
+    "categoria": "kits",
+    "preco": 15.0,
+    "img": "",
+    "disponivel": true
+  },
+  {
+    "id": "morangos",
+    "nome": "Morangos",
+    "categoria": "kits",
+    "preco": 18.0,
+    "img": "",
+    "disponivel": true
+  },
+  {
+    "id": "laco",
+    "nome": "Laço",
+    "categoria": "opcionais",
+    "preco": 2.0,
+    "img": "",
+    "disponivel": true
+  },
+  {
+    "id": "placa",
+    "nome": "Placa",
+    "categoria": "opcionais",
+    "preco": 3.0,
+    "img": "",
+    "disponivel": true
+  }
+]

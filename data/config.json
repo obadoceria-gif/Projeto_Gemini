@@ -1,0 +1,7 @@
+{
+  "storePhone": "",
+  "storeName": "Oba Doceria",
+  "welcomeText": "Bem-vindo ao Cardápio Virtual da Oba Doceria! Escolha seus doces e finalize seu pedido por WhatsApp.",
+  "phoneHint": "Telefone da loja no formato E.164 sem sinais, ex: 5511999999999",
+  "whatsappPrompt": "Por favor confirmar disponibilidade e preço final. Obrigado!"
+}

@@ -9,5 +9,6 @@
     },
     "chat.instructions.files": [
         ".instructions.md"
-    ]
+    ],
+    "liveServer.settings.port": 5501
 }

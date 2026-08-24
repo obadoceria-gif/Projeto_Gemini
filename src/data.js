@@ -1,22 +1,26 @@
-// Catalogo de dados da Oba Doceria
 
-export const caixas = [
-  { id: 'caixa-4', nome: 'Caixa 4 Unidades', capacidade: 4, preco: 0.0 },
-  { id: 'caixa-6', nome: 'Caixa 6 Unidades', capacidade: 6, preco: 0.0 },
-  { id: 'caixa-12', nome: 'Caixa 12 Unidades', capacidade: 12, preco: 0.0 }
-];
+const products = {
+  "caixas": [
+    { "id": "cx001", "name": "Caixa com 4 doces", "capacity": 4, "price": 20.00 },
+    { "id": "cx002", "name": "Caixa com 6 doces", "capacity": 6, "price": 30.00 },
+    { "id": "cx003", "name": "Caixa com 12 doces", "capacity": 12, "price": 60.00 }
+  ],
+  "kitsPresenteaveis": [
+    { "id": "kp001", "name": "Mini Naked Cake", "price": 45.00 },
+    { "id": "kp002", "name": "Uvas Verdes (200g)", "price": 15.00 },
+    { "id": "kp003", "name": "Morangos Frescos (200g)", "price": 18.00 }
+  ],
+  "opcionais": [
+    { "id": "op001", "name": "Cartão Personalizado", "price": 5.00 },
+    { "id": "op002", "name": "Embalagem de Presente", "price": 10.00 }
+  ]
+};
 
-export const kitsPresenteaveis = [
-  // Adicionar kits existentes aqui
-];
+export function getProducts() {
+  return products;
+}
 
-export const catalogoDoces = [
-  // Sabores de brigadeiros, palha italiana, etc.
-  // Exemplo de estrutura:
-  // { id: 'brigadeiro-tradicional', nome: 'Brigadeiro Tradicional', categoria: 'brigadeiros', preco: 0.0, img: '' }
-];
-
-export const opcionaisKits = [
-  { id: 'laco', nome: 'Laço Especial', preco: 0.0 },
-  { id: 'placa', nome: 'Placa Personalizada', preco: 0.0 }
-];
+export function validateProducts(products) {
+  // Implementar lógica de validação se necessário
+  return true;
+}

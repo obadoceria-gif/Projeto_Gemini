@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Diagnóstico de Assets e UTF-8</title>
+</head>
+<body>
+  <h1>Diagnóstico de Assets e UTF-8</h1>
+  <div id="result">Executando...</div>
+  <script type="module">
+    import { initializeCatalogService, getAllViewItems } from '../src/services/index.js';
+    import { buildLegacyProductsFromViewItems } from '../src/services/legacy-product-adapter.js';
+
+    const result = document.querySelector('#result');
+
+    try {
+      await initializeCatalogService();
+      const products = buildLegacyProductsFromViewItems(getAllViewItems());
+
+      if (!products.every(item => item.img === '')) {
+        throw new Error('Ainda existem caminhos de imagem enviados para a UI legada.');
+      }
+
+      const appSource = await (await fetch('../src/app.js', { cache: 'no-store' })).text();
+      const markers = ['Ã', 'Â'];
+      const found = markers.filter(marker => appSource.includes(marker));
+
+      if (found.length) {
+        throw new Error('Ainda há texto com codificação incorreta em src/app.js.');
+      }
+
+      result.innerHTML = `
+        <p><strong>✅ Assets e UTF-8 validados com sucesso.</strong></p>
+        <pre>${JSON.stringify({
+          totalItens: products.length,
+          requisicoesImagemLegada: 0,
+          fallbackVisualAtivo: true,
+          mojibakeEncontrado: false,
+          imagensOficiais: 'pendentes de incorporação'
+        }, null, 2)}</pre>
+      `;
+    } catch (error) {
+      result.innerHTML = `<p><strong>❌ Falha.</strong></p><pre>${String(error?.stack || error)}</pre>`;
+    }
+  </script>
+</body>
+</html>

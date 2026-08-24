@@ -1,0 +1,37 @@
+[
+  {
+    "id": "leite-condensado",
+    "nome": "Leite Condensado",
+    "unidade": "lata",
+    "preco": 5.5,
+    "fornecedorId": "fornecedor-laticinios"
+  },
+  {
+    "id": "manteiga",
+    "nome": "Manteiga",
+    "unidade": "kg",
+    "preco": 18.0,
+    "fornecedorId": "fornecedor-laticinios"
+  },
+  {
+    "id": "chocolate-povis",
+    "nome": "Chocolate em Pó",
+    "unidade": "pacote",
+    "preco": 8.5,
+    "fornecedorId": "fornecedor-chocolate"
+  },
+  {
+    "id": "creme-de-leite",
+    "nome": "Creme de Leite",
+    "unidade": "caixa",
+    "preco": 6.0,
+    "fornecedorId": "fornecedor-laticinios"
+  },
+  {
+    "id": "biscoito",
+    "nome": "Biscoito",
+    "unidade": "pacote",
+    "preco": 4.0,
+    "fornecedorId": "fornecedor-mercearia"
+  }
+]

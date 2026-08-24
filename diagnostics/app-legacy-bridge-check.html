@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diagnóstico Hotfix 1.4.1</title>
+  <style>
+    body { max-width: 900px; margin: 0 auto; padding: 24px; font-family: system-ui, sans-serif; line-height: 1.5; }
+    pre { overflow: auto; padding: 16px; background: #f4f4f4; border-radius: 8px; white-space: pre-wrap; }
+    .ok { font-weight: 700; }
+  </style>
+</head>
+<body>
+  <h1>Diagnóstico Hotfix 1.4.1</h1>
+  <div id="result">Executando...</div>
+
+  <script type="module">
+    import {
+      initializeCatalogService,
+      getAllViewItems
+    } from '../src/services/index.js';
+
+    import {
+      buildLegacyProductsFromViewItems
+    } from '../src/services/legacy-product-adapter.js';
+
+    const result = document.querySelector('#result');
+
+    function assert(condition, message) {
+      if (!condition) throw new Error(message);
+    }
+
+    try {
+      await initializeCatalogService();
+
+      const viewItems = getAllViewItems();
+      const products = buildLegacyProductsFromViewItems(viewItems);
+
+      assert(Array.isArray(products), 'O adaptador não retornou um array.');
+      assert(products.length === 8, `Esperados 8 produtos, encontrados ${products.length}.`);
+
+      const configurable = products.filter(item => item.configuravel);
+      const purchasable = products.filter(item => item.disponivel);
+
+      assert(configurable.length === 4, 'Esperadas 4 caixas configuráveis.');
+      assert(purchasable.length === 4, 'Esperados 4 itens compráveis com preço fixo.');
+      assert(configurable.every(item => item.disponivel === false), 'Caixas montáveis não podem ser adicionadas como produto comum.');
+      assert(products.every(item => Number.isFinite(item.preco)), 'Existe produto com preço não numérico.');
+
+      const appResponse = await fetch('../src/app.js', { cache: 'no-store' });
+      assert(appResponse.ok, 'Não foi possível ler src/app.js.');
+      const appSource = await appResponse.text();
+
+      assert(
+        appSource.includes('buildLegacyProductsFromViewItems'),
+        'app.js não utiliza o adaptador legado.'
+      );
+
+      assert(
+        appSource.includes('getAllViewItems()'),
+        'app.js não obtém os itens do Catalog Service.'
+      );
+
+      result.innerHTML = `
+        <p class="ok">✅ Hotfix 1.4.1 validada com sucesso.</p>
+        <pre>${JSON.stringify({
+          total: products.length,
+          caixasMontaveisBloqueadas: configurable.map(item => item.id),
+          itensCompraveis: purchasable.map(item => ({
+            id: item.id,
+            preco: item.preco
+          })),
+          appUsaCatalogService: true,
+          fluxoLegadoProtegido: true
+        }, null, 2)}</pre>
+      `;
+    } catch (error) {
+      result.innerHTML = `
+        <p><strong>❌ Falha na Hotfix 1.4.1.</strong></p>
+        <pre>${String(error?.stack || error)}</pre>
+      `;
+    }
+  </script>
+</body>
+</html>

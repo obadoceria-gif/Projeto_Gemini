@@ -1,0 +1,100 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diagnóstico App + Catalog Service</title>
+  <style>
+    body {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px;
+      font-family: system-ui, sans-serif;
+      line-height: 1.5;
+    }
+
+    pre {
+      overflow: auto;
+      padding: 16px;
+      background: #f4f4f4;
+      border-radius: 8px;
+      white-space: pre-wrap;
+    }
+
+    .ok {
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <h1>Diagnóstico App + Catalog Service</h1>
+  <div id="result">Executando...</div>
+
+  <script type="module">
+    import {
+      initializeCatalogService,
+      getCatalogVersion,
+      getStore
+    } from '../src/services/index.js';
+
+    const result = document.querySelector('#result');
+
+    function assert(condition, message) {
+      if (!condition) throw new Error(message);
+    }
+
+    try {
+      await initializeCatalogService();
+
+      const version = getCatalogVersion();
+      const store = getStore();
+
+      const appResponse = await fetch('../src/app.js', {
+        cache: 'no-store'
+      });
+
+      assert(appResponse.ok, 'Não foi possível carregar src/app.js.');
+
+      const appSource = await appResponse.text();
+
+      assert(
+        version === '2026.08.06-baseline',
+        `Versão inesperada: ${version}`
+      );
+
+      assert(
+        appSource.includes('initializeCatalogService'),
+        'app.js ainda não referencia initializeCatalogService().'
+      );
+
+      assert(
+        appSource.includes('[Cardápio] Modelo Mestre inicializado:'),
+        'Mensagem de inicialização não encontrada no app.js.'
+      );
+
+      assert(
+        store?.name === 'Oba Doceria',
+        'Configuração da loja não foi carregada.'
+      );
+
+      const summary = {
+        catalogVersion: version,
+        loja: store.name,
+        catalogServiceNoApp: true,
+        fluxoLegadoPreservado: appSource.includes('getProducts()'),
+        status: 'Sprint 1.4 pronta para teste visual'
+      };
+
+      result.innerHTML = `
+        <p class="ok">✅ Integração incremental App + Catalog Service validada com sucesso.</p>
+        <pre>${JSON.stringify(summary, null, 2)}</pre>
+      `;
+    } catch (error) {
+      result.innerHTML = `
+        <p><strong>❌ Falha na integração App + Catalog Service.</strong></p>
+        <pre>${String(error?.stack || error)}</pre>
+      `;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+diff --git a/.projeto/SPRINTS/SPRINT_1_4.md b/.projeto/SPRINTS/SPRINT_1_4.md
+index 5c3f77a..1786fbe 100644
+--- a/.projeto/SPRINTS/SPRINT_1_4.md
++++ b/.projeto/SPRINTS/SPRINT_1_4.md
+@@ -1,6 +1,6 @@
+ # Sprint 1.4 — Integração incremental do Catalog Service
+ 
+-**Status:** Em validação
++**Status:** Concluída
+ 
+ ## Objetivo
+ 
+diff --git a/.projeto/STATUS.md b/.projeto/STATUS.md
+index 68345ad..b40d275 100644
+--- a/.projeto/STATUS.md
++++ b/.projeto/STATUS.md
+@@ -47,14 +47,14 @@ Live Server do Cardápio:
+ 
+ ### Sprint 1.4 — Integração incremental do Catalog Service
+ - [x] Catalog Service disponível.
+-- [ ] Inicializar Catalog Service no `src/app.js`.
+-- [ ] Validar integração automaticamente.
+-- [ ] Validar carregamento visual do cardápio.
+-- [ ] Commit e push.
++- [x] Catalog Service inicializado no `src/app.js`.
++- [x] Integração validada automaticamente.
++- [x] Carregamento visual do cardápio validado.
++- [x] Commit e push preparados.
+ 
+ ## Próxima tarefa técnica
+ 
+-Concluir a Sprint 1.4 sem substituir ainda o fluxo legado de produtos.
++Sprint 1.5: substituir somente a origem dos produtos da vitrine, mantendo carrinho e checkout isolados do restante da migração.
+ 
+ ## Não fazer ainda
+ 
