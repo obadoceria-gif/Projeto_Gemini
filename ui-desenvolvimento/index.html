@@ -1635,6 +1635,25 @@ body:has(#r120-ux2-selection-trigger:not([hidden]))
 }
 
 </style>
+
+<!-- OBA PRODUCTION DEBUG GUARD -->
+<style id="oba-production-debug-guard">
+  /*
+   * Produção:
+   * infraestrutura R13 permanece disponível para diagnóstico,
+   * porém nunca aparece para o cliente normal.
+   *
+   * Ativação técnica explícita:
+   * ?obaDebug=1
+   */
+  #r120-r13-checkpoint {
+    display: none !important;
+  }
+
+  html.oba-debug-ativo #r120-r13-checkpoint {
+    display: block !important;
+  }
+</style>
 </head>
 <body class="antialiased selection:bg-[#8B4513] selection:text-white pb-24">
 
