@@ -355,6 +355,54 @@ function Try-StaticFile([string]$UrlPath){
     if(!(Test-Path -LiteralPath $candidate -PathType Leaf)){ return $null }
     return $candidate
 }
+function Content-Type-For([string]$Path){
+    switch([IO.Path]::GetExtension($Path).ToLowerInvariant()){
+        ".html" { "text/html; charset=utf-8"; break }
+        ".json" { "application/json; charset=utf-8"; break }
+        ".css"  { "text/css; charset=utf-8"; break }
+        ".js"   { "application/javascript; charset=utf-8"; break }
+        ".png"  { "image/png"; break }
+        ".jpg"  { "image/jpeg"; break }
+        ".jpeg" { "image/jpeg"; break }
+        ".webp" { "image/webp"; break }
+        ".svg"  { "image/svg+xml"; break }
+        default { "application/octet-stream" }
+    }
+}
+
+function Try-StaticFile([string]$UrlPath){
+    $pathOnly=($UrlPath -split '\?')[0]
+    $decoded=[Uri]::UnescapeDataString($pathOnly).TrimStart('/')
+    if([string]::IsNullOrWhiteSpace($decoded)){ return $null }
+
+    $allowed=@(
+        "ui-desenvolvimento/",
+        "data/",
+        "Images/",
+        "images/",
+        "src/",
+        "assets/"
+    )
+
+    $ok=$false
+    foreach($prefix in $allowed){
+        if($decoded.StartsWith($prefix,[StringComparison]::OrdinalIgnoreCase)){
+            $ok=$true
+            break
+        }
+    }
+    if(-not $ok){ return $null }
+
+    $candidate=[IO.Path]::GetFullPath((Join-Path $root ($decoded -replace '/','\')))
+    $rootFull=[IO.Path]::GetFullPath($root + [IO.Path]::DirectorySeparatorChar)
+
+    if(-not $candidate.StartsWith($rootFull,[StringComparison]::OrdinalIgnoreCase)){
+        throw "Path traversal bloqueado."
+    }
+
+    if(!(Test-Path -LiteralPath $candidate -PathType Leaf)){ return $null }
+    return $candidate
+}
 $listener = [Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback,$Port)
 $listener.Start()
 
@@ -392,6 +440,44 @@ try{
 
                     $result = Save-EntityAtomic $entity $value
                     Send-Json $stream 200 "OK" $result
+                }
+                elseif($req.method -eq "POST" -and $req.path -eq "/api/publish"){
+                    $payload=$req.body | ConvertFrom-Json
+                    if([string]$payload.confirm -ne "PUBLICAR"){
+                        throw "Confirmacao de publicacao invalida."
+                    }
+
+                    $pub=Join-Path $root ".scripts\CARDAPIO-publicar-catalogo.ps1"
+                    if(!(Test-Path -LiteralPath $pub)){ throw "Publicador ausente." }
+
+                    $psi=New-Object Diagnostics.ProcessStartInfo
+                    $psi.FileName="powershell.exe"
+                    $psi.Arguments='-NoProfile -ExecutionPolicy Bypass -File "'+$pub+'"'
+                    $psi.WorkingDirectory=$root
+                    $psi.UseShellExecute=$false
+                    $psi.RedirectStandardOutput=$true
+                    $psi.RedirectStandardError=$true
+                    $psi.CreateNoWindow=$true
+
+                    $p=[Diagnostics.Process]::Start($psi)
+                    $stdout=$p.StandardOutput.ReadToEnd()
+                    $stderr=$p.StandardError.ReadToEnd()
+                    $p.WaitForExit()
+
+                    if($p.ExitCode -ne 0){
+                        throw ("Publicacao falhou. "+$stderr+" "+$stdout)
+                    }
+
+                    Send-Json $stream 200 "OK" @{ok=$true;output=$stdout}
+                }
+                elseif($req.method -eq "GET"){
+                    $static=Try-StaticFile $req.path
+                    if($null -ne $static){
+                        $bytes=[IO.File]::ReadAllBytes($static)
+                        Write-HttpResponse $stream 200 "OK" (Content-Type-For $static) $bytes
+                    }else{
+                        Send-Json $stream 404 "Not Found" @{ok=$false;error="Rota inexistente."}
+                    }
                 }
                 elseif($req.method -eq "POST" -and $req.path -eq "/api/publish"){
                     $payload=$req.body | ConvertFrom-Json

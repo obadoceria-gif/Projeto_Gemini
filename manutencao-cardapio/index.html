@@ -35,6 +35,11 @@ dialog{border:0;border-radius:15px;padding:0;max-width:620px;width:calc(100% - 2
 <button class="primary" type="button" id="publicarCardapio">Publicar alterações</button>
 <span id="dirtyState" class="badge">Sem alterações pendentes</span>
 </div>
+<div class="toolbar">
+<button class="secondary" type="button" id="previewCardapio">Visualizar cardápio</button>
+<button class="primary" type="button" id="publicarCardapio">Publicar alterações</button>
+<span id="dirtyState" class="badge">Sem alterações pendentes</span>
+</div>
 <div class="cards">
 <div class="card"><div class="numero" id="nSabores">—</div><div class="label">Sabores</div></div>
 <div class="card"><div class="numero" id="nCategorias">—</div><div class="label">Categorias</div></div>
@@ -52,7 +57,7 @@ dialog{border:0;border-radius:15px;padding:0;max-width:620px;width:calc(100% - 2
 </div>
 
 <section id="panel-sabores" class="panel active">
-<div class="toolbar"><h2>Sabores</h2><button class="primary" type="button" id="novoSabor">+ Novo sabor</button><input id="buscaSabor" placeholder="Buscar sabor"><select id="filtroCategoria"><option value="">Todas as categorias</option></select><select id="filtroStatus"><option value="">Todos</option><option value="disponivel">Disponíveis</option><option value="oculto">Ocultos</option></select></div>
+<div class="toolbar"><h2>Sabores</h2><button class="primary" type="button" id="novoSabor">+ Novo sabor</button><button class="primary" type="button" id="novoSabor">+ Novo sabor</button><input id="buscaSabor" placeholder="Buscar sabor"><select id="filtroCategoria"><option value="">Todas as categorias</option></select><select id="filtroStatus"><option value="">Todos</option><option value="disponivel">Disponíveis</option><option value="oculto">Ocultos</option></select></div>
 <table><thead><tr><th>Nome</th><th>Categoria</th><th>Preço</th><th class="hide-mobile">Imagem</th><th>Status</th></tr></thead><tbody id="bodySabores"></tbody></table>
 </section>
 
@@ -241,6 +246,45 @@ function abrirNovo(tipo){
 
   $('editor').showModal();
 }
+function novoId(prefix,nome){
+  const base=String(nome||'item').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'item';
+  let id=prefix+'-'+base, n=2;
+  const todos=[...catalogo.flavors,...catalogo.boxes,...catalogo.products,...catalogo.options].map(x=>String(x.id));
+  while(todos.includes(id)){id=prefix+'-'+base+'-'+n++}
+  return id;
+}
+
+function marcarDirty(){
+  dirty=true;
+  const d=$('dirtyState');d.textContent='Alterações pendentes';d.className='badge off';
+}
+
+function abrirNovo(tipo){
+  editando={tipo,id:null,novo:true};
+  const box=$('editorCampos');box.replaceChildren();
+
+  if(tipo==='flavors'){
+    $('editorTitulo').textContent='Novo sabor';
+    box.append(field('edNome','Nome','','text',true));
+    const wrap=document.createElement('div');wrap.className='field';const l=document.createElement('label');l.textContent='Categoria';const s=document.createElement('select');s.id='edCategoria';
+    catalogo.categories.filter(c=>c.ativo!==false).forEach(c=>s.add(new Option(c.nome,c.id)));wrap.append(l,s);box.append(wrap);
+    box.append(field('edPreco','Preço','0.00','number'));box.append(field('edImagem','Imagem','','text',true));box.append(checks({ativo:true,disponivel:true}));
+  }
+  if(tipo==='boxes'){
+    $('editorTitulo').textContent='Nova caixa';
+    box.append(field('edNome','Nome','','text',true));box.append(field('edCapacidade','Capacidade','0','number'));box.append(field('edMaxSabores','Máx. sabores','','number'));box.append(field('edPrecoFixo','Preço fixo','','number'));box.append(checks({ativo:true,disponivel:true}));
+  }
+  if(tipo==='products'){
+    $('editorTitulo').textContent='Novo produto';
+    box.append(field('edNome','Nome','','text',true));box.append(field('edDescricao','Descrição','','text',true));box.append(field('edPreco','Preço','0.00','number'));box.append(field('edImagem','Imagem','','text',true));box.append(field('edOpcionais','Opcionais permitidos','','text',true));box.append(checks({ativo:true,disponivel:true}));
+  }
+  if(tipo==='options'){
+    $('editorTitulo').textContent='Novo opcional';
+    box.append(field('edNome','Nome','','text',true));box.append(field('edPreco','Preço','0.00','number'));box.append(checks({ativo:true,disponivel:true}));
+  }
+
+  $('editor').showModal();
+}
 function abrirEditor(tipo,id){
   const item=catalogo[tipo].find(x=>String(x.id)===String(id));if(!item)return;
   editando={tipo,id,novo:false};const box=$('editorCampos');box.replaceChildren();
@@ -341,6 +385,42 @@ $('buscaSabor').addEventListener('input',renderSabores);
 $('filtroCategoria').addEventListener('change',renderSabores);
 $('filtroStatus').addEventListener('change',renderSabores);
 
+$('novoSabor').addEventListener('click',()=>abrirNovo('flavors'));
+$('novaCaixa').addEventListener('click',()=>abrirNovo('boxes'));
+$('novoProduto').addEventListener('click',()=>abrirNovo('products'));
+$('novoOpcional').addEventListener('click',()=>abrirNovo('options'));
+
+$('previewCardapio').addEventListener('click',()=>{
+  window.open('/ui-desenvolvimento/index.html?preview='+Date.now(),'_blank','noopener,noreferrer');
+});
+
+$('publicarCardapio').addEventListener('click',async()=>{
+  if(!dirty){
+    msg('Não há alterações pendentes para publicar.','erro');
+    return;
+  }
+
+  const ok=window.confirm('Publicar as alterações no cardápio oficial? O sistema fará validação, Git, deploy, smoke público e rollback automático se necessário.');
+  if(!ok)return;
+
+  const btn=$('publicarCardapio');btn.disabled=true;btn.textContent='Publicando...';
+
+  try{
+    const res=await request('/api/publish',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({confirm:'PUBLICAR'})
+    });
+
+    dirty=false;
+    const d=$('dirtyState');d.textContent='Publicado';d.className='badge ok';
+    msg('Publicação concluída com sucesso.');
+  }catch(err){
+    msg(String(err.message||err),'erro');
+  }finally{
+    btn.disabled=false;btn.textContent='Publicar alterações';
+  }
+});
 $('novoSabor').addEventListener('click',()=>abrirNovo('flavors'));
 $('novaCaixa').addEventListener('click',()=>abrirNovo('boxes'));
 $('novoProduto').addEventListener('click',()=>abrirNovo('products'));
