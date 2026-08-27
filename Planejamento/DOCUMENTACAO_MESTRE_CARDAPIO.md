@@ -318,3 +318,51 @@ Número de arquivos rastreados:
 Baseline SHA256:
 
 42F8968B159D3CF1E280FF325D6079B3CBB4E9B2BE202370F5017AF747B44299
+---
+
+## Fechamento de Segurança 2026-08-26
+
+Status: **APROVADO E PUBLICADO**
+
+### Hardening
+
+- 3/3 links 	arget="_blank" protegidos por el="noopener noreferrer"
+- window.open principal protegido com 
+oopener,noreferrer
+- R15.2: 12/12 contratos aprovados
+- contratos funcionais centrais preservados
+- HTTP local aprovado
+- smoke público aprovado
+- nenhum segredo evidente encontrado no secret scan
+
+### Git
+
+Commit de segurança:
+
+196b3e6
+
+Commit de segurança integrado em main:
+
+129854cc0013b3d3cda8d949fb9ec3c7d15f24aa
+
+Git blob oficial do arquivo ui-desenvolvimento/index.html:
+
+8c3f51999d1553ba24ea61fa8528c7e9c2cc4b42
+
+### Produção
+
+https://obadoceria-gif.github.io/Projeto_Gemini/
+
+### Integridade
+
+O Git blob é a referência canônica entre worktrees.
+
+O SHA256 do arquivo físico pode variar entre worktrees Windows
+por normalização LF/CRLF sem representar alteração no conteúdo
+versionado.
+
+### Segurança
+
+A versão passou pela auditoria e pelo hardening definidos neste
+projeto. Isso reduz a superfície identificada de ataque, mas não
+significa garantia absoluta contra todo ataque futuro.
