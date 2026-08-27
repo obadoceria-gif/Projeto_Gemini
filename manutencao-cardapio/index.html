@@ -3,322 +3,235 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Oba Doceria — Central de Manutenção</title>
+<title>Oba Doceria — Gestão do Cardápio</title>
 <style>
 :root{--bg:#f8f3ed;--card:#fff;--text:#4e352c;--muted:#81736d;--brand:#9d4c0c;--line:#eaded5;--ok:#167544;--danger:#a33636}
 *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--text)}
-header{padding:22px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+header{padding:20px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
 header h1{margin:0 0 4px;font-size:22px}header p{margin:0;color:var(--muted)}
-main{max-width:1250px;margin:auto;padding:20px}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
-.card,section{background:#fff;border:1px solid var(--line);border-radius:15px}.card{padding:14px}.numero{font-size:25px;font-weight:800;color:var(--brand)}.label{color:var(--muted)}
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.tab{background:#eee5dd;color:var(--text)}.tab.active{background:var(--brand);color:#fff}
-section{display:none;padding:18px}.panel.active{display:block}.toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:12px}.toolbar h2{margin:0 auto 0 0}
-input,select,textarea,button{font:inherit}input,select,textarea{padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:#fff}
-textarea{min-height:80px;resize:vertical}button{border:0;border-radius:9px;padding:9px 13px;cursor:pointer}.primary{background:var(--brand);color:#fff}.secondary{background:#eee5dd;color:var(--text)}
+main{max-width:1280px;margin:auto;padding:18px}.topbar,.toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.topbar{margin-bottom:14px}
+button,input,select,textarea{font:inherit}button{border:0;border-radius:9px;padding:9px 13px;cursor:pointer}.primary{background:var(--brand);color:#fff}.secondary{background:#eee5dd;color:var(--text)}.danger{background:#fff0f0;color:var(--danger)}
+input,select,textarea{padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:#fff}textarea{min-height:80px;resize:vertical}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:9px}.card,section{background:#fff;border:1px solid var(--line);border-radius:14px}.card{padding:13px}
+.numero{font-size:24px;font-weight:800;color:var(--brand)}.label{color:var(--muted)}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:16px 0}.tab{background:#eee5dd;color:var(--text)}.tab.active{background:var(--brand);color:#fff}
+section{display:none;padding:17px}.panel.active{display:block}.toolbar{margin-bottom:11px}.toolbar h2{margin:0 auto 0 0}
 table{width:100%;border-collapse:collapse}th,td{padding:9px;text-align:left;border-bottom:1px solid var(--line)}th{font-size:12px;color:var(--muted)}
 tr[data-editable]{cursor:pointer}tr[data-editable]:hover{background:#fffaf6}.ok{color:var(--ok);font-weight:700}.off{color:var(--danger);font-weight:700}
 .badge{display:inline-block;background:#f4e9df;padding:4px 8px;border-radius:999px;font-size:12px}
-#mensagem{display:none;margin:0 0 12px;padding:11px;border-radius:9px}#mensagem.okbox{display:block;background:#eaf8ef;color:#145e36}#mensagem.errbox{display:block;background:#fff0f0;color:#8b2828}
-dialog{border:0;border-radius:15px;padding:0;max-width:620px;width:calc(100% - 24px);box-shadow:0 18px 60px #0003}dialog::backdrop{background:#0007}
-.modal{padding:20px}.modal h2{margin-top:0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}
-.checks{display:flex;gap:18px;align-items:center}.actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.config-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-@media(max-width:700px){.grid{grid-template-columns:1fr}.hide-mobile{display:none}table{font-size:13px}}
+#mensagem{display:none;margin-bottom:12px;padding:11px;border-radius:9px}#mensagem.okbox{display:block;background:#eaf8ef;color:#145e36}#mensagem.errbox{display:block;background:#fff0f0;color:#8b2828}
+#pendenciasBox{display:none;background:#fff8e8;border:1px solid #ead4a5;border-radius:12px;padding:12px;margin-bottom:13px}#pendenciasBox.show{display:block}
+dialog{border:0;border-radius:15px;padding:0;max-width:660px;width:calc(100% - 24px);box-shadow:0 18px 60px #0003}dialog::backdrop{background:#0007}
+.modal{padding:20px}.modal h2{margin-top:0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}.checks{display:flex;gap:18px;align-items:center}
+.actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.preview-img{max-width:180px;max-height:130px;border:1px solid var(--line);border-radius:9px;object-fit:contain;background:#fafafa}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.hide-mobile{display:none}table{font-size:13px}}
 </style>
 </head>
 <body>
-<header><h1>Oba Doceria — Central de Manutenção</h1><p>Modelo Mestre · manutenção local segura</p></header>
+<header><h1>Oba Doceria — Gestão do Cardápio</h1><p>Crie, edite, arquive, troque imagens, visualize e publique</p></header>
 <main>
 <div id="mensagem"></div>
+<div id="pendenciasBox"><strong>Alterações pendentes</strong><ul id="listaPendencias"></ul></div>
 
-<div class="toolbar">
-<button class="secondary" type="button" id="previewCardapio">Visualizar cardápio</button>
-<button class="primary" type="button" id="publicarCardapio">Publicar alterações</button>
-<span id="dirtyState" class="badge">Sem alterações pendentes</span>
+<div class="topbar">
+<button class="secondary" id="previewBtn">Visualizar cardápio</button>
+<button class="primary" id="publicarBtn">Publicar alterações</button>
+<span id="statusBadge" class="badge">Verificando...</span>
 </div>
-<div class="toolbar">
-<button class="secondary" type="button" id="previewCardapio">Visualizar cardápio</button>
-<button class="primary" type="button" id="publicarCardapio">Publicar alterações</button>
-<span id="dirtyState" class="badge">Sem alterações pendentes</span>
-</div>
+
 <div class="cards">
 <div class="card"><div class="numero" id="nSabores">—</div><div class="label">Sabores</div></div>
 <div class="card"><div class="numero" id="nCategorias">—</div><div class="label">Categorias</div></div>
 <div class="card"><div class="numero" id="nCaixas">—</div><div class="label">Caixas</div></div>
 <div class="card"><div class="numero" id="nProdutos">—</div><div class="label">Produtos</div></div>
 <div class="card"><div class="numero" id="nOpcionais">—</div><div class="label">Opcionais</div></div>
+<div class="card"><div class="numero" id="nCombos">—</div><div class="label">Combos</div></div>
 </div>
 
 <div class="tabs">
-<button class="tab active" data-tab="sabores">Sabores</button>
-<button class="tab" data-tab="caixas">Caixas</button>
-<button class="tab" data-tab="produtos">Produtos</button>
-<button class="tab" data-tab="opcionais">Opcionais</button>
-<button class="tab" data-tab="config">Configurações</button>
+<button class="tab active" data-tab="flavors">Sabores</button>
+<button class="tab" data-tab="categories">Categorias</button>
+<button class="tab" data-tab="boxes">Caixas</button>
+<button class="tab" data-tab="products">Produtos</button>
+<button class="tab" data-tab="options">Opcionais</button>
+<button class="tab" data-tab="combos">Combos</button>
+<button class="tab" data-tab="config">Loja</button>
 </div>
 
-<section id="panel-sabores" class="panel active">
-<div class="toolbar"><h2>Sabores</h2><button class="primary" type="button" id="novoSabor">+ Novo sabor</button><button class="primary" type="button" id="novoSabor">+ Novo sabor</button><input id="buscaSabor" placeholder="Buscar sabor"><select id="filtroCategoria"><option value="">Todas as categorias</option></select><select id="filtroStatus"><option value="">Todos</option><option value="disponivel">Disponíveis</option><option value="oculto">Ocultos</option></select></div>
-<table><thead><tr><th>Nome</th><th>Categoria</th><th>Preço</th><th class="hide-mobile">Imagem</th><th>Status</th></tr></thead><tbody id="bodySabores"></tbody></table>
-</section>
+<section id="panel-flavors" class="panel active"><div class="toolbar"><h2>Sabores</h2><button class="primary" data-new="flavors">+ Novo sabor</button><input id="buscaSabor" placeholder="Buscar sabor"><select id="filtroCategoria"><option value="">Todas as categorias</option></select></div><table><thead><tr><th>Nome</th><th>Categoria</th><th>Preço</th><th class="hide-mobile">Imagem</th><th>Status</th></tr></thead><tbody id="body-flavors"></tbody></table></section>
+<section id="panel-categories" class="panel"><div class="toolbar"><h2>Categorias</h2><button class="primary" data-new="categories">+ Nova categoria</button></div><table><thead><tr><th>Nome</th><th>Preço ref.</th><th>Ordem</th><th>Status</th></tr></thead><tbody id="body-categories"></tbody></table></section>
+<section id="panel-boxes" class="panel"><div class="toolbar"><h2>Caixas</h2><button class="primary" data-new="boxes">+ Nova caixa</button></div><table><thead><tr><th>Nome</th><th>Capacidade</th><th>Máx. sabores</th><th>Preço fixo</th><th>Status</th></tr></thead><tbody id="body-boxes"></tbody></table></section>
+<section id="panel-products" class="panel"><div class="toolbar"><h2>Produtos</h2><button class="primary" data-new="products">+ Novo produto</button></div><table><thead><tr><th>Nome</th><th>Tipo</th><th>Preço</th><th class="hide-mobile">Imagem</th><th>Status</th></tr></thead><tbody id="body-products"></tbody></table></section>
+<section id="panel-options" class="panel"><div class="toolbar"><h2>Opcionais</h2><button class="primary" data-new="options">+ Novo opcional</button></div><table><thead><tr><th>Nome</th><th>Preço</th><th>Ordem</th><th>Status</th></tr></thead><tbody id="body-options"></tbody></table></section>
+<section id="panel-combos" class="panel"><div class="toolbar"><h2>Combos</h2><button class="primary" data-new="combos">+ Novo combo</button></div><table><thead><tr><th>Nome</th><th>Preço</th><th>Imagem</th><th>Status</th></tr></thead><tbody id="body-combos"></tbody></table></section>
+<section id="panel-config" class="panel"><h2>Loja</h2><form id="formConfig"><div class="grid"><div class="field"><label>WhatsApp</label><input id="cfgWhatsapp" required></div><div class="field"><label>Locale</label><input id="cfgLocale"></div><div class="field"><label>Moeda</label><input id="cfgCurrency"></div><div class="field full"><label>Formas de pagamento</label><input id="cfgPayments" placeholder="Pix, Dinheiro, Cartão"></div></div><div class="actions"><button class="primary" type="submit">Salvar loja</button></div></form></section>
 
-<section id="panel-caixas" class="panel">
-<div class="toolbar"><h2>Caixas</h2><button class="primary" type="button" id="novaCaixa">+ Nova caixa</button></div>
-<table><thead><tr><th>Nome</th><th>Capacidade</th><th>Máx. sabores</th><th>Preço fixo</th><th>Status</th></tr></thead><tbody id="bodyCaixas"></tbody></table>
-</section>
-
-<section id="panel-produtos" class="panel">
-<div class="toolbar"><h2>Produtos</h2><button class="primary" type="button" id="novoProduto">+ Novo produto</button></div>
-<table><thead><tr><th>Nome</th><th>Tipo</th><th>Preço</th><th>Status</th></tr></thead><tbody id="bodyProdutos"></tbody></table>
-</section>
-
-<section id="panel-opcionais" class="panel">
-<div class="toolbar"><h2>Opcionais</h2><button class="primary" type="button" id="novoOpcional">+ Novo opcional</button></div>
-<table><thead><tr><th>Nome</th><th>Preço</th><th>Status</th></tr></thead><tbody id="bodyOpcionais"></tbody></table>
-</section>
-
-<section id="panel-config" class="panel">
-<h2>Configurações da loja</h2>
-<form id="formConfig">
-<div class="config-grid">
-<div class="field"><label>WhatsApp</label><input id="cfgWhatsapp" required></div>
-<div class="field"><label>Locale</label><input id="cfgLocale" placeholder="pt-BR"></div>
-<div class="field"><label>Moeda</label><input id="cfgCurrency" placeholder="BRL"></div>
-<div class="field full"><label>Formas de pagamento (separadas por vírgula)</label><input id="cfgPayments"></div>
-</div>
-<div class="actions"><button class="primary" type="submit">Salvar configurações</button></div>
-</form>
-</section>
 </main>
 
-<dialog id="editor">
-<form class="modal" id="formEditor">
-<h2 id="editorTitulo">Editar</h2>
-<div id="editorCampos" class="grid"></div>
-<div class="actions">
-<button class="secondary" type="button" id="cancelarEditor">Cancelar</button>
-<button class="primary" type="submit">Salvar alteração</button>
-</div>
-</form>
-</dialog>
+<dialog id="editor"><form class="modal" id="formEditor"><h2 id="editorTitulo">Editar</h2><div id="editorCampos" class="grid"></div><div class="actions"><button class="danger" type="button" id="arquivarBtn">Arquivar</button><button class="secondary" type="button" id="duplicarBtn">Duplicar</button><button class="secondary" type="button" id="cancelarBtn">Cancelar</button><button class="primary" type="submit">Salvar</button></div></form></dialog>
 
 <script>
 'use strict';
 
 let catalogo=null;
-let editando={tipo:null,id:null,novo:false}; let dirty=false;
+let editando={tipo:null,id:null,novo:false};
+let pendencias=[];
 
 const $=id=>document.getElementById(id);
 const moeda=v=>Number(v??0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 
-function msg(texto,tipo='ok'){
-  const b=$('mensagem');b.textContent=texto;b.className=tipo==='ok'?'okbox':'errbox';b.style.display='block';window.scrollTo({top:0,behavior:'smooth'});
-}
-
-async function request(url,opts){
+async function api(url,opts){
   const r=await fetch(url,opts);
   const j=await r.json();
   if(!r.ok)throw new Error(j.error||'Falha na operação.');
   return j;
 }
 
-async function carregar(){
+function msg(t,tipo='ok'){const b=$('mensagem');b.textContent=t;b.className=tipo==='ok'?'okbox':'errbox';b.style.display='block';window.scrollTo({top:0,behavior:'smooth'})}
+function td(t,c=''){const x=document.createElement('td');x.textContent=t??'—';if(c)x.className=c;return x}
+function statusTd(x){const ok=x.ativo!==false&&x.disponivel!==false;return td(ok?'Disponível':'Arquivado',ok?'ok':'off')}
+function nextOrder(tipo){return Math.max(0,...catalogo[tipo].map(x=>Number(x.ordem)||0))+1}
+
+function slug(s){return String(s||'item').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'item'}
+function novoId(tipo,nome){
+  const prefix={flavors:'sabor',categories:'categoria',boxes:'caixa',products:'produto',options:'opcional',combos:'combo'}[tipo]||'item';
+  let id=prefix+'-'+slug(nome),n=2;
+  const ids=Object.values(catalogo).flatMap(v=>Array.isArray(v)?v.map(x=>String(x.id||'')):[]);
+  while(ids.includes(id))id=prefix+'-'+slug(nome)+'-'+n++;
+  return id;
+}
+
+function addPendencia(t){
+  pendencias.unshift(t);
+  pendencias=pendencias.slice(0,20);
+  renderPendencias();
+  atualizarStatus();
+}
+
+function renderPendencias(){
+  const box=$('pendenciasBox'),ul=$('listaPendencias');ul.replaceChildren();
+  pendencias.forEach(p=>{const li=document.createElement('li');li.textContent=p;ul.appendChild(li)});
+  box.classList.toggle('show',pendencias.length>0);
+}
+
+async function atualizarStatus(){
   try{
-    catalogo=await request('/api/catalog',{cache:'no-store'});
-    preparar();
-    renderTudo();
-  }catch(e){msg(String(e.message||e),'erro');}
+    const s=await api('/api/status',{cache:'no-store'});
+    const b=$('statusBadge');
+    if(s.dirty){b.textContent=s.changed.length+' arquivo(s) pendente(s)';b.className='badge off'}
+    else{b.textContent='Sem alterações pendentes';b.className='badge ok'}
+  }catch{}
 }
 
-function preparar(){
-  const fc=$('filtroCategoria');fc.replaceChildren(new Option('Todas as categorias',''));
-  catalogo.categories.filter(c=>c.ativo!==false).sort((a,b)=>(a.ordem??0)-(b.ordem??0)).forEach(c=>fc.add(new Option(c.nome,c.id)));
-
-  $('cfgWhatsapp').value=catalogo.config?.store?.whatsapp??'';
-  $('cfgLocale').value=catalogo.config?.store?.locale??'pt-BR';
-  $('cfgCurrency').value=catalogo.config?.store?.currency??'BRL';
-  $('cfgPayments').value=Array.isArray(catalogo.config?.checkout?.paymentMethods)?catalogo.config.checkout.paymentMethods.join(', '):'';
-}
-
-function renderTudo(){
-  $('nSabores').textContent=catalogo.flavors.length;
-  $('nCategorias').textContent=catalogo.categories.length;
-  $('nCaixas').textContent=catalogo.boxes.length;
-  $('nProdutos').textContent=catalogo.products.length;
-  $('nOpcionais').textContent=catalogo.options.length;
-  renderSabores();renderCaixas();renderProdutos();renderOpcionais();
-}
-
-function td(texto,classe=''){const x=document.createElement('td');x.textContent=texto;if(classe)x.className=classe;return x}
-function statusTd(x){const ok=x.ativo!==false&&x.disponivel!==false;return td(ok?'Disponível':'Oculto',ok?'ok':'off')}
-function rowClick(item,tipo,cells){
-  const tr=document.createElement('tr');tr.dataset.editable='true';tr.addEventListener('click',()=>abrirEditor(tipo,item.id));cells.forEach(c=>tr.appendChild(c));return tr;
-}
-
-function renderSabores(){
-  const cats=new Map(catalogo.categories.map(c=>[String(c.id),String(c.nome)]));
-  const termo=$('buscaSabor').value.trim().toLowerCase(),cat=$('filtroCategoria').value,st=$('filtroStatus').value;
-  const body=$('bodySabores');body.replaceChildren();
-
-  catalogo.flavors.filter(s=>{
-    const disp=s.ativo!==false&&s.disponivel!==false;
-    if(termo&&!String(s.nome).toLowerCase().includes(termo))return false;
-    if(cat&&String(s.categoriaId)!==cat)return false;
-    if(st==='disponivel'&&!disp)return false;
-    if(st==='oculto'&&disp)return false;
-    return true;
-  }).sort((a,b)=>(a.ordem??0)-(b.ordem??0)).forEach(s=>{
-    body.appendChild(rowClick(s,'flavors',[td(s.nome),td(cats.get(String(s.categoriaId))||s.categoriaId),td(moeda(s.preco)),td(s.imagem||'—','hide-mobile'),statusTd(s)]));
+function imgField(item,tipo){
+  const wrap=document.createElement('div');wrap.className='field full';
+  const l=document.createElement('label');l.textContent='Imagem';
+  const cur=document.createElement('input');cur.id='edImagem';cur.value=item.imagem??'';
+  const file=document.createElement('input');file.id='edImagemFile';file.type='file';file.accept='.jpg,.jpeg,.png,.webp';
+  const preview=document.createElement('img');preview.className='preview-img';preview.id='imgPreview';
+  if(cur.value)preview.src='/'+cur.value;
+  file.addEventListener('change',async()=>{
+    const f=file.files?.[0];if(!f)return;
+    preview.src=URL.createObjectURL(f);
   });
-}
-
-function renderCaixas(){
-  const body=$('bodyCaixas');body.replaceChildren();
-  catalogo.boxes.sort((a,b)=>(a.ordem??0)-(b.ordem??0)).forEach(x=>{
-    body.appendChild(rowClick(x,'boxes',[td(x.nome),td(x.capacidade),td(x.maxSabores??'—'),td(x.precoFixo==null?'—':moeda(x.precoFixo)),statusTd(x)]));
-  });
-}
-
-function renderProdutos(){
-  const body=$('bodyProdutos');body.replaceChildren();
-  catalogo.products.sort((a,b)=>(a.ordem??0)-(b.ordem??0)).forEach(x=>{
-    body.appendChild(rowClick(x,'products',[td(x.nome),td(x.tipo||'—'),td(moeda(x.preco)),statusTd(x)]));
-  });
-}
-
-function renderOpcionais(){
-  const body=$('bodyOpcionais');body.replaceChildren();
-  catalogo.options.sort((a,b)=>(a.ordem??0)-(b.ordem??0)).forEach(x=>{
-    body.appendChild(rowClick(x,'options',[td(x.nome),td(moeda(x.preco)),statusTd(x)]));
-  });
+  wrap.append(l,cur,file,preview);return wrap;
 }
 
 function field(id,label,value,type='text',full=false){
-  const wrap=document.createElement('div');wrap.className='field'+(full?' full':'');
+  const w=document.createElement('div');w.className='field'+(full?' full':'');
   const l=document.createElement('label');l.textContent=label;
-  const input=document.createElement('input');input.id=id;input.type=type;input.value=value??'';
-  if(type==='number'){input.step='0.01';input.min='0'}
-  wrap.append(l,input);return wrap;
+  const i=document.createElement('input');i.id=id;i.type=type;i.value=value??'';
+  if(type==='number'){i.min='0';i.step='0.01'}
+  w.append(l,i);return w;
 }
 
 function checks(item){
-  const wrap=document.createElement('div');wrap.className='field full checks';
-  [['edAtivo','Ativo',item.ativo!==false],['edDisponivel','Disponível',item.disponivel!==false]].forEach(([id,label,val])=>{
-    const l=document.createElement('label'),i=document.createElement('input');i.type='checkbox';i.id=id;i.checked=val;l.append(i,' '+label);wrap.appendChild(l);
-  });return wrap;
+  const w=document.createElement('div');w.className='field full checks';
+  [['edAtivo','Ativo',item.ativo!==false],['edDisponivel','Disponível',item.disponivel!==false]].forEach(([id,t,v])=>{
+    const l=document.createElement('label'),i=document.createElement('input');i.type='checkbox';i.id=id;i.checked=v;l.append(i,' '+t);w.append(l);
+  });return w;
 }
 
-function novoId(prefix,nome){
-  const base=String(nome||'item').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'item';
-  let id=prefix+'-'+base, n=2;
-  const todos=[...catalogo.flavors,...catalogo.boxes,...catalogo.products,...catalogo.options].map(x=>String(x.id));
-  while(todos.includes(id)){id=prefix+'-'+base+'-'+n++}
-  return id;
+function selectField(id,label,options,value,full=false){
+  const w=document.createElement('div');w.className='field'+(full?' full':'');
+  const l=document.createElement('label');l.textContent=label;
+  const s=document.createElement('select');s.id=id;
+  options.forEach(o=>s.add(new Option(o.text,o.value)));s.value=value??'';
+  w.append(l,s);return w;
 }
 
-function marcarDirty(){
-  dirty=true;
-  const d=$('dirtyState');d.textContent='Alterações pendentes';d.className='badge off';
+async function uploadSeNecessario(tipo,item){
+  const input=$('edImagemFile');
+  if(!input||!input.files||!input.files[0])return item.imagem??'';
+
+  const f=input.files[0];
+  if(f.size>5*1024*1024)throw new Error('Imagem excede 5 MB.');
+  const b64=await new Promise((resolve,reject)=>{
+    const r=new FileReader();r.onerror=()=>reject(new Error('Falha ao ler imagem.'));
+    r.onload=()=>resolve(String(r.result).split(',')[1]);r.readAsDataURL(f);
+  });
+
+  const res=await api('/api/upload-image',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({entity:tipo,itemId:item.id,fileName:f.name,base64:b64})
+  });
+  return res.path;
 }
 
-function abrirNovo(tipo){
-  editando={tipo,id:null,novo:true};
+function abrirEditor(tipo,id=null,duplicar=false){
+  const original=id?catalogo[tipo].find(x=>String(x.id)===String(id)):null;
+  const novo=!original||duplicar;
+  const item=original?JSON.parse(JSON.stringify(original)):{};
+
+  editando={tipo,id:original?.id??null,novo,duplicar};
   const box=$('editorCampos');box.replaceChildren();
+  $('arquivarBtn').style.display=original&&!duplicar?'inline-block':'none';
+  $('duplicarBtn').style.display=original&&!duplicar?'inline-block':'none';
 
   if(tipo==='flavors'){
-    $('editorTitulo').textContent='Novo sabor';
-    box.append(field('edNome','Nome','','text',true));
-    const wrap=document.createElement('div');wrap.className='field';const l=document.createElement('label');l.textContent='Categoria';const s=document.createElement('select');s.id='edCategoria';
-    catalogo.categories.filter(c=>c.ativo!==false).forEach(c=>s.add(new Option(c.nome,c.id)));wrap.append(l,s);box.append(wrap);
-    box.append(field('edPreco','Preço','0.00','number'));box.append(field('edImagem','Imagem','','text',true));box.append(checks({ativo:true,disponivel:true}));
-  }
-  if(tipo==='boxes'){
-    $('editorTitulo').textContent='Nova caixa';
-    box.append(field('edNome','Nome','','text',true));box.append(field('edCapacidade','Capacidade','0','number'));box.append(field('edMaxSabores','Máx. sabores','','number'));box.append(field('edPrecoFixo','Preço fixo','','number'));box.append(checks({ativo:true,disponivel:true}));
-  }
-  if(tipo==='products'){
-    $('editorTitulo').textContent='Novo produto';
-    box.append(field('edNome','Nome','','text',true));box.append(field('edDescricao','Descrição','','text',true));box.append(field('edPreco','Preço','0.00','number'));box.append(field('edImagem','Imagem','','text',true));box.append(field('edOpcionais','Opcionais permitidos','','text',true));box.append(checks({ativo:true,disponivel:true}));
-  }
-  if(tipo==='options'){
-    $('editorTitulo').textContent='Novo opcional';
-    box.append(field('edNome','Nome','','text',true));box.append(field('edPreco','Preço','0.00','number'));box.append(checks({ativo:true,disponivel:true}));
-  }
-
-  $('editor').showModal();
-}
-function novoId(prefix,nome){
-  const base=String(nome||'item').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'item';
-  let id=prefix+'-'+base, n=2;
-  const todos=[...catalogo.flavors,...catalogo.boxes,...catalogo.products,...catalogo.options].map(x=>String(x.id));
-  while(todos.includes(id)){id=prefix+'-'+base+'-'+n++}
-  return id;
-}
-
-function marcarDirty(){
-  dirty=true;
-  const d=$('dirtyState');d.textContent='Alterações pendentes';d.className='badge off';
-}
-
-function abrirNovo(tipo){
-  editando={tipo,id:null,novo:true};
-  const box=$('editorCampos');box.replaceChildren();
-
-  if(tipo==='flavors'){
-    $('editorTitulo').textContent='Novo sabor';
-    box.append(field('edNome','Nome','','text',true));
-    const wrap=document.createElement('div');wrap.className='field';const l=document.createElement('label');l.textContent='Categoria';const s=document.createElement('select');s.id='edCategoria';
-    catalogo.categories.filter(c=>c.ativo!==false).forEach(c=>s.add(new Option(c.nome,c.id)));wrap.append(l,s);box.append(wrap);
-    box.append(field('edPreco','Preço','0.00','number'));box.append(field('edImagem','Imagem','','text',true));box.append(checks({ativo:true,disponivel:true}));
-  }
-  if(tipo==='boxes'){
-    $('editorTitulo').textContent='Nova caixa';
-    box.append(field('edNome','Nome','','text',true));box.append(field('edCapacidade','Capacidade','0','number'));box.append(field('edMaxSabores','Máx. sabores','','number'));box.append(field('edPrecoFixo','Preço fixo','','number'));box.append(checks({ativo:true,disponivel:true}));
-  }
-  if(tipo==='products'){
-    $('editorTitulo').textContent='Novo produto';
-    box.append(field('edNome','Nome','','text',true));box.append(field('edDescricao','Descrição','','text',true));box.append(field('edPreco','Preço','0.00','number'));box.append(field('edImagem','Imagem','','text',true));box.append(field('edOpcionais','Opcionais permitidos','','text',true));box.append(checks({ativo:true,disponivel:true}));
-  }
-  if(tipo==='options'){
-    $('editorTitulo').textContent='Novo opcional';
-    box.append(field('edNome','Nome','','text',true));box.append(field('edPreco','Preço','0.00','number'));box.append(checks({ativo:true,disponivel:true}));
-  }
-
-  $('editor').showModal();
-}
-function abrirEditor(tipo,id){
-  const item=catalogo[tipo].find(x=>String(x.id)===String(id));if(!item)return;
-  editando={tipo,id,novo:false};const box=$('editorCampos');box.replaceChildren();
-
-  if(tipo==='flavors'){
-    $('editorTitulo').textContent='Editar sabor';
-    box.append(field('edNome','Nome',item.nome,'text',true));
-    const wrap=document.createElement('div');wrap.className='field';const l=document.createElement('label');l.textContent='Categoria';const s=document.createElement('select');s.id='edCategoria';
-    catalogo.categories.filter(c=>c.ativo!==false).forEach(c=>s.add(new Option(c.nome,c.id)));s.value=item.categoriaId;wrap.append(l,s);box.append(wrap);
-    box.append(field('edPreco','Preço',Number(item.preco).toFixed(2),'number'));
-    box.append(field('edImagem','Imagem',item.imagem,'text',true));box.append(checks(item));
-  }
-  if(tipo==='boxes'){
-    $('editorTitulo').textContent='Editar caixa';
-    box.append(field('edNome','Nome',item.nome,'text',true));
-    box.append(field('edCapacidade','Capacidade',item.capacidade,'number'));
-    box.append(field('edMaxSabores','Máx. sabores',item.maxSabores??'','number'));
-    box.append(field('edPrecoFixo','Preço fixo',item.precoFixo??'','number'));
-    box.append(checks(item));
-  }
-  if(tipo==='products'){
-    $('editorTitulo').textContent='Editar produto';
-    box.append(field('edNome','Nome',item.nome,'text',true));
+    $('editorTitulo').textContent=novo?'Novo sabor':'Editar sabor';
+    box.append(field('edNome','Nome',duplicar?(item.nome+' - cópia'):item.nome,'text',true));
+    box.append(selectField('edCategoria','Categoria',catalogo.categories.filter(c=>c.ativo!==false).map(c=>({text:c.nome,value:c.id})),item.categoriaId));
+    box.append(field('edPreco','Preço',item.preco??0,'number'));
     box.append(field('edDescricao','Descrição',item.descricao??'','text',true));
-    box.append(field('edPreco','Preço',Number(item.preco).toFixed(2),'number'));
-    box.append(field('edImagem','Imagem',item.imagem??'','text',true));
+    box.append(imgField(item,tipo));box.append(checks(item));
+  }
+  if(tipo==='categories'){
+    $('editorTitulo').textContent=novo?'Nova categoria':'Editar categoria';
+    box.append(field('edNome','Nome',duplicar?(item.nome+' - cópia'):item.nome,'text',true));
+    box.append(field('edPrecoReferencia','Preço de referência',item.precoReferencia??'','number'));
+    box.append(field('edOrdem','Ordem',item.ordem??nextOrder(tipo),'number'));box.append(checks(item));
+  }
+  if(tipo==='boxes'){
+    $('editorTitulo').textContent=novo?'Nova caixa':'Editar caixa';
+    box.append(field('edNome','Nome',duplicar?(item.nome+' - cópia'):item.nome,'text',true));
+    box.append(field('edCapacidade','Capacidade',item.capacidade??0,'number'));
+    box.append(field('edMaxSabores','Máx. sabores',item.maxSabores??'','number'));
+    box.append(field('edPrecoFixo','Preço fixo',item.precoFixo??'','number'));box.append(checks(item));
+  }
+  if(tipo==='products'){
+    $('editorTitulo').textContent=novo?'Novo produto':'Editar produto';
+    box.append(field('edNome','Nome',duplicar?(item.nome+' - cópia'):item.nome,'text',true));
+    box.append(field('edTipo','Tipo',item.tipo??'produto'));
+    box.append(field('edPreco','Preço',item.preco??0,'number'));
+    box.append(field('edDescricao','Descrição',item.descricao??'','text',true));
     box.append(field('edOpcionais','Opcionais permitidos',Array.isArray(item.opcionaisPermitidos)?item.opcionaisPermitidos.join(', '):'','text',true));
-    box.append(checks(item));
+    box.append(imgField(item,tipo));box.append(checks(item));
   }
   if(tipo==='options'){
-    $('editorTitulo').textContent='Editar opcional';
-    box.append(field('edNome','Nome',item.nome,'text',true));
-    box.append(field('edPreco','Preço',Number(item.preco).toFixed(2),'number'));
-    box.append(checks(item));
+    $('editorTitulo').textContent=novo?'Novo opcional':'Editar opcional';
+    box.append(field('edNome','Nome',duplicar?(item.nome+' - cópia'):item.nome,'text',true));
+    box.append(field('edPreco','Preço',item.preco??0,'number'));
+    box.append(field('edOrdem','Ordem',item.ordem??nextOrder(tipo),'number'));box.append(checks(item));
+  }
+  if(tipo==='combos'){
+    $('editorTitulo').textContent=novo?'Novo combo':'Editar combo';
+    box.append(field('edNome','Nome',duplicar?(item.nome+' - cópia'):item.nome,'text',true));
+    box.append(field('edPreco','Preço',item.preco??0,'number'));
+    box.append(field('edDescricao','Descrição',item.descricao??'','text',true));
+    box.append(field('edItens','Itens / IDs separados por vírgula',Array.isArray(item.itens)?item.itens.join(', '):'','text',true));
+    box.append(imgField(item,tipo));box.append(checks(item));
   }
 
   $('editor').showModal();
@@ -326,138 +239,123 @@ function abrirEditor(tipo,id){
 
 async function salvarEditor(){
   const {tipo,id,novo}=editando;
-  const atual=novo?{}:catalogo[tipo].find(x=>String(x.id)===String(id));
-  if(!novo&&!atual)return;
-  const item={...(atual||{})};
+  const base=id?catalogo[tipo].find(x=>String(x.id)===String(id)):{};
+  const item={...(base||{})};
 
   if(tipo==='flavors'){
-    item.nome=$('edNome').value.trim();item.categoriaId=$('edCategoria').value;item.preco=Number($('edPreco').value);item.imagem=$('edImagem').value.trim();
-    if(novo){item.id=novoId('sabor',item.nome);item.ordem=catalogo.flavors.length+1;item.sazonal=false;item.tags=[]}
+    item.nome=$('edNome').value.trim();item.categoriaId=$('edCategoria').value;item.preco=Number($('edPreco').value);item.descricao=$('edDescricao').value.trim();
+    if(novo){item.id=novoId(tipo,item.nome);item.ordem=nextOrder(tipo);item.sazonal=false;item.tags=[]}
+  }
+  if(tipo==='categories'){
+    item.nome=$('edNome').value.trim();item.precoReferencia=$('edPrecoReferencia').value===''?null:Number($('edPrecoReferencia').value);item.ordem=Number($('edOrdem').value||nextOrder(tipo));
+    if(novo)item.id=novoId(tipo,item.nome);
   }
   if(tipo==='boxes'){
     item.nome=$('edNome').value.trim();item.capacidade=Number($('edCapacidade').value);item.maxSabores=$('edMaxSabores').value===''?null:Number($('edMaxSabores').value);item.precoFixo=$('edPrecoFixo').value===''?null:Number($('edPrecoFixo').value);
-    if(novo){item.id=novoId('caixa',item.nome);item.tipo='caixa';item.ordem=catalogo.boxes.length+1}
+    if(novo){item.id=novoId(tipo,item.nome);item.tipo='caixa';item.ordem=nextOrder(tipo)}
   }
   if(tipo==='products'){
-    item.nome=$('edNome').value.trim();item.descricao=$('edDescricao').value.trim();item.preco=Number($('edPreco').value);item.imagem=$('edImagem').value.trim();item.opcionaisPermitidos=$('edOpcionais').value.split(',').map(x=>x.trim()).filter(Boolean);
-    if(novo){item.id=novoId('produto',item.nome);item.tipo='produto';item.ordem=catalogo.products.length+1}
+    item.nome=$('edNome').value.trim();item.tipo=$('edTipo').value.trim()||'produto';item.preco=Number($('edPreco').value);item.descricao=$('edDescricao').value.trim();item.opcionaisPermitidos=$('edOpcionais').value.split(',').map(x=>x.trim()).filter(Boolean);
+    if(novo){item.id=novoId(tipo,item.nome);item.ordem=nextOrder(tipo)}
   }
   if(tipo==='options'){
-    item.nome=$('edNome').value.trim();item.preco=Number($('edPreco').value);
-    if(novo){item.id=novoId('opcional',item.nome);item.ordem=catalogo.options.length+1}
+    item.nome=$('edNome').value.trim();item.preco=Number($('edPreco').value);item.ordem=Number($('edOrdem').value||nextOrder(tipo));
+    if(novo)item.id=novoId(tipo,item.nome);
+  }
+  if(tipo==='combos'){
+    item.nome=$('edNome').value.trim();item.preco=Number($('edPreco').value);item.descricao=$('edDescricao').value.trim();item.itens=$('edItens').value.split(',').map(x=>x.trim()).filter(Boolean);
+    if(novo){item.id=novoId(tipo,item.nome);item.ordem=nextOrder(tipo)}
   }
 
   item.ativo=$('edAtivo').checked;item.disponivel=$('edDisponivel').checked;
-
   if(!item.nome)throw new Error('Nome obrigatório.');
-  for(const key of ['preco','precoFixo','capacidade','maxSabores']){
-    if(key in item&&item[key]!=null&&(!Number.isFinite(Number(item[key]))||Number(item[key])<0))throw new Error('Valor inválido: '+key);
+
+  if(['flavors','products','combos'].includes(tipo)){
+    item.imagem=await uploadSeNecessario(tipo,item);
+    if(!item.imagem&&$('edImagem'))item.imagem=$('edImagem').value.trim();
   }
 
   const items=novo?[...catalogo[tipo],item]:catalogo[tipo].map(x=>String(x.id)===String(id)?item:x);
-  const res=await request('/api/'+tipo,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items})});
-  catalogo[tipo]=items;$('editor').close();renderTudo();marcarDirty();msg((novo?'Novo item criado. ':'Alteração salva. ')+'Backup: '+res.backup);
+  const res=await api('/api/'+tipo,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items})});
+  catalogo[tipo]=items;
+  $('editor').close();
+  renderTudo();
+  addPendencia((novo?'Criado: ':'Alterado: ')+item.nome);
+  msg('Salvo e validado. Backup: '+res.backup);
 }
-$('formEditor').addEventListener('submit',async e=>{e.preventDefault();try{await salvarEditor()}catch(err){msg(String(err.message||err),'erro')}});
-$('cancelarEditor').addEventListener('click',()=>$('editor').close());
 
-$('formConfig').addEventListener('submit',async e=>{
+async function arquivarAtual(){
+  const {tipo,id}=editando;
+  if(!id)return;
+  const item=catalogo[tipo].find(x=>String(x.id)===String(id));if(!item)return;
+  if(!confirm('Arquivar "'+item.nome+'"? Ele deixará de ficar disponível, mas poderá ser reativado depois.'))return;
+
+  const novo={...item,ativo:false,disponivel:false};
+  const items=catalogo[tipo].map(x=>String(x.id)===String(id)?novo:x);
+  const res=await api('/api/'+tipo,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items})});
+  catalogo[tipo]=items;$('editor').close();renderTudo();addPendencia('Arquivado: '+item.nome);msg('Item arquivado. Backup: '+res.backup);
+}
+
+function renderTudo(){
+  $('nSabores').textContent=catalogo.flavors.length;$('nCategorias').textContent=catalogo.categories.length;$('nCaixas').textContent=catalogo.boxes.length;$('nProdutos').textContent=catalogo.products.length;$('nOpcionais').textContent=catalogo.options.length;$('nCombos').textContent=catalogo.combos.length;
+
+  const cats=new Map(catalogo.categories.map(c=>[String(c.id),c.nome]));
+  const termo=$('buscaSabor').value.trim().toLowerCase(),cat=$('filtroCategoria').value;
+  const bodies={};
+  for(const t of ['flavors','categories','boxes','products','options','combos']){bodies[t]=$('body-'+t);bodies[t].replaceChildren()}
+
+  catalogo.flavors.filter(x=>(!termo||String(x.nome).toLowerCase().includes(termo))&&(!cat||String(x.categoriaId)===cat)).forEach(x=>{
+    const tr=document.createElement('tr');tr.dataset.editable='1';tr.onclick=()=>abrirEditor('flavors',x.id);tr.append(td(x.nome),td(cats.get(String(x.categoriaId))||x.categoriaId),td(moeda(x.preco)),td(x.imagem||'—','hide-mobile'),statusTd(x));bodies.flavors.append(tr)
+  });
+  catalogo.categories.forEach(x=>{const tr=document.createElement('tr');tr.dataset.editable='1';tr.onclick=()=>abrirEditor('categories',x.id);tr.append(td(x.nome),td(x.precoReferencia==null?'—':moeda(x.precoReferencia)),td(x.ordem),statusTd(x));bodies.categories.append(tr)});
+  catalogo.boxes.forEach(x=>{const tr=document.createElement('tr');tr.dataset.editable='1';tr.onclick=()=>abrirEditor('boxes',x.id);tr.append(td(x.nome),td(x.capacidade),td(x.maxSabores),td(x.precoFixo==null?'—':moeda(x.precoFixo)),statusTd(x));bodies.boxes.append(tr)});
+  catalogo.products.forEach(x=>{const tr=document.createElement('tr');tr.dataset.editable='1';tr.onclick=()=>abrirEditor('products',x.id);tr.append(td(x.nome),td(x.tipo),td(moeda(x.preco)),td(x.imagem||'—','hide-mobile'),statusTd(x));bodies.products.append(tr)});
+  catalogo.options.forEach(x=>{const tr=document.createElement('tr');tr.dataset.editable='1';tr.onclick=()=>abrirEditor('options',x.id);tr.append(td(x.nome),td(moeda(x.preco)),td(x.ordem),statusTd(x));bodies.options.append(tr)});
+  catalogo.combos.forEach(x=>{const tr=document.createElement('tr');tr.dataset.editable='1';tr.onclick=()=>abrirEditor('combos',x.id);tr.append(td(x.nome),td(moeda(x.preco)),td(x.imagem||'—'),statusTd(x));bodies.combos.append(tr)});
+}
+
+async function carregar(){
+  catalogo=await api('/api/catalog',{cache:'no-store'});
+  const f=$('filtroCategoria');f.replaceChildren(new Option('Todas as categorias',''));catalogo.categories.forEach(c=>f.add(new Option(c.nome,c.id)));
+  $('cfgWhatsapp').value=catalogo.config?.store?.whatsapp??'';$('cfgLocale').value=catalogo.config?.store?.locale??'pt-BR';$('cfgCurrency').value=catalogo.config?.store?.currency??'BRL';$('cfgPayments').value=Array.isArray(catalogo.config?.checkout?.paymentMethods)?catalogo.config.checkout.paymentMethods.join(', '):'';
+  renderTudo();await atualizarStatus();
+}
+
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));$('panel-'+b.dataset.tab).classList.add('active')});
+document.querySelectorAll('[data-new]').forEach(b=>b.onclick=()=>abrirEditor(b.dataset.new));
+$('buscaSabor').oninput=renderTudo;$('filtroCategoria').onchange=renderTudo;
+$('cancelarBtn').onclick=()=>$('editor').close();
+$('duplicarBtn').onclick=()=>{const e={...editando};$('editor').close();abrirEditor(e.tipo,e.id,true)};
+$('arquivarBtn').onclick=()=>arquivarAtual();
+$('formEditor').onsubmit=async e=>{e.preventDefault();try{await salvarEditor()}catch(err){msg(String(err.message||err),'erro')}};
+
+$('formConfig').onsubmit=async e=>{
   e.preventDefault();
   try{
     const cfg=window.structuredClone?window.structuredClone(catalogo.config):JSON.parse(JSON.stringify(catalogo.config));
     cfg.store=cfg.store||{};cfg.checkout=cfg.checkout||{};
-    cfg.store.whatsapp=$('cfgWhatsapp').value.trim();
-    cfg.store.locale=$('cfgLocale').value.trim()||'pt-BR';
-    cfg.store.currency=$('cfgCurrency').value.trim()||'BRL';
-    cfg.checkout.paymentMethods=$('cfgPayments').value.split(',').map(x=>x.trim()).filter(Boolean);
-    const res=await request('/api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config:cfg})});
-    catalogo.config=cfg;marcarDirty();msg('Configurações salvas, validadas e com backup: '+res.backup);
+    cfg.store.whatsapp=$('cfgWhatsapp').value.trim();cfg.store.locale=$('cfgLocale').value.trim()||'pt-BR';cfg.store.currency=$('cfgCurrency').value.trim()||'BRL';cfg.checkout.paymentMethods=$('cfgPayments').value.split(',').map(x=>x.trim()).filter(Boolean);
+    const res=await api('/api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config:cfg})});
+    catalogo.config=cfg;addPendencia('Configurações da loja alteradas');msg('Loja salva. Backup: '+res.backup);
   }catch(err){msg(String(err.message||err),'erro')}
-});
+};
 
-document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===btn));
-  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
-  $('panel-'+btn.dataset.tab).classList.add('active');
-}));
+$('previewBtn').onclick=()=>window.open('/ui-desenvolvimento/index.html?preview='+Date.now(),'_blank','noopener,noreferrer');
 
-$('buscaSabor').addEventListener('input',renderSabores);
-$('filtroCategoria').addEventListener('change',renderSabores);
-$('filtroStatus').addEventListener('change',renderSabores);
+$('publicarBtn').onclick=async()=>{
+  const s=await api('/api/status',{cache:'no-store'});
+  if(!s.dirty){msg('Não há alterações pendentes para publicar.','erro');return}
+  if(!confirm('Publicar alterações no cardápio oficial? O processo fará backup, validação, Git, deploy, smoke e rollback automático se necessário.'))return;
 
-$('novoSabor').addEventListener('click',()=>abrirNovo('flavors'));
-$('novaCaixa').addEventListener('click',()=>abrirNovo('boxes'));
-$('novoProduto').addEventListener('click',()=>abrirNovo('products'));
-$('novoOpcional').addEventListener('click',()=>abrirNovo('options'));
-
-$('previewCardapio').addEventListener('click',()=>{
-  window.open('/ui-desenvolvimento/index.html?preview='+Date.now(),'_blank','noopener,noreferrer');
-});
-
-$('publicarCardapio').addEventListener('click',async()=>{
-  if(!dirty){
-    msg('Não há alterações pendentes para publicar.','erro');
-    return;
-  }
-
-  const ok=window.confirm('Publicar as alterações no cardápio oficial? O sistema fará validação, Git, deploy, smoke público e rollback automático se necessário.');
-  if(!ok)return;
-
-  const btn=$('publicarCardapio');btn.disabled=true;btn.textContent='Publicando...';
-
+  const b=$('publicarBtn');b.disabled=true;b.textContent='Publicando...';
   try{
-    const res=await request('/api/publish',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({confirm:'PUBLICAR'})
-    });
+    await api('/api/publish',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({confirm:'PUBLICAR'})});
+    pendencias=[];renderPendencias();await atualizarStatus();msg('Publicação concluída com sucesso.');
+  }catch(err){msg(String(err.message||err),'erro')}
+  finally{b.disabled=false;b.textContent='Publicar alterações'}
+};
 
-    dirty=false;
-    const d=$('dirtyState');d.textContent='Publicado';d.className='badge ok';
-    msg('Publicação concluída com sucesso.');
-  }catch(err){
-    msg(String(err.message||err),'erro');
-  }finally{
-    btn.disabled=false;btn.textContent='Publicar alterações';
-  }
-});
-$('novoSabor').addEventListener('click',()=>abrirNovo('flavors'));
-$('novaCaixa').addEventListener('click',()=>abrirNovo('boxes'));
-$('novoProduto').addEventListener('click',()=>abrirNovo('products'));
-$('novoOpcional').addEventListener('click',()=>abrirNovo('options'));
-
-$('previewCardapio').addEventListener('click',()=>{
-  window.open('/ui-desenvolvimento/index.html?preview='+Date.now(),'_blank','noopener,noreferrer');
-});
-
-$('publicarCardapio').addEventListener('click',async()=>{
-  if(!dirty){
-    msg('Não há alterações pendentes para publicar.','erro');
-    return;
-  }
-
-  const ok=window.confirm('Publicar as alterações no cardápio oficial? O sistema fará validação, Git, deploy, smoke público e rollback automático se necessário.');
-  if(!ok)return;
-
-  const btn=$('publicarCardapio');btn.disabled=true;btn.textContent='Publicando...';
-
-  try{
-    const res=await request('/api/publish',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({confirm:'PUBLICAR'})
-    });
-
-    dirty=false;
-    const d=$('dirtyState');d.textContent='Publicado';d.className='badge ok';
-    msg('Publicação concluída com sucesso.');
-  }catch(err){
-    msg(String(err.message||err),'erro');
-  }finally{
-    btn.disabled=false;btn.textContent='Publicar alterações';
-  }
-});
-carregar();
+carregar().catch(e=>msg(String(e.message||e),'erro'));
 </script>
 </body>
 </html>

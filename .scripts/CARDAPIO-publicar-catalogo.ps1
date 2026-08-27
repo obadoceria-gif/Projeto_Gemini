@@ -1,19 +1,17 @@
-param(
-    [switch]$DryRun
-)
+param([switch]$DryRun)
 
 $ErrorActionPreference = "Stop"
 
-$root = Split-Path -Parent $PSScriptRoot
+$root=Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
-$branchEsperada = "feature/central-manutencao-cardapio"
-$validator = Join-Path $root ".scripts\CARDAPIO-validar-catalogo.ps1"
-$urlBase = "https://obadoceria-gif.github.io/Projeto_Gemini"
-$stamp = Get-Date -Format "yyyyMMdd_HHmmss"
-$audit = Join-Path $root ".auditoria\Cardapio\PUBLISH_$stamp"
+$branchEsperada="feature/central-manutencao-cardapio"
+$validator=Join-Path $root ".scripts\CARDAPIO-validar-catalogo.ps1"
+$urlBase="https://obadoceria-gif.github.io/Projeto_Gemini"
+$stamp=Get-Date -Format "yyyyMMdd_HHmmss"
+$audit=Join-Path $root ".auditoria\Cardapio\PUBLISH_$stamp"
 New-Item -ItemType Directory -Path $audit -Force | Out-Null
-$report = Join-Path $audit "PUBLISH_RESULTADO.txt"
+$report=Join-Path $audit "PUBLISH_RESULTADO.txt"
 
 function Fail([string]$m){ throw $m }
 
@@ -24,202 +22,154 @@ git fetch origin --prune --quiet
 if($LASTEXITCODE -ne 0){ Fail "git fetch falhou." }
 
 & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $validator | Out-Null
-if($LASTEXITCODE -ne 0){ Fail "Catalogo reprovado antes da publicacao." }
+if($LASTEXITCODE -ne 0){ Fail "Catalogo reprovado." }
 
 $status=@(git status --porcelain)
-$permitidos=New-Object System.Collections.Generic.List[string]
+$permitidos=@()
 
-foreach($linha in $status){
-    if($linha.Length -lt 4){ continue }
-    $path=$linha.Substring(3).Trim()
+foreach($line in $status){
+    if($line.Length -lt 4){ continue }
+    $path=$line.Substring(3).Trim()
 
-    if($path -match '^data/catalog-v1/[^/]+\.json$'){
-        $permitidos.Add($path)
-        continue
-    }
+    if($path -match '^data/catalog-v1/[^/]+\.json$'){ $permitidos += $path; continue }
+    if($path -match '^Images/Catalogo/.+\.(jpg|jpeg|png|webp)$'){ $permitidos += $path; continue }
 
     Fail "Alteracao inesperada impede publicacao: $path"
 }
 
-$alterados=@($permitidos | Sort-Object -Unique)
+$alterados=@($permitidos|Sort-Object -Unique)
 
 if($alterados.Count -eq 0){
     if($DryRun){
         Write-Host "[PASS] PUBLISH DRY-RUN: ambiente limpo e catalogo valido." -ForegroundColor Green
         exit 0
     }
-    Fail "Nenhuma alteracao de catalogo para publicar."
+    Fail "Nenhuma alteracao para publicar."
 }
 
-# Backup independente antes do commit.
 $backupDir=Join-Path $audit "backup"
 New-Item -ItemType Directory -Path $backupDir -Force | Out-Null
-
 foreach($rel in $alterados){
     $src=Join-Path $root ($rel -replace '/','\')
-    Copy-Item -LiteralPath $src -Destination (Join-Path $backupDir ([IO.Path]::GetFileName($rel))) -Force
+    if(Test-Path -LiteralPath $src){
+        $dst=Join-Path $backupDir ($rel -replace '/','__')
+        Copy-Item -LiteralPath $src -Destination $dst -Force
+    }
 }
 
 if($DryRun){
     Write-Host "[PASS] PUBLISH DRY-RUN" -ForegroundColor Green
-    Write-Host "Arquivos publicaveis: $($alterados.Count)"
-    $alterados | ForEach-Object { Write-Host " - $_" }
+    $alterados|ForEach-Object{Write-Host " - $_"}
     exit 0
 }
 
-# Stage somente JSON comerciais.
 git add -- $alterados
 if($LASTEXITCODE -ne 0){ Fail "git add falhou." }
 
 $staged=@(git diff --cached --name-only)
-$fora=@($staged | Where-Object { $_ -notmatch '^data/catalog-v1/[^/]+\.json$' })
-if($fora.Count -gt 0){
-    git reset
-    Fail "Staging inesperado: $($fora -join ', ')"
-}
+$fora=@($staged|Where-Object{
+    $_ -notmatch '^data/catalog-v1/[^/]+\.json$' -and
+    $_ -notmatch '^Images/Catalogo/.+\.(jpg|jpeg|png|webp)$'
+})
+if($fora.Count -gt 0){ git reset; Fail "Staging inesperado: $($fora -join ', ')" }
 
 git diff --cached --check
-if($LASTEXITCODE -ne 0){
-    git reset
-    Fail "git diff --check reprovou."
-}
+if($LASTEXITCODE -ne 0){ git reset; Fail "git diff --check reprovou." }
 
 git commit -m "content(cardapio): atualizar catalogo"
-if($LASTEXITCODE -ne 0){ Fail "Commit do catalogo falhou." }
-
+if($LASTEXITCODE -ne 0){ Fail "Commit falhou." }
 $commitCatalogo=(git rev-parse HEAD).Trim()
 
 git push -u origin $branchEsperada
-if($LASTEXITCODE -ne 0){ Fail "Push da branch de manutencao falhou." }
+if($LASTEXITCODE -ne 0){ Fail "Push da feature falhou." }
 
-# Integra exclusivamente o commit de catalogo na main.
 git fetch origin --quiet
 $wt=Join-Path $env:TEMP ("oba-publish-"+[guid]::NewGuid().ToString("N"))
 $mainCommit=$null
 $tag=$null
-$rollbackCommit=$null
 
 try{
     git worktree add --detach $wt origin/main
-    if($LASTEXITCODE -ne 0){ Fail "Nao foi possivel preparar main temporaria." }
+    if($LASTEXITCODE -ne 0){ Fail "Falha ao preparar main." }
 
     Push-Location $wt
     try{
         git cherry-pick $commitCatalogo
-        if($LASTEXITCODE -ne 0){
-            git cherry-pick --abort 2>$null
-            Fail "Cherry-pick do catalogo falhou."
-        }
+        if($LASTEXITCODE -ne 0){ git cherry-pick --abort 2>$null; Fail "Cherry-pick falhou." }
 
         $mainCommit=(git rev-parse HEAD).Trim()
-
         git push origin HEAD:main
-        if($LASTEXITCODE -ne 0){ Fail "Push para main falhou." }
+        if($LASTEXITCODE -ne 0){ Fail "Push main falhou." }
 
-        # Smoke semantico dos JSON publicados.
         $smokeOK=$false
         $erroSmoke=""
 
-        for($tentativa=1;$tentativa -le 24;$tentativa++){
-            $todosOK=$true
+        for($attempt=1;$attempt -le 24;$attempt++){
+            $todos=$true
 
             foreach($rel in $alterados){
-                $nome=[IO.Path]::GetFileName($rel)
-                $localPath=Join-Path $wt ($rel -replace '/','\')
-
                 try{
-                    $localObj=[IO.File]::ReadAllText($localPath) | ConvertFrom-Json
-                    $localCanon=$localObj | ConvertTo-Json -Depth 30 -Compress
+                    $localPath=Join-Path $wt ($rel -replace '/','\')
+                    $url="$urlBase/$rel?cb=$([DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds())"
+                    $resp=Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 20 -Headers @{"Cache-Control"="no-cache";"Pragma"="no-cache"}
+                    if($resp.StatusCode -ne 200){ throw "HTTP $($resp.StatusCode)" }
 
-                    $publicUrl="$urlBase/$rel?cb=$([DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds())"
-                    $resp=Invoke-WebRequest -Uri $publicUrl -UseBasicParsing -TimeoutSec 20 `
-                        -Headers @{"Cache-Control"="no-cache";"Pragma"="no-cache"}
-
-                    if($resp.StatusCode -ne 200){ throw "$nome HTTP $($resp.StatusCode)" }
-
-                    $publicObj=$resp.Content | ConvertFrom-Json
-                    $publicCanon=$publicObj | ConvertTo-Json -Depth 30 -Compress
-
-                    if($publicCanon -ne $localCanon){
-                        $todosOK=$false
-                        $erroSmoke="$nome ainda nao propagou"
-                        break
+                    if($rel -match '\.json$'){
+                        $a=([IO.File]::ReadAllText($localPath)|ConvertFrom-Json)|ConvertTo-Json -Depth 40 -Compress
+                        $b=($resp.Content|ConvertFrom-Json)|ConvertTo-Json -Depth 40 -Compress
+                        if($a -ne $b){ throw "JSON ainda nao propagou." }
+                    }else{
+                        $remoteBytes=$resp.RawContentStream.ToArray()
+                        $localHash=(Get-FileHash -LiteralPath $localPath -Algorithm SHA256).Hash
+                        $sha=[Security.Cryptography.SHA256]::Create()
+                        try{
+                            $remoteHash=([BitConverter]::ToString($sha.ComputeHash($remoteBytes))).Replace("-","")
+                        }finally{$sha.Dispose()}
+                        if($remoteHash -ne $localHash){ throw "Imagem ainda nao propagou." }
                     }
                 }
                 catch{
-                    $todosOK=$false
+                    $todos=$false
                     $erroSmoke=[string]$_.Exception.Message
                     break
                 }
             }
 
-            if($todosOK){
-                $smokeOK=$true
-                break
-            }
-
+            if($todos){ $smokeOK=$true;break }
             Start-Sleep -Seconds 10
         }
 
         if(-not $smokeOK){
-            # Rollback automatico da main se a publicacao nao puder ser confirmada.
             git revert --no-edit $mainCommit
-            if($LASTEXITCODE -eq 0){
-                $rollbackCommit=(git rev-parse HEAD).Trim()
-                git push origin HEAD:main
-            }
-            Fail "Smoke publico falhou; rollback solicitado. Detalhe: $erroSmoke"
+            if($LASTEXITCODE -eq 0){ git push origin HEAD:main }
+            Fail "Smoke publico falhou; rollback solicitado. $erroSmoke"
         }
 
-        # Tag somente apos smoke aprovado.
         $tag="cardapio-catalogo-"+(Get-Date -Format "yyyyMMdd-HHmmss")
         git tag -a $tag $mainCommit -m "Catalogo Oba Doceria publicado"
-        if($LASTEXITCODE -ne 0){ Fail "Criacao de tag falhou." }
-
         git push origin "refs/tags/$tag"
-        if($LASTEXITCODE -ne 0){ Fail "Push da tag falhou." }
+        if($LASTEXITCODE -ne 0){ Fail "Tag falhou." }
     }
-    finally{
-        Pop-Location
-    }
+    finally{ Pop-Location }
 }
 finally{
-    if(Test-Path -LiteralPath $wt){
-        git worktree remove --force $wt 2>$null
-    }
+    if(Test-Path -LiteralPath $wt){ git worktree remove --force $wt 2>$null }
     git worktree prune 2>$null
 }
 
-$resultado=@"
-PUBLICACAO DO CATALOGO
-
-STATUS:
-APROVADO
-
-COMMIT FEATURE:
-$commitCatalogo
-
-COMMIT MAIN:
-$mainCommit
-
-TAG:
-$tag
-
+$result=@"
+PUBLICACAO APROVADA
+COMMIT FEATURE: $commitCatalogo
+COMMIT MAIN: $mainCommit
+TAG: $tag
 ARQUIVOS:
 $($alterados -join "`r`n")
-
-SMOKE PUBLICO:
-APROVADO
-
-BACKUP:
-$backupDir
+BACKUP: $backupDir
 "@
 
-[IO.File]::WriteAllText($report,$resultado,[Text.UTF8Encoding]::new($false))
+[IO.File]::WriteAllText($report,$result,[Text.UTF8Encoding]::new($false))
 
 Write-Host "====================================================" -ForegroundColor Green
 Write-Host " CATALOGO PUBLICADO COM SUCESSO" -ForegroundColor Green
 Write-Host "====================================================" -ForegroundColor Green
-Write-Host "Commit main: $mainCommit"
 Write-Host "Tag: $tag"
-Write-Host "Relatorio: $report"
