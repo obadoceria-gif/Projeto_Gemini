@@ -111,7 +111,66 @@ try{
                 try{
                     $localPath=Join-Path $wt ($rel -replace '/','\')
                     $url="$urlBase/$rel?cb=$([DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds())"
-                    $resp=Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 20 -Headers @{"Cache-Control"="no-cache";"Pragma"="no-cache"}
+    # FASE4J_SMOKE_START
+    # GitHub Pages pode responder antes de todos os artefatos do novo deploy
+    # estarem propagados. O smoke deve aguardar consistencia, nao falhar na
+    # primeira resposta 404.
+    $smokeUrl = "https://obadoceria-gif.github.io/Projeto_Gemini/data/catalog-v1/flavors.json"
+    $smokeOk = $false
+    $smokeUltimo = ""
+    $smokeDeadline = (Get-Date).AddMinutes(5)
+
+    do {
+        try {
+            $cb = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
+            $resp = Invoke-WebRequest `
+                -Uri ($smokeUrl + "?cb=" + $cb) `
+                -UseBasicParsing `
+                -TimeoutSec 20 `
+                -Headers @{"Cache-Control"="no-cache";"Pragma"="no-cache"}
+
+            $smokeUltimo = "HTTP $($resp.StatusCode)"
+
+            if ($resp.StatusCode -eq 200) {
+                try {
+                    $jsonPublico = $resp.Content | ConvertFrom-Json
+                    $capp = @($jsonPublico | Where-Object {
+                        [string]$_.nome -eq "Cappuccino" -or [string]$_.id -match "cappuccino"
+                    } | Select-Object -First 1)
+
+                    if ($capp) {
+                        $smokeOk = $true
+                        break
+                    }
+
+                    $smokeUltimo = "HTTP 200, mas Cappuccino nao localizado"
+                }
+                catch {
+                    $smokeUltimo = "HTTP 200, JSON ainda inconsistente: $($_.Exception.Message)"
+                }
+            }
+        }
+        catch {
+            $code = ""
+            if ($_.Exception.Response -and $_.Exception.Response.StatusCode) {
+                $code = [string][int]$_.Exception.Response.StatusCode
+            }
+            if ([string]::IsNullOrWhiteSpace($code)) { $code = "ERRO" }
+            $smokeUltimo = "HTTP $code - $($_.Exception.Message)"
+        }
+
+        if ((Get-Date) -lt $smokeDeadline) {
+            Write-Host "[INFO] GitHub Pages ainda propagando ($smokeUltimo). Nova tentativa em 10s..." -ForegroundColor Cyan
+            Start-Sleep -Seconds 10
+        }
+    } while ((Get-Date) -lt $smokeDeadline)
+
+    if (-not $smokeOk) {
+        throw "Smoke publico nao estabilizou em 5 minutos. Ultimo resultado: $smokeUltimo"
+    }
+
+    Write-Host "[PASS] Smoke publico estabilizado: $smokeUrl" -ForegroundColor Green
+    # FASE4J_SMOKE_END
                     if($resp.StatusCode -ne 200){ throw "HTTP $($resp.StatusCode)" }
 
                     if($rel -match '\.json$'){
