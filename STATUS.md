@@ -303,3 +303,18 @@ Estado:
 - primeira edição real: homologada.
 
 Próximo foco: cardápio do cliente.
+
+<!-- CARDAPIO_FINAL_START -->
+
+## Cardápio Virtual — Estado Final
+
+**FINALIZADO / HOMOLOGADO / PUBLICADO**
+
+- Release funcional: 60fe160
+- Tag: cardapio-final-homologado-20260828-144517
+- URL pública: https://obadoceria-gif.github.io/Projeto_Gemini/ui-desenvolvimento/index.html
+- Documento: docs/FECHAMENTO_CARDAPIO_FINAL.md
+
+A implementação inicial foi encerrada. Mudanças posteriores são manutenção/evolução.
+
+<!-- CARDAPIO_FINAL_END -->
