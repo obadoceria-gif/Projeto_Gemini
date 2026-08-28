@@ -23,7 +23,7 @@ tr[data-editable]{cursor:pointer}tr[data-editable]:hover{background:#fffaf6}.ok{
 #pendenciasBox{display:none;background:#fff8e8;border:1px solid #ead4a5;border-radius:12px;padding:12px;margin-bottom:13px}#pendenciasBox.show{display:block}
 dialog{border:0;border-radius:15px;padding:0;max-width:660px;width:calc(100% - 24px);box-shadow:0 18px 60px #0003}dialog::backdrop{background:#0007}
 .modal{padding:20px}.modal h2{margin-top:0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}.checks{display:flex;gap:18px;align-items:center}
-.actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.preview-img{max-width:180px;max-height:130px;border:1px solid var(--line);border-radius:9px;object-fit:contain;background:#fafafa}
+.actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.preview-img{width:220px;height:150px;border:1px solid var(--line);border-radius:12px;object-fit:contain;background:#fafafa}.image-box{display:flex;gap:14px;align-items:center;flex-wrap:wrap}.image-tools{display:flex;flex-direction:column;gap:7px;flex:1;min-width:220px}.image-path{font-size:12px;color:var(--muted);word-break:break-all}.image-error{font-size:12px;color:var(--danger);display:none}.hint{font-size:12px;color:var(--muted)}.danger-zone{margin-right:auto}
 @media(max-width:720px){.grid{grid-template-columns:1fr}.hide-mobile{display:none}table{font-size:13px}}
 </style>
 </head>
@@ -123,31 +123,36 @@ async function atualizarStatus(){
   }catch{}
 }
 
+function imageUrl(path){return '/'+String(path||'').split('/').map(encodeURIComponent).join('/')}
 function imgField(item,tipo){
   const wrap=document.createElement('div');wrap.className='field full';
-  const l=document.createElement('label');l.textContent='Imagem';
-  const cur=document.createElement('input');cur.id='edImagem';cur.value=item.imagem??'';
+  const l=document.createElement('label');l.textContent='Foto do item';
+  const box=document.createElement('div');box.className='image-box';
+  const cur=document.createElement('input');cur.id='edImagem';cur.type='hidden';cur.value=item.imagem??'';
+  const preview=document.createElement('img');preview.className='preview-img';preview.id='imgPreview';preview.alt='Prévia da imagem';
+  const tools=document.createElement('div');tools.className='image-tools';
   const file=document.createElement('input');file.id='edImagemFile';file.type='file';file.accept='.jpg,.jpeg,.png,.webp';
-  const preview=document.createElement('img');preview.className='preview-img';preview.id='imgPreview';
-  if(cur.value)preview.src='/'+cur.value;
-  file.addEventListener('change',async()=>{
-    const f=file.files?.[0];if(!f)return;
-    preview.src=URL.createObjectURL(f);
-  });
-  wrap.append(l,cur,file,preview);return wrap;
+  const hint=document.createElement('div');hint.className='hint';hint.textContent='Clique em “Escolher arquivo” para trocar a foto. JPG, PNG ou WEBP, até 5 MB.';
+  const path=document.createElement('div');path.className='image-path';path.textContent=cur.value?'Arquivo atual: '+cur.value:'Nenhuma imagem cadastrada';
+  const err=document.createElement('div');err.className='image-error';err.textContent='A foto atual não foi encontrada. Você pode escolher uma nova imagem.';
+  preview.onerror=()=>{err.style.display='block';preview.style.display='none'};
+  preview.onload=()=>{err.style.display='none';preview.style.display='block'};
+  if(cur.value)preview.src=imageUrl(cur.value);else preview.style.display='none';
+  file.addEventListener('change',()=>{const f=file.files?.[0];if(!f)return;err.style.display='none';preview.style.display='block';preview.src=URL.createObjectURL(f);path.textContent='Nova foto selecionada: '+f.name});
+  tools.append(file,hint,path,err);box.append(preview,tools);wrap.append(l,cur,box);return wrap;
 }
 
 function field(id,label,value,type='text',full=false){
   const w=document.createElement('div');w.className='field'+(full?' full':'');
   const l=document.createElement('label');l.textContent=label;
-  const i=document.createElement('input');i.id=id;i.type=type;i.value=value??'';
+  const i=document.createElement(type==='textarea'?'textarea':'input');i.id=id;if(type!=='textarea')i.type=type;i.value=value??'';
   if(type==='number'){i.min='0';i.step='0.01'}
   w.append(l,i);return w;
 }
 
 function checks(item){
   const w=document.createElement('div');w.className='field full checks';
-  [['edAtivo','Ativo',item.ativo!==false],['edDisponivel','Disponível',item.disponivel!==false]].forEach(([id,t,v])=>{
+  [['edAtivo','Cadastrado no catálogo',item.ativo!==false],['edDisponivel','Disponível para venda',item.disponivel!==false]].forEach(([id,t,v])=>{
     const l=document.createElement('label'),i=document.createElement('input');i.type='checkbox';i.id=id;i.checked=v;l.append(i,' '+t);w.append(l);
   });return w;
 }
@@ -193,14 +198,14 @@ function abrirEditor(tipo,id=null,duplicar=false){
     $('editorTitulo').textContent=novo?'Novo sabor':'Editar sabor';
     box.append(field('edNome','Nome',duplicar?(item.nome+' - cópia'):item.nome,'text',true));
     box.append(selectField('edCategoria','Categoria',catalogo.categories.filter(c=>c.ativo!==false).map(c=>({text:c.nome,value:c.id})),item.categoriaId));
-    box.append(field('edPreco','Preço',item.preco??0,'number'));
-    box.append(field('edDescricao','Descrição',item.descricao??'','text',true));
+    box.append(field('edPreco','Preço (R$)',Number(item.preco??0).toFixed(2),'number'));
+    box.append(field('edDescricao','Descrição',item.descricao??'','textarea',true));
     box.append(imgField(item,tipo));box.append(checks(item));
   }
   if(tipo==='categories'){
     $('editorTitulo').textContent=novo?'Nova categoria':'Editar categoria';
     box.append(field('edNome','Nome',duplicar?(item.nome+' - cópia'):item.nome,'text',true));
-    box.append(field('edPrecoReferencia','Preço de referência',item.precoReferencia??'','number'));
+    box.append(field('edPrecoReferencia','Preço de referência (R$)',item.precoReferencia==null?'':Number(item.precoReferencia).toFixed(2),'number'));
     box.append(field('edOrdem','Ordem',item.ordem??nextOrder(tipo),'number'));box.append(checks(item));
   }
   if(tipo==='boxes'){
@@ -208,28 +213,28 @@ function abrirEditor(tipo,id=null,duplicar=false){
     box.append(field('edNome','Nome',duplicar?(item.nome+' - cópia'):item.nome,'text',true));
     box.append(field('edCapacidade','Capacidade',item.capacidade??0,'number'));
     box.append(field('edMaxSabores','Máx. sabores',item.maxSabores??'','number'));
-    box.append(field('edPrecoFixo','Preço fixo',item.precoFixo??'','number'));box.append(checks(item));
+    box.append(field('edPrecoFixo','Preço fixo (R$)',item.precoFixo==null?'':Number(item.precoFixo).toFixed(2),'number'));box.append(checks(item));
   }
   if(tipo==='products'){
     $('editorTitulo').textContent=novo?'Novo produto':'Editar produto';
     box.append(field('edNome','Nome',duplicar?(item.nome+' - cópia'):item.nome,'text',true));
     box.append(field('edTipo','Tipo',item.tipo??'produto'));
-    box.append(field('edPreco','Preço',item.preco??0,'number'));
-    box.append(field('edDescricao','Descrição',item.descricao??'','text',true));
+    box.append(field('edPreco','Preço (R$)',Number(item.preco??0).toFixed(2),'number'));
+    box.append(field('edDescricao','Descrição',item.descricao??'','textarea',true));
     box.append(field('edOpcionais','Opcionais permitidos',Array.isArray(item.opcionaisPermitidos)?item.opcionaisPermitidos.join(', '):'','text',true));
     box.append(imgField(item,tipo));box.append(checks(item));
   }
   if(tipo==='options'){
     $('editorTitulo').textContent=novo?'Novo opcional':'Editar opcional';
     box.append(field('edNome','Nome',duplicar?(item.nome+' - cópia'):item.nome,'text',true));
-    box.append(field('edPreco','Preço',item.preco??0,'number'));
+    box.append(field('edPreco','Preço (R$)',Number(item.preco??0).toFixed(2),'number'));
     box.append(field('edOrdem','Ordem',item.ordem??nextOrder(tipo),'number'));box.append(checks(item));
   }
   if(tipo==='combos'){
     $('editorTitulo').textContent=novo?'Novo combo':'Editar combo';
     box.append(field('edNome','Nome',duplicar?(item.nome+' - cópia'):item.nome,'text',true));
-    box.append(field('edPreco','Preço',item.preco??0,'number'));
-    box.append(field('edDescricao','Descrição',item.descricao??'','text',true));
+    box.append(field('edPreco','Preço (R$)',Number(item.preco??0).toFixed(2),'number'));
+    box.append(field('edDescricao','Descrição',item.descricao??'','textarea',true));
     box.append(field('edItens','Itens / IDs separados por vírgula',Array.isArray(item.itens)?item.itens.join(', '):'','text',true));
     box.append(imgField(item,tipo));box.append(checks(item));
   }
@@ -288,7 +293,7 @@ async function arquivarAtual(){
   const {tipo,id}=editando;
   if(!id)return;
   const item=catalogo[tipo].find(x=>String(x.id)===String(id));if(!item)return;
-  if(!confirm('Arquivar "'+item.nome+'"? Ele deixará de ficar disponível, mas poderá ser reativado depois.'))return;
+  if(!confirm('CONFIRMAR ARQUIVAMENTO\n\nArquivar \"'+item.nome+'\"?\n\nO item deixará de aparecer como disponível para venda, mas continuará cadastrado e poderá ser reativado depois.'))return;
 
   const novo={...item,ativo:false,disponivel:false};
   const items=catalogo[tipo].map(x=>String(x.id)===String(id)?novo:x);
