@@ -348,8 +348,26 @@ function Try-StaticFile([string]$UrlPath){
     $candidate=[IO.Path]::GetFullPath((Join-Path $root ($decoded -replace '/','\')))
     $rootFull=[IO.Path]::GetFullPath($root+[IO.Path]::DirectorySeparatorChar)
     if(-not $candidate.StartsWith($rootFull,[StringComparison]::OrdinalIgnoreCase)){ throw "Path traversal bloqueado." }
-    if(!(Test-Path -LiteralPath $candidate -PathType Leaf)){ return $null }
-    return $candidate
+
+    if(Test-Path -LiteralPath $candidate -PathType Leaf){
+        return $candidate
+    }
+
+    # Compatibilidade com imagens legadas usadas pelo cardapio.
+    # Ex.: Images/Sabores_Doces/Cappuccino.jpeg vive sob ui-desenvolvimento.
+    if($decoded.StartsWith("Images/",[StringComparison]::OrdinalIgnoreCase) -or
+       $decoded.StartsWith("images/",[StringComparison]::OrdinalIgnoreCase)){
+        $uiRoot=[IO.Path]::GetFullPath((Join-Path $root "ui-desenvolvimento"))
+        $uiCandidate=[IO.Path]::GetFullPath((Join-Path $uiRoot ($decoded -replace '/','\')))
+        $uiPrefix=[IO.Path]::GetFullPath($uiRoot+[IO.Path]::DirectorySeparatorChar)
+
+        if($uiCandidate.StartsWith($uiPrefix,[StringComparison]::OrdinalIgnoreCase) -and
+           (Test-Path -LiteralPath $uiCandidate -PathType Leaf)){
+            return $uiCandidate
+        }
+    }
+
+    return $null
 }
 
 function Self-Test{
