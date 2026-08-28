@@ -284,3 +284,22 @@ Decisão:
 
 Próxima ação:
 R1.20-B04 — próximo gap técnico real do backlog.
+---
+
+## Central de Gestão do Cardápio — HOMOLOGADA
+
+Data: 2026-08-28 00:39:50
+
+A Central foi homologada em testes automáticos e inspeção visual.
+
+Estado:
+- manutenção comercial via interface: OK;
+- imagens: OK;
+- publicação: OK;
+- rollback: OK;
+- Git/GitHub: fonte oficial;
+- PRE-CHANGE: obrigatório;
+- backup externo: disponível;
+- primeira edição real: homologada.
+
+Próximo foco: cardápio do cliente.
