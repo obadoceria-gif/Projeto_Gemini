@@ -123,7 +123,7 @@ async function atualizarStatus(){
   }catch{}
 }
 
-function imageUrl(path){return '/'+String(path||'').split('/').map(encodeURIComponent).join('/')}
+function imageUrl(path){const p=String(path||'').replace(/\\/g,'/').replace(/^\/+/,'');return '/ui-desenvolvimento/'+p.split('/').map(encodeURIComponent).join('/')+'?imgcb='+Date.now()}
 function imgField(item,tipo){
   const wrap=document.createElement('div');wrap.className='field full';
   const l=document.createElement('label');l.textContent='Foto do item';
