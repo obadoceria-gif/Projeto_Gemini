@@ -19135,13 +19135,39 @@ function mostrarNotificacao(msg) {
 
 
     /*
-     * Na montagem, "Salvar" apenas confirma os ajustes.
-     * A caixa ainda nao vai para o carrinho.
+     * FASE 5D.3
+     * Ao salvar uma montagem valida, consolida a caixa
+     * e segue diretamente para a revisao do carrinho.
      */
 
-    window.__obaMinimoAvisadoR120 =
-      backupMinimoAvisado ||
-      total >= 25;
+    if (total < 25) {
+
+      mostrarNotificacao(
+        `A caixa precisa ter pelo menos 25 doces. Faltam ${25 - total}.`
+      );
+
+      return;
+    }
+
+
+    caixaAtiva.titulo =
+      `Caixa Personalizada — ${total} doces`;
+
+
+    caixaAtiva.maxSabores =
+      limite;
+
+
+    _registrarCaixaNoCarrinho();
+
+
+    resetarSelecaoCaixa();
+
+
+    atualizarCarrinhoMobilePersistente();
+
+
+    liberarCarrinhoUX4();
 
 
     const modal =
@@ -19161,22 +19187,23 @@ function mostrarNotificacao(msg) {
       '';
 
 
-    renderizarDoces();
-
-    atualizarInterface();
-
-    window
-      .atualizarUXProgressivaR120?.(
-        total
-      );
-
-
-    marcarSelecionadosUX4();
-
-
     mostrarNotificacao(
-      'Seleção atualizada.'
+      'Caixa adicionada ao carrinho.'
     );
+
+
+    try {
+
+      if (
+        typeof window.abrirCarrinhoViewportR117 ===
+          'function'
+      ) {
+
+        window.abrirCarrinhoViewportR117();
+      }
+
+    }
+    catch (_) {}
 
 
     limparEstadoEditorUX4();
@@ -19324,6 +19351,33 @@ function mostrarNotificacao(msg) {
 
     indiceCarrinhoEditor =
       null;
+
+
+    /*
+     * FASE 5D.7
+     * O fechamento do UX4 tambem encerra o estado global
+     * usado pelas camadas visuais de edicao do carrinho.
+     */
+
+    window.__obaIndiceCaixaEmEdicao =
+      null;
+
+
+    const statusEdicaoUX4 =
+      document.getElementById(
+        'r120-b05-editando-status'
+      );
+
+
+    if (statusEdicaoUX4) {
+
+      statusEdicaoUX4.hidden =
+        true;
+
+
+      statusEdicaoUX4.style.display =
+        'none';
+    }
 
 
     backupCaixaAtiva =

@@ -488,8 +488,18 @@ try{
                 Send-Json $stream 400 "Bad Request" @{ok=$false;error=[string]$_.Exception.Message}
             }
         }
+        catch{
+            # FASE 5D.5A
+            # Uma conexao HTTP interrompida nao pode derrubar o servidor.
+            Write-Warning (
+                "Requisicao descartada sem encerrar servidor: " +
+                [string]$_.Exception.Message
+            )
+        }
         finally{
-            $client.Close()
+            if($null -ne $client){
+                $client.Close()
+            }
         }
     }
 }
