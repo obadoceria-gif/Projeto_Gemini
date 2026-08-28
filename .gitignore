@@ -24,3 +24,8 @@ ui-oficial/
 # Sistema / editor
 .DS_Store
 Thumbs.db
+
+# Instaladores e checkpoints transitórios
+FASE*.ps1
+CENTRAL_*_ATUAL.zip
+*.bundle
