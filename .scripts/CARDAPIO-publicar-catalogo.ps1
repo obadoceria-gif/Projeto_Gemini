@@ -39,12 +39,45 @@ foreach($line in $status){
 
 $alterados=@($permitidos|Sort-Object -Unique)
 
+# FASE4K_PENDING_MODE
+# Se o workspace estiver limpo, ainda pode haver conteudo ja versionado na feature
+# e nao publicado em origin/main (por exemplo apos rollback de deploy).
+$pendingMode=$false
+$pendingCommits=@()
+
+if($alterados.Count -eq 0){
+    $branchAtual=(git branch --show-current).Trim()
+
+    $pendingFiles=@(
+        git diff --name-only "origin/main..origin/$branchAtual" -- "data/catalog-v1/*.json" "Images/Catalogo/*"
+    ) | Sort-Object -Unique
+
+    if($pendingFiles.Count -gt 0){
+        $pendingMode=$true
+        $alterados=@($pendingFiles)
+
+        $pendingCommits=@(
+            git log --reverse --format="%H" "origin/main..origin/$branchAtual" -- "data/catalog-v1/*.json" "Images/Catalogo/*"
+        )
+
+        Write-Host "[INFO] Modo publicacao pendente: $($alterados.Count) arquivo(s), $($pendingCommits.Count) commit(s)." -ForegroundColor Cyan
+    }
+}
+
 if($alterados.Count -eq 0){
     if($DryRun){
-        Write-Host "[PASS] PUBLISH DRY-RUN: ambiente limpo e catalogo valido." -ForegroundColor Green
+        Write-Host "[PASS] PUBLISH DRY-RUN: ambiente limpo, catalogo valido e nada pendente na feature." -ForegroundColor Green
         exit 0
     }
     Fail "Nenhuma alteracao para publicar."
+}
+
+if($DryRun){
+    if($pendingMode){
+        Write-Host "[PASS] PUBLISH DRY-RUN: ha conteudo versionado pendente de publicacao." -ForegroundColor Green
+        $alterados | ForEach-Object { Write-Host " - $_" }
+        exit 0
+    }
 }
 
 $backupDir=Join-Path $audit "backup"
@@ -63,25 +96,31 @@ if($DryRun){
     exit 0
 }
 
-git add -- $alterados
-if($LASTEXITCODE -ne 0){ Fail "git add falhou." }
+if(-not $pendingMode){
+    git add -- $alterados
+    if($LASTEXITCODE -ne 0){ Fail "git add falhou." }
 
-$staged=@(git diff --cached --name-only)
-$fora=@($staged|Where-Object{
-    $_ -notmatch '^data/catalog-v1/[^/]+\.json$' -and
-    $_ -notmatch '^Images/Catalogo/.+\.(jpg|jpeg|png|webp)$'
-})
-if($fora.Count -gt 0){ git reset; Fail "Staging inesperado: $($fora -join ', ')" }
+    $staged=@(git diff --cached --name-only)
+    $fora=@($staged|Where-Object{
+        $_ -notmatch '^data/catalog-v1/[^/]+\.json$' -and
+        $_ -notmatch '^Images/Catalogo/.+\.(jpg|jpeg|png|webp)$'
+    })
+    if($fora.Count -gt 0){ git reset; Fail "Staging inesperado: $($fora -join ', ')" }
 
-git diff --cached --check
-if($LASTEXITCODE -ne 0){ git reset; Fail "git diff --check reprovou." }
+    git diff --cached --check
+    if($LASTEXITCODE -ne 0){ git reset; Fail "git diff --check reprovou." }
 
-git commit -m "content(cardapio): atualizar catalogo"
-if($LASTEXITCODE -ne 0){ Fail "Commit falhou." }
-$commitCatalogo=(git rev-parse HEAD).Trim()
+    git commit -m "content(cardapio): atualizar catalogo"
+    if($LASTEXITCODE -ne 0){ Fail "Commit falhou." }
+    $commitCatalogo=(git rev-parse HEAD).Trim()
 
-git push -u origin $branchEsperada
-if($LASTEXITCODE -ne 0){ Fail "Push da feature falhou." }
+    git push -u origin $branchEsperada
+    if($LASTEXITCODE -ne 0){ Fail "Push da feature falhou." }
+
+    $commitsParaPublicar=@($commitCatalogo)
+}else{
+    $commitsParaPublicar=@($pendingCommits)
+}
 
 git fetch origin --quiet
 $wt=Join-Path $env:TEMP ("oba-publish-"+[guid]::NewGuid().ToString("N"))
@@ -94,7 +133,10 @@ try{
 
     Push-Location $wt
     try{
-        git cherry-pick $commitCatalogo
+        foreach($commitPublicacao in $commitsParaPublicar){
+            git cherry-pick $commitPublicacao
+            if($LASTEXITCODE -ne 0){ git cherry-pick --abort 2>$null; Fail "Cherry-pick falhou: $commitPublicacao" }
+        }
         if($LASTEXITCODE -ne 0){ git cherry-pick --abort 2>$null; Fail "Cherry-pick falhou." }
 
         $mainCommit=(git rev-parse HEAD).Trim()

@@ -118,8 +118,19 @@ async function atualizarStatus(){
   try{
     const s=await api('/api/status',{cache:'no-store'});
     const b=$('statusBadge');
-    if(s.dirty){b.textContent=s.changed.length+' arquivo(s) pendente(s)';b.className='badge off'}
-    else{b.textContent='Sem alterações pendentes';b.className='badge ok'}
+
+    if(s.dirty){
+      b.textContent=s.changed.length+' arquivo(s) não versionado(s)';
+      b.className='badge off';
+    }else if(s.publishPendingFlag){
+      b.textContent=s.publishPendingCount+' arquivo(s) pendente(s) de publicação';
+      b.className='badge off';
+    }else{
+      b.textContent='Tudo publicado';
+      b.className='badge ok';
+    }
+
+    window.__obaStatusPublicacao=s;
   }catch{}
 }
 
@@ -349,7 +360,7 @@ $('previewBtn').onclick=()=>window.open('/ui-desenvolvimento/index.html?preview=
 
 $('publicarBtn').onclick=async()=>{
   const s=await api('/api/status',{cache:'no-store'});
-  if(!s.dirty){msg('Não há alterações pendentes para publicar.','erro');return}
+  if(!s.dirty && !s.publishPendingFlag){msg('Não há alterações pendentes para publicar.','erro');return}
   if(!confirm('Publicar alterações no cardápio oficial? O processo fará backup, validação, Git, deploy, smoke e rollback automático se necessário.'))return;
 
   const b=$('publicarBtn');b.disabled=true;b.textContent='Publicando...';

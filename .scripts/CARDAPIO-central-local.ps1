@@ -236,13 +236,40 @@ function Save-Image($Payload){
 
 function Get-Status{
     $changed=@()
+    $publishPending=@()
+    $publishPendingCommits=@()
+
     if([string]::IsNullOrWhiteSpace($DataDirOverride)){
         $status=@(git -C $root status --porcelain -- "data/catalog-v1/*.json" "Images/Catalogo/*")
         foreach($line in $status){
             if($line.Length -ge 4){ $changed += $line.Substring(3).Trim() }
         }
+
+        try{
+            git -C $root fetch origin --quiet 2>$null | Out-Null
+
+            $branch=(git -C $root branch --show-current).Trim()
+            if(-not [string]::IsNullOrWhiteSpace($branch)){
+                $publishPending=@(
+                    git -C $root diff --name-only "origin/main..origin/$branch" -- "data/catalog-v1/*.json" "Images/Catalogo/*"
+                ) | Sort-Object -Unique
+
+                $publishPendingCommits=@(
+                    git -C $root log --reverse --format="%H|%s" "origin/main..origin/$branch" -- "data/catalog-v1/*.json" "Images/Catalogo/*"
+                )
+            }
+        }catch{}
     }
-    [ordered]@{ok=$true;changed=@($changed|Sort-Object -Unique);dirty=($changed.Count -gt 0)}
+
+    [ordered]@{
+        ok=$true
+        changed=@($changed|Sort-Object -Unique)
+        dirty=($changed.Count -gt 0)
+        publishPending=@($publishPending)
+        publishPendingCount=@($publishPending).Count
+        publishPendingCommits=@($publishPendingCommits)
+        publishPendingFlag=(@($publishPending).Count -gt 0)
+    }
 }
 
 function Read-HttpRequest($Stream){
