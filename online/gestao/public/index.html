@@ -1,0 +1,1499 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Oba Doceria — Gestão do Cardápio</title>
+<style>
+:root{--bg:#f8f3ed;--card:#fff;--text:#4e352c;--muted:#81736d;--brand:#9d4c0c;--line:#eaded5;--ok:#167544;--danger:#a33636}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--text)}
+header{padding:20px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+header h1{margin:0 0 4px;font-size:22px}header p{margin:0;color:var(--muted)}
+main{max-width:1280px;margin:auto;padding:18px}.topbar,.toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.topbar{margin-bottom:14px}
+button,input,select,textarea{font:inherit}button{border:0;border-radius:9px;padding:9px 13px;cursor:pointer}.primary{background:var(--brand);color:#fff}.secondary{background:#eee5dd;color:var(--text)}.danger{background:#fff0f0;color:var(--danger)}
+input,select,textarea{padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:#fff}textarea{min-height:80px;resize:vertical}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:9px}.card,section{background:#fff;border:1px solid var(--line);border-radius:14px}.card{padding:13px}
+.numero{font-size:24px;font-weight:800;color:var(--brand)}.label{color:var(--muted)}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:16px 0}.tab{background:#eee5dd;color:var(--text)}.tab.active{background:var(--brand);color:#fff}
+section{display:none;padding:17px}.panel.active{display:block}.toolbar{margin-bottom:11px}.toolbar h2{margin:0 auto 0 0}
+table{width:100%;border-collapse:collapse}th,td{padding:9px;text-align:left;border-bottom:1px solid var(--line)}th{font-size:12px;color:var(--muted)}
+tr[data-editable]{cursor:pointer}tr[data-editable]:hover{background:#fffaf6}.ok{color:var(--ok);font-weight:700}.off{color:var(--danger);font-weight:700}
+.badge{display:inline-block;background:#f4e9df;padding:4px 8px;border-radius:999px;font-size:12px}
+#mensagem{display:none;margin-bottom:12px;padding:11px;border-radius:9px}#mensagem.okbox{display:block;background:#eaf8ef;color:#145e36}#mensagem.errbox{display:block;background:#fff0f0;color:#8b2828}
+#pendenciasBox{display:none;background:#fff8e8;border:1px solid #ead4a5;border-radius:12px;padding:12px;margin-bottom:13px}#pendenciasBox.show{display:block}
+dialog{border:0;border-radius:15px;padding:0;max-width:660px;width:calc(100% - 24px);box-shadow:0 18px 60px #0003}dialog::backdrop{background:#0007}
+.modal{padding:20px}.modal h2{margin-top:0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}.checks{display:flex;gap:18px;align-items:center}
+.actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.preview-img{width:220px;height:150px;border:1px solid var(--line);border-radius:12px;object-fit:contain;background:#fafafa}.image-box{display:flex;gap:14px;align-items:center;flex-wrap:wrap}.image-tools{display:flex;flex-direction:column;gap:7px;flex:1;min-width:220px}.image-path{font-size:12px;color:var(--muted);word-break:break-all}.image-error{font-size:12px;color:var(--danger);display:none}.hint{font-size:12px;color:var(--muted)}.danger-zone{margin-right:auto}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.hide-mobile{display:none}table{font-size:13px}}
+</style>
+</head>
+<body>
+<header><h1>Oba Doceria — Gestão do Cardápio</h1><p>Crie, edite, arquive, troque imagens, visualize e publique</p></header>
+<main>
+<div id="mensagem"></div>
+<div id="pendenciasBox"><strong>Alterações pendentes</strong><ul id="listaPendencias"></ul></div>
+
+<div class="topbar">
+<button class="secondary" id="previewBtn">Visualizar cardápio</button>
+<button class="primary" id="publicarBtn">Publicar alterações</button>
+<span id="statusBadge" class="badge">Verificando...</span>
+</div>
+
+<div class="cards">
+<div class="card"><div class="numero" id="nSabores">—</div><div class="label">Sabores</div></div>
+<div class="card"><div class="numero" id="nCategorias">—</div><div class="label">Categorias</div></div>
+<div class="card"><div class="numero" id="nCaixas">—</div><div class="label">Caixas</div></div>
+<div class="card"><div class="numero" id="nProdutos">—</div><div class="label">Produtos</div></div>
+<div class="card"><div class="numero" id="nOpcionais">—</div><div class="label">Opcionais</div></div>
+<div class="card"><div class="numero" id="nCombos">—</div><div class="label">Combos</div></div>
+</div>
+
+<div class="tabs">
+<button class="tab active" data-tab="flavors">Sabores</button>
+<button class="tab" data-tab="categories">Categorias</button>
+<button class="tab" data-tab="boxes">Caixas</button>
+<button class="tab" data-tab="products">Produtos</button>
+<button class="tab" data-tab="options">Opcionais</button>
+<button class="tab" data-tab="combos">Combos</button>
+<button class="tab" data-tab="config">Loja</button>
+</div>
+
+<section id="panel-flavors" class="panel active"><div class="toolbar"><h2>Sabores</h2><button class="primary" data-new="flavors">+ Novo sabor</button><input id="buscaSabor" placeholder="Buscar sabor"><select id="filtroCategoria"><option value="">Todas as categorias</option></select></div><table><thead><tr><th>Nome</th><th>Categoria</th><th>Preço</th><th class="hide-mobile">Imagem</th><th>Status</th></tr></thead><tbody id="body-flavors"></tbody></table></section>
+<section id="panel-categories" class="panel"><div class="toolbar"><h2>Categorias</h2><button class="primary" data-new="categories">+ Nova categoria</button></div><table><thead><tr><th>Nome</th><th>Preço ref.</th><th>Ordem</th><th>Status</th></tr></thead><tbody id="body-categories"></tbody></table></section>
+<section id="panel-boxes" class="panel"><div class="toolbar"><h2>Caixas</h2><button class="primary" data-new="boxes">+ Nova caixa</button></div><table><thead><tr><th>Nome</th><th>Capacidade</th><th>Máx. sabores</th><th>Preço fixo</th><th>Status</th></tr></thead><tbody id="body-boxes"></tbody></table></section>
+<section id="panel-products" class="panel"><div class="toolbar"><h2>Produtos</h2><button class="primary" data-new="products">+ Novo produto</button></div><table><thead><tr><th>Nome</th><th>Tipo</th><th>Preço</th><th class="hide-mobile">Imagem</th><th>Status</th></tr></thead><tbody id="body-products"></tbody></table></section>
+<section id="panel-options" class="panel"><div class="toolbar"><h2>Opcionais</h2><button class="primary" data-new="options">+ Novo opcional</button></div><table><thead><tr><th>Nome</th><th>Preço</th><th>Ordem</th><th>Status</th></tr></thead><tbody id="body-options"></tbody></table></section>
+<section id="panel-combos" class="panel"><div class="toolbar"><h2>Combos</h2><button class="primary" data-new="combos">+ Novo combo</button></div><table><thead><tr><th>Nome</th><th>Preço</th><th>Imagem</th><th>Status</th></tr></thead><tbody id="body-combos"></tbody></table></section>
+<section id="panel-config" class="panel"><h2>Loja</h2><form id="formConfig"><div class="grid"><div class="field"><label>WhatsApp</label><input id="cfgWhatsapp" required></div><div class="field"><label>Locale</label><input id="cfgLocale"></div><div class="field"><label>Moeda</label><input id="cfgCurrency"></div><div class="field full"><label>Formas de pagamento</label><input id="cfgPayments" placeholder="Pix, Dinheiro, Cartão"></div></div><div class="actions"><button class="primary" type="submit">Salvar loja</button></div></form></section>
+
+</main>
+
+<dialog id="editor"><form class="modal" id="formEditor"><h2 id="editorTitulo">Editar</h2><div id="editorCampos" class="grid"></div><div class="actions"><button class="danger" type="button" id="arquivarBtn">Arquivar</button><button class="secondary" type="button" id="duplicarBtn">Duplicar</button><button class="secondary" type="button" id="cancelarBtn">Cancelar</button><button class="primary" type="submit">Salvar</button></div></form></dialog>
+
+<script>
+'use strict';
+
+let catalogo=null;
+let editando={tipo:null,id:null,novo:false};
+let pendencias=[];
+
+const $=id=>document.getElementById(id);
+const moeda=v=>Number(v??0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+
+async function api(url,opts){
+  const r=await fetch(url,opts);
+  const j=await r.json();
+  if(!r.ok)throw new Error(j.error||'Falha na operação.');
+  return j;
+}
+
+function msg(t,tipo='ok'){const b=$('mensagem');b.textContent=t;b.className=tipo==='ok'?'okbox':'errbox';b.style.display='block';window.scrollTo({top:0,behavior:'smooth'})}
+function td(t,c=''){const x=document.createElement('td');x.textContent=t??'—';if(c)x.className=c;return x}
+function statusTd(x){const ok=x.ativo!==false&&x.disponivel!==false;return td(ok?'Disponível':'Arquivado',ok?'ok':'off')}
+function nextOrder(tipo){return Math.max(0,...catalogo[tipo].map(x=>Number(x.ordem)||0))+1}
+
+function slug(s){return String(s||'item').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'item'}
+function novoId(tipo,nome){
+  const prefix={flavors:'sabor',categories:'categoria',boxes:'caixa',products:'produto',options:'opcional',combos:'combo'}[tipo]||'item';
+  let id=prefix+'-'+slug(nome),n=2;
+  const ids=Object.values(catalogo).flatMap(v=>Array.isArray(v)?v.map(x=>String(x.id||'')):[]);
+  while(ids.includes(id))id=prefix+'-'+slug(nome)+'-'+n++;
+  return id;
+}
+
+function addPendencia(t){
+  pendencias.unshift(t);
+  pendencias=pendencias.slice(0,20);
+  renderPendencias();
+  atualizarStatus();
+}
+
+function renderPendencias(){
+  const box=$('pendenciasBox'),ul=$('listaPendencias');ul.replaceChildren();
+  pendencias.forEach(p=>{const li=document.createElement('li');li.textContent=p;ul.appendChild(li)});
+  box.classList.toggle('show',pendencias.length>0);
+}
+
+async function atualizarStatus(){
+  try{
+    const s=await api('/api/status',{cache:'no-store'});
+    const b=$('statusBadge');
+
+    if(s.dirty){
+      b.textContent=s.changed.length+' arquivo(s) não versionado(s)';
+      b.className='badge off';
+    }else if(s.publishPendingFlag){
+      b.textContent=s.publishPendingCount+' arquivo(s) pendente(s) de publicação';
+      b.className='badge off';
+    }else{
+      b.textContent='Tudo publicado';
+      b.className='badge ok';
+    }
+
+    window.__obaStatusPublicacao=s;
+  }catch{}
+}
+
+function imageUrl(path){const p=String(path||'').replace(/\\/g,'/').replace(/^\/+/,'');return '/ui-desenvolvimento/'+p.split('/').map(encodeURIComponent).join('/')+'?imgcb='+Date.now()}
+function imgField(item,tipo){
+  const wrap=document.createElement('div');wrap.className='field full';
+  const l=document.createElement('label');l.textContent='Foto do item';
+  const box=document.createElement('div');box.className='image-box';
+  const cur=document.createElement('input');cur.id='edImagem';cur.type='hidden';cur.value=item.imagem??'';
+  const preview=document.createElement('img');preview.className='preview-img';preview.id='imgPreview';preview.alt='Prévia da imagem';
+  const tools=document.createElement('div');tools.className='image-tools';
+  const file=document.createElement('input');file.id='edImagemFile';file.type='file';file.accept='.jpg,.jpeg,.png,.webp';
+  const hint=document.createElement('div');hint.className='hint';hint.textContent='Clique em “Escolher arquivo” para trocar a foto. JPG, PNG ou WEBP, até 5 MB.';
+  const path=document.createElement('div');path.className='image-path';path.textContent=cur.value?'Arquivo atual: '+cur.value:'Nenhuma imagem cadastrada';
+  const err=document.createElement('div');err.className='image-error';err.textContent='A foto atual não foi encontrada. Você pode escolher uma nova imagem.';
+  preview.onerror=()=>{err.style.display='block';preview.style.display='none'};
+  preview.onload=()=>{err.style.display='none';preview.style.display='block'};
+  if(cur.value)preview.src=imageUrl(cur.value);else preview.style.display='none';
+  file.addEventListener('change',()=>{const f=file.files?.[0];if(!f)return;err.style.display='none';preview.style.display='block';preview.src=URL.createObjectURL(f);path.textContent='Nova foto selecionada: '+f.name});
+  tools.append(file,hint,path,err);box.append(preview,tools);wrap.append(l,cur,box);return wrap;
+}
+
+function field(id,label,value,type='text',full=false){
+  const w=document.createElement('div');w.className='field'+(full?' full':'');
+  const l=document.createElement('label');l.textContent=label;
+  const i=document.createElement(type==='textarea'?'textarea':'input');i.id=id;if(type!=='textarea')i.type=type;i.value=value??'';
+  if(type==='number'){i.min='0';i.step='0.01'}
+  w.append(l,i);return w;
+}
+
+function checks(item){
+  const w=document.createElement('div');w.className='field full checks';
+  [['edAtivo','Cadastrado no catálogo',item.ativo!==false],['edDisponivel','Disponível para venda',item.disponivel!==false]].forEach(([id,t,v])=>{
+    const l=document.createElement('label'),i=document.createElement('input');i.type='checkbox';i.id=id;i.checked=v;l.append(i,' '+t);w.append(l);
+  });return w;
+}
+
+function selectField(id,label,options,value,full=false){
+  const w=document.createElement('div');w.className='field'+(full?' full':'');
+  const l=document.createElement('label');l.textContent=label;
+  const s=document.createElement('select');s.id=id;
+  options.forEach(o=>s.add(new Option(o.text,o.value)));s.value=value??'';
+  w.append(l,s);return w;
+}
+
+async function uploadSeNecessario(tipo,item){
+  const input=$('edImagemFile');
+  if(!input||!input.files||!input.files[0])return item.imagem??'';
+
+  const f=input.files[0];
+  if(f.size>5*1024*1024)throw new Error('Imagem excede 5 MB.');
+  const b64=await new Promise((resolve,reject)=>{
+    const r=new FileReader();r.onerror=()=>reject(new Error('Falha ao ler imagem.'));
+    r.onload=()=>resolve(String(r.result).split(',')[1]);r.readAsDataURL(f);
+  });
+
+  const res=await api('/api/upload-image',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({entity:tipo,itemId:item.id,fileName:f.name,base64:b64})
+  });
+  return res.path;
+}
+
+function abrirEditor(tipo,id=null,duplicar=false){
+  const original=id?catalogo[tipo].find(x=>String(x.id)===String(id)):null;
+  const novo=!original||duplicar;
+  const item=original?JSON.parse(JSON.stringify(original)):{};
+
+  editando={tipo,id:original?.id??null,novo,duplicar};
+  const box=$('editorCampos');box.replaceChildren();
+  $('arquivarBtn').style.display=original&&!duplicar?'inline-block':'none';
+  $('duplicarBtn').style.display=original&&!duplicar?'inline-block':'none';
+
+  if(tipo==='flavors'){
+    $('editorTitulo').textContent=novo?'Novo sabor':'Editar sabor';
+    box.append(field('edNome','Nome',duplicar?(item.nome+' - cópia'):item.nome,'text',true));
+    box.append(selectField('edCategoria','Categoria',catalogo.categories.filter(c=>c.ativo!==false).map(c=>({text:c.nome,value:c.id})),item.categoriaId));
+    box.append(field('edPreco','Preço (R$)',Number(item.preco??0).toFixed(2),'number'));
+    box.append(field('edDescricao','Descrição',item.descricao??'','textarea',true));
+    box.append(imgField(item,tipo));box.append(checks(item));
+  }
+  if(tipo==='categories'){
+    $('editorTitulo').textContent=novo?'Nova categoria':'Editar categoria';
+    box.append(field('edNome','Nome',duplicar?(item.nome+' - cópia'):item.nome,'text',true));
+    box.append(field('edPrecoReferencia','Preço de referência (R$)',item.precoReferencia==null?'':Number(item.precoReferencia).toFixed(2),'number'));
+    box.append(field('edOrdem','Ordem',item.ordem??nextOrder(tipo),'number'));box.append(checks(item));
+  }
+  if(tipo==='boxes'){
+    $('editorTitulo').textContent=novo?'Nova caixa':'Editar caixa';
+    box.append(field('edNome','Nome',duplicar?(item.nome+' - cópia'):item.nome,'text',true));
+    box.append(field('edCapacidade','Capacidade',item.capacidade??0,'number'));
+    box.append(field('edMaxSabores','Máx. sabores',item.maxSabores??'','number'));
+    box.append(field('edPrecoFixo','Preço fixo (R$)',item.precoFixo==null?'':Number(item.precoFixo).toFixed(2),'number'));box.append(checks(item));
+  }
+  if(tipo==='products'){
+    $('editorTitulo').textContent=novo?'Novo produto':'Editar produto';
+    box.append(field('edNome','Nome',duplicar?(item.nome+' - cópia'):item.nome,'text',true));
+    box.append(field('edTipo','Tipo',item.tipo??'produto'));
+    box.append(field('edPreco','Preço (R$)',Number(item.preco??0).toFixed(2),'number'));
+    box.append(field('edDescricao','Descrição',item.descricao??'','textarea',true));
+    box.append(field('edOpcionais','Opcionais permitidos',Array.isArray(item.opcionaisPermitidos)?item.opcionaisPermitidos.join(', '):'','text',true));
+    box.append(imgField(item,tipo));box.append(checks(item));
+  }
+  if(tipo==='options'){
+    $('editorTitulo').textContent=novo?'Novo opcional':'Editar opcional';
+    box.append(field('edNome','Nome',duplicar?(item.nome+' - cópia'):item.nome,'text',true));
+    box.append(field('edPreco','Preço (R$)',Number(item.preco??0).toFixed(2),'number'));
+    box.append(field('edOrdem','Ordem',item.ordem??nextOrder(tipo),'number'));box.append(checks(item));
+  }
+  if(tipo==='combos'){
+    $('editorTitulo').textContent=novo?'Novo combo':'Editar combo';
+    box.append(field('edNome','Nome',duplicar?(item.nome+' - cópia'):item.nome,'text',true));
+    box.append(field('edPreco','Preço (R$)',Number(item.preco??0).toFixed(2),'number'));
+    box.append(field('edDescricao','Descrição',item.descricao??'','textarea',true));
+    box.append(field('edItens','Itens / IDs separados por vírgula',Array.isArray(item.itens)?item.itens.join(', '):'','text',true));
+    box.append(imgField(item,tipo));box.append(checks(item));
+  }
+
+  $('editor').showModal();
+}
+
+async function salvarEditor(){
+  const {tipo,id,novo}=editando;
+  const base=id?catalogo[tipo].find(x=>String(x.id)===String(id)):{};
+  const item={...(base||{})};
+
+  if(tipo==='flavors'){
+    item.nome=$('edNome').value.trim();item.categoriaId=$('edCategoria').value;item.preco=Number($('edPreco').value);item.descricao=$('edDescricao').value.trim();
+    if(novo){item.id=novoId(tipo,item.nome);item.ordem=nextOrder(tipo);item.sazonal=false;item.tags=[]}
+  }
+  if(tipo==='categories'){
+    item.nome=$('edNome').value.trim();item.precoReferencia=$('edPrecoReferencia').value===''?null:Number($('edPrecoReferencia').value);item.ordem=Number($('edOrdem').value||nextOrder(tipo));
+    if(novo)item.id=novoId(tipo,item.nome);
+  }
+  if(tipo==='boxes'){
+    item.nome=$('edNome').value.trim();item.capacidade=Number($('edCapacidade').value);item.maxSabores=$('edMaxSabores').value===''?null:Number($('edMaxSabores').value);item.precoFixo=$('edPrecoFixo').value===''?null:Number($('edPrecoFixo').value);
+    if(novo){item.id=novoId(tipo,item.nome);item.tipo='caixa';item.ordem=nextOrder(tipo)}
+  }
+  if(tipo==='products'){
+    item.nome=$('edNome').value.trim();item.tipo=$('edTipo').value.trim()||'produto';item.preco=Number($('edPreco').value);item.descricao=$('edDescricao').value.trim();item.opcionaisPermitidos=$('edOpcionais').value.split(',').map(x=>x.trim()).filter(Boolean);
+    if(novo){item.id=novoId(tipo,item.nome);item.ordem=nextOrder(tipo)}
+  }
+  if(tipo==='options'){
+    item.nome=$('edNome').value.trim();item.preco=Number($('edPreco').value);item.ordem=Number($('edOrdem').value||nextOrder(tipo));
+    if(novo)item.id=novoId(tipo,item.nome);
+  }
+  if(tipo==='combos'){
+    item.nome=$('edNome').value.trim();item.preco=Number($('edPreco').value);item.descricao=$('edDescricao').value.trim();item.itens=$('edItens').value.split(',').map(x=>x.trim()).filter(Boolean);
+    if(novo){item.id=novoId(tipo,item.nome);item.ordem=nextOrder(tipo)}
+  }
+
+  item.ativo=$('edAtivo').checked;item.disponivel=$('edDisponivel').checked;
+  if(!item.nome)throw new Error('Nome obrigatório.');
+
+  if(['flavors','products','combos'].includes(tipo)){
+    item.imagem=await uploadSeNecessario(tipo,item);
+    if(!item.imagem&&$('edImagem'))item.imagem=$('edImagem').value.trim();
+  }
+
+  const items=novo?[...catalogo[tipo],item]:catalogo[tipo].map(x=>String(x.id)===String(id)?item:x);
+  const res=await api('/api/'+tipo,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items})});
+  catalogo[tipo]=items;
+  $('editor').close();
+  renderTudo();
+  addPendencia((novo?'Criado: ':'Alterado: ')+item.nome);
+  msg('Salvo e validado. Backup: '+res.backup);
+}
+
+async function arquivarAtual(){
+  const {tipo,id}=editando;
+  if(!id)return;
+  const item=catalogo[tipo].find(x=>String(x.id)===String(id));if(!item)return;
+  if(!confirm('CONFIRMAR ARQUIVAMENTO\n\nArquivar \"'+item.nome+'\"?\n\nO item deixará de aparecer como disponível para venda, mas continuará cadastrado e poderá ser reativado depois.'))return;
+
+  const novo={...item,ativo:false,disponivel:false};
+  const items=catalogo[tipo].map(x=>String(x.id)===String(id)?novo:x);
+  const res=await api('/api/'+tipo,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items})});
+  catalogo[tipo]=items;$('editor').close();renderTudo();addPendencia('Arquivado: '+item.nome);msg('Item arquivado. Backup: '+res.backup);
+}
+
+function renderTudo(){
+  $('nSabores').textContent=catalogo.flavors.length;$('nCategorias').textContent=catalogo.categories.length;$('nCaixas').textContent=catalogo.boxes.length;$('nProdutos').textContent=catalogo.products.length;$('nOpcionais').textContent=catalogo.options.length;$('nCombos').textContent=catalogo.combos.length;
+
+  const cats=new Map(catalogo.categories.map(c=>[String(c.id),c.nome]));
+  const termo=$('buscaSabor').value.trim().toLowerCase(),cat=$('filtroCategoria').value;
+  const bodies={};
+  for(const t of ['flavors','categories','boxes','products','options','combos']){bodies[t]=$('body-'+t);bodies[t].replaceChildren()}
+
+  catalogo.flavors.filter(x=>(!termo||String(x.nome).toLowerCase().includes(termo))&&(!cat||String(x.categoriaId)===cat)).forEach(x=>{
+    const tr=document.createElement('tr');tr.dataset.editable='1';tr.onclick=()=>abrirEditor('flavors',x.id);tr.append(td(x.nome),td(cats.get(String(x.categoriaId))||x.categoriaId),td(moeda(x.preco)),td(x.imagem||'—','hide-mobile'),statusTd(x));bodies.flavors.append(tr)
+  });
+  catalogo.categories.forEach(x=>{const tr=document.createElement('tr');tr.dataset.editable='1';tr.onclick=()=>abrirEditor('categories',x.id);tr.append(td(x.nome),td(x.precoReferencia==null?'—':moeda(x.precoReferencia)),td(x.ordem),statusTd(x));bodies.categories.append(tr)});
+  catalogo.boxes.forEach(x=>{const tr=document.createElement('tr');tr.dataset.editable='1';tr.onclick=()=>abrirEditor('boxes',x.id);tr.append(td(x.nome),td(x.capacidade),td(x.maxSabores),td(x.precoFixo==null?'—':moeda(x.precoFixo)),statusTd(x));bodies.boxes.append(tr)});
+  catalogo.products.forEach(x=>{const tr=document.createElement('tr');tr.dataset.editable='1';tr.onclick=()=>abrirEditor('products',x.id);tr.append(td(x.nome),td(x.tipo),td(moeda(x.preco)),td(x.imagem||'—','hide-mobile'),statusTd(x));bodies.products.append(tr)});
+  catalogo.options.forEach(x=>{const tr=document.createElement('tr');tr.dataset.editable='1';tr.onclick=()=>abrirEditor('options',x.id);tr.append(td(x.nome),td(moeda(x.preco)),td(x.ordem),statusTd(x));bodies.options.append(tr)});
+  catalogo.combos.forEach(x=>{const tr=document.createElement('tr');tr.dataset.editable='1';tr.onclick=()=>abrirEditor('combos',x.id);tr.append(td(x.nome),td(moeda(x.preco)),td(x.imagem||'—'),statusTd(x));bodies.combos.append(tr)});
+}
+
+async function carregar(){
+  catalogo=await api('/api/catalog',{cache:'no-store'});
+  const f=$('filtroCategoria');f.replaceChildren(new Option('Todas as categorias',''));catalogo.categories.forEach(c=>f.add(new Option(c.nome,c.id)));
+  $('cfgWhatsapp').value=catalogo.config?.store?.whatsapp??'';$('cfgLocale').value=catalogo.config?.store?.locale??'pt-BR';$('cfgCurrency').value=catalogo.config?.store?.currency??'BRL';$('cfgPayments').value=Array.isArray(catalogo.config?.checkout?.paymentMethods)?catalogo.config.checkout.paymentMethods.join(', '):'';
+  renderTudo();await atualizarStatus();
+}
+
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));$('panel-'+b.dataset.tab).classList.add('active')});
+document.querySelectorAll('[data-new]').forEach(b=>b.onclick=()=>abrirEditor(b.dataset.new));
+$('buscaSabor').oninput=renderTudo;$('filtroCategoria').onchange=renderTudo;
+$('cancelarBtn').onclick=()=>$('editor').close();
+$('duplicarBtn').onclick=()=>{const e={...editando};$('editor').close();abrirEditor(e.tipo,e.id,true)};
+$('arquivarBtn').onclick=()=>arquivarAtual();
+$('formEditor').onsubmit=async e=>{e.preventDefault();try{await salvarEditor()}catch(err){msg(String(err.message||err),'erro')}};
+
+$('formConfig').onsubmit=async e=>{
+  e.preventDefault();
+  try{
+    const cfg=window.structuredClone?window.structuredClone(catalogo.config):JSON.parse(JSON.stringify(catalogo.config));
+    cfg.store=cfg.store||{};cfg.checkout=cfg.checkout||{};
+    cfg.store.whatsapp=$('cfgWhatsapp').value.trim();cfg.store.locale=$('cfgLocale').value.trim()||'pt-BR';cfg.store.currency=$('cfgCurrency').value.trim()||'BRL';cfg.checkout.paymentMethods=$('cfgPayments').value.split(',').map(x=>x.trim()).filter(Boolean);
+    const res=await api('/api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config:cfg})});
+    catalogo.config=cfg;addPendencia('Configurações da loja alteradas');msg('Loja salva. Backup: '+res.backup);
+  }catch(err){msg(String(err.message||err),'erro')}
+};
+
+$('previewBtn').onclick=()=>window.open('/ui-desenvolvimento/index.html?preview='+Date.now(),'_blank','noopener,noreferrer');
+
+$('publicarBtn').onclick=async()=>{
+  const s=await api('/api/status',{cache:'no-store'});
+  if(!s.dirty && !s.publishPendingFlag){msg('Não há alterações pendentes para publicar.','erro');return}
+  if(!confirm('Publicar alterações no cardápio oficial? O processo fará backup, validação, Git, deploy, smoke e rollback automático se necessário.'))return;
+
+  const b=$('publicarBtn');b.disabled=true;b.textContent='Publicando...';
+  try{
+    await api('/api/publish',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({confirm:'PUBLICAR'})});
+    pendencias=[];renderPendencias();await atualizarStatus();msg('Publicação concluída com sucesso.');
+  }catch(err){msg(String(err.message||err),'erro')}
+  finally{b.disabled=false;b.textContent='Publicar alterações'}
+};
+
+carregar().catch(e=>msg(String(e.message||e),'erro'));
+</script>
+<!-- =========================================================
+     FASE 7C.2B - UX OPERACIONAL SIMPLIFICADA
+     Camada aditiva: preserva CRUD e contratos existentes.
+========================================================= -->
+<style id="oba-central-ux-7c2b">
+  .oba-ux-tecnico-oculto {
+    display: none !important;
+  }
+
+  .oba-ux-help {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 7px 12px;
+    border: 1px solid #d7a36b;
+    border-radius: 8px;
+    background: #fffaf4;
+    color: #8f4309;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .oba-ux-help:hover {
+    background: #fff3e6;
+  }
+
+  .oba-ux-box {
+    margin-top: 8px;
+    padding: 10px 12px;
+    border: 1px solid #ead6c1;
+    border-radius: 10px;
+    background: #fffaf6;
+  }
+
+  .oba-ux-box-title {
+    margin: 0 0 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #7d3e10;
+  }
+
+  .oba-ux-check-list {
+    display: grid;
+    gap: 7px;
+  }
+
+  .oba-ux-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+
+  .oba-ux-check input {
+    width: auto !important;
+    margin: 0;
+  }
+
+  .oba-ux-note {
+    margin-top: 5px;
+    font-size: 11px;
+    line-height: 1.35;
+    color: #71675f;
+  }
+
+  .oba-ux-fixed-info {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 5px 8px;
+    border-radius: 8px;
+    background: #f7f2ed;
+    color: #665b52;
+    font-size: 11px;
+  }
+</style>
+
+<script id="oba-central-ux-7c2b-script">
+(() => {
+  'use strict';
+
+  const UX = {
+    marker: 'FASE 7C.2B - UX OPERACIONAL SIMPLIFICADA',
+
+    texto(el) {
+      return String(el?.textContent || '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
+    },
+
+    normalizar(valor) {
+      return String(valor || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim();
+    },
+
+    acharLabel(texto) {
+      const alvo = this.normalizar(texto);
+
+      return Array.from(document.querySelectorAll('label'))
+        .find(label => this.normalizar(label.textContent).includes(alvo)) || null;
+    },
+
+    acharControleDoLabel(label) {
+      if (!label) return null;
+
+      const forId = label.getAttribute('for');
+
+      if (forId) {
+        const porId = document.getElementById(forId);
+        if (porId) return porId;
+      }
+
+      const dentro = label.querySelector('input,select,textarea');
+      if (dentro) return dentro;
+
+      const pai = label.parentElement;
+      if (!pai) return null;
+
+      return pai.querySelector('input,select,textarea');
+    },
+
+    grupoDoLabel(label) {
+      if (!label) return null;
+
+      let atual = label;
+
+      for (let i = 0; i < 4 && atual; i++, atual = atual.parentElement) {
+        const controles = atual.querySelectorAll?.('input,select,textarea') || [];
+
+        if (controles.length === 1) {
+          return atual;
+        }
+      }
+
+      return label.parentElement;
+    },
+
+    ocultarCampo(texto) {
+      const label = this.acharLabel(texto);
+      if (!label) return false;
+
+      const grupo = this.grupoDoLabel(label);
+
+      if (grupo) {
+        grupo.classList.add('oba-ux-tecnico-oculto');
+        return true;
+      }
+
+      return false;
+    },
+
+    definirValor(texto, valor) {
+      const label = this.acharLabel(texto);
+      const controle = this.acharControleDoLabel(label);
+
+      if (!controle) return false;
+
+      controle.value = valor;
+
+      controle.dispatchEvent(
+        new Event('input', { bubbles: true })
+      );
+
+      controle.dispatchEvent(
+        new Event('change', { bubbles: true })
+      );
+
+      return true;
+    },
+
+    ocultarCheckboxPorTexto(texto) {
+      const alvo = this.normalizar(texto);
+
+      const labels = Array.from(document.querySelectorAll('label'));
+
+      const label = labels.find(
+        el => this.normalizar(el.textContent).includes(alvo)
+      );
+
+      if (!label) return false;
+
+      const pai = label.parentElement || label;
+      pai.classList.add('oba-ux-tecnico-oculto');
+
+      return true;
+    },
+
+    proximaOrdem() {
+      const numeros = Array.from(
+        document.querySelectorAll('table tbody tr')
+      )
+      .flatMap(tr =>
+        Array.from(tr.querySelectorAll('td'))
+          .map(td => Number(String(td.textContent).trim()))
+      )
+      .filter(n => Number.isFinite(n) && n > 0);
+
+      if (!numeros.length) return 10;
+
+      const max = Math.max(...numeros);
+      return Math.ceil((max + 1) / 10) * 10;
+    },
+
+    automatizarTecnicos() {
+      this.ocultarCheckboxPorTexto('Cadastrado no catálogo');
+
+      const ordemLabel = this.acharLabel('Ordem');
+
+      if (ordemLabel) {
+        const ordem = this.acharControleDoLabel(ordemLabel);
+
+        if (ordem) {
+          if (!String(ordem.value || '').trim() || Number(ordem.value) <= 0) {
+            ordem.value = String(this.proximaOrdem());
+          }
+
+          const grupo = this.grupoDoLabel(ordemLabel);
+          grupo?.classList.add('oba-ux-tecnico-oculto');
+        }
+      }
+
+      const tipoLabel = this.acharLabel('Tipo');
+
+      if (tipoLabel) {
+        const controle = this.acharControleDoLabel(tipoLabel);
+
+        if (controle && !String(controle.value || '').trim()) {
+          controle.value = 'produto';
+        }
+
+        this.grupoDoLabel(tipoLabel)
+          ?.classList.add('oba-ux-tecnico-oculto');
+      }
+
+      const locale = this.acharLabel('Locale');
+
+      if (locale) {
+        const input = this.acharControleDoLabel(locale);
+
+        if (input) {
+          input.value = 'pt-BR';
+        }
+
+        this.grupoDoLabel(locale)
+          ?.classList.add('oba-ux-tecnico-oculto');
+      }
+
+      const moeda = this.acharLabel('Moeda');
+
+      if (moeda) {
+        const input = this.acharControleDoLabel(moeda);
+
+        if (input) {
+          input.value = 'BRL';
+        }
+
+        this.grupoDoLabel(moeda)
+          ?.classList.add('oba-ux-tecnico-oculto');
+      }
+    },
+
+    melhorarDisponibilidade() {
+      const labels = Array.from(document.querySelectorAll('label'));
+
+      labels.forEach(label => {
+        if (
+          this.normalizar(label.textContent)
+            .includes('disponivel para venda')
+        ) {
+          label.title =
+            'Desmarque somente quando quiser retirar este item da venda.';
+        }
+      });
+    },
+
+    melhorarImagem() {
+      const label = this.acharLabel('Foto do item');
+
+      if (!label) return;
+
+      const grupo = this.grupoDoLabel(label) || label.parentElement;
+
+      if (!grupo || grupo.querySelector('.oba-ux-note')) return;
+
+      const nota = document.createElement('div');
+      nota.className = 'oba-ux-note';
+      nota.textContent =
+        'Escolha uma nova foto somente quando quiser substituir a imagem atual.';
+
+      grupo.appendChild(nota);
+    },
+
+    adicionarAjuda() {
+      if (document.getElementById('oba-central-ajuda')) return;
+
+      const candidatos = Array.from(
+        document.querySelectorAll('button,a')
+      );
+
+      const visualizar = candidatos.find(
+        el => this.normalizar(el.textContent)
+          .includes('visualizar cardapio')
+      );
+
+      if (!visualizar || !visualizar.parentElement) return;
+
+      const ajuda = document.createElement('a');
+
+      ajuda.id = 'oba-central-ajuda';
+      ajuda.className = 'oba-ux-help';
+      ajuda.href = '#';
+      ajuda.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        if (
+          typeof window.abrirAjudaCentral === 'function'
+        ) {
+          window.abrirAjudaCentral();
+        }
+      });
+
+      ajuda.textContent = 'Ajuda / Manual';
+      ajuda.title =
+        'Abrir manual, tira-dúvidas e instruções de manutenção';
+
+      visualizar.parentElement.insertBefore(
+        ajuda,
+        visualizar.nextSibling
+      );
+    },
+
+    async lerCatalogo(caminho) {
+      try {
+        const resp = await fetch(caminho, {
+          cache: 'no-store'
+        });
+
+        if (!resp.ok) return [];
+
+        const json = await resp.json();
+
+        return Array.isArray(json) ? json : [];
+      }
+      catch (_) {
+        return [];
+      }
+    },
+
+    idItem(item) {
+      return String(
+        item?.id ??
+        item?.slug ??
+        item?.codigo ??
+        item?.name ??
+        item?.nome ??
+        ''
+      ).trim();
+    },
+
+    nomeItem(item) {
+      return String(
+        item?.name ??
+        item?.nome ??
+        item?.titulo ??
+        item?.label ??
+        this.idItem(item)
+      ).trim();
+    },
+
+    parseIds(valor) {
+      return String(valor || '')
+        .split(',')
+        .map(v => v.trim())
+        .filter(Boolean);
+    },
+
+    sincronizarVisual(inputOriginal, caixa) {
+      const selecionados = Array.from(
+        caixa.querySelectorAll(
+          'input[type="checkbox"][data-oba-id]:checked'
+        )
+      )
+      .map(el => el.dataset.obaId)
+      .filter(Boolean);
+
+      inputOriginal.value =
+        selecionados.join(', ');
+
+      inputOriginal.dispatchEvent(
+        new Event('input', { bubbles: true })
+      );
+
+      inputOriginal.dispatchEvent(
+        new Event('change', { bubbles: true })
+      );
+    },
+
+    async transformarRelacionamento({
+      labelTexto,
+      titulo,
+      caminhos
+    }) {
+      const label = this.acharLabel(labelTexto);
+
+      if (!label) return false;
+
+      const input = this.acharControleDoLabel(label);
+
+      if (!input) return false;
+
+      const grupo = this.grupoDoLabel(label) || label.parentElement;
+
+      if (
+        !grupo ||
+        grupo.dataset.obaVisualizado === '1'
+      ) {
+        return false;
+      }
+
+      let dados = [];
+
+      for (const caminho of caminhos) {
+        const itens = await this.lerCatalogo(caminho);
+        dados = dados.concat(itens);
+      }
+
+      const vistos = new Set();
+
+      dados = dados.filter(item => {
+        const id = this.idItem(item);
+
+        if (!id || vistos.has(id)) return false;
+
+        vistos.add(id);
+        return true;
+      });
+
+      if (!dados.length) return false;
+
+      const selecionados =
+        new Set(this.parseIds(input.value));
+
+      const box = document.createElement('div');
+      box.className = 'oba-ux-box';
+
+      const tituloEl = document.createElement('div');
+      tituloEl.className = 'oba-ux-box-title';
+      tituloEl.textContent = titulo;
+
+      const lista = document.createElement('div');
+      lista.className = 'oba-ux-check-list';
+
+      dados.forEach(item => {
+        const id = this.idItem(item);
+        const nome = this.nomeItem(item);
+
+        const rotulo = document.createElement('label');
+        rotulo.className = 'oba-ux-check';
+
+        const check = document.createElement('input');
+        check.type = 'checkbox';
+        check.dataset.obaId = id;
+        check.checked = selecionados.has(id);
+
+        const texto = document.createElement('span');
+        texto.textContent = nome;
+
+        check.addEventListener('change', () => {
+          this.sincronizarVisual(input, box);
+        });
+
+        rotulo.append(check, texto);
+        lista.appendChild(rotulo);
+      });
+
+      const nota = document.createElement('div');
+      nota.className = 'oba-ux-note';
+      nota.textContent =
+        'Marque as opções desejadas. Os códigos internos são preenchidos automaticamente.';
+
+      box.append(tituloEl, lista, nota);
+
+      grupo.insertAdjacentElement(
+        'afterend',
+        box
+      );
+
+      grupo.classList.add('oba-ux-tecnico-oculto');
+      grupo.dataset.obaVisualizado = '1';
+
+      return true;
+    },
+
+    async aplicarRelacionamentos() {
+      await this.transformarRelacionamento({
+        labelTexto: 'Opcionais permitidos',
+        titulo: 'Opcionais disponíveis para este produto',
+        caminhos: [
+          '../data/catalog-v1/options.json',
+          '/data/catalog-v1/options.json'
+        ]
+      });
+
+      await this.transformarRelacionamento({
+        labelTexto: 'Itens / IDs separados por vírgula',
+        titulo: 'Itens incluídos neste combo',
+        caminhos: [
+          '../data/catalog-v1/products.json',
+          '../data/catalog-v1/options.json',
+          '/data/catalog-v1/products.json',
+          '/data/catalog-v1/options.json'
+        ]
+      });
+    },
+
+    aplicar() {
+      this.automatizarTecnicos();
+      this.melhorarDisponibilidade();
+      this.melhorarImagem();
+      this.adicionarAjuda();
+      this.aplicarRelacionamentos();
+    },
+
+    observar() {
+      let timer = null;
+
+      const observer = new MutationObserver(() => {
+        clearTimeout(timer);
+
+        timer = setTimeout(
+          () => this.aplicar(),
+          30
+        );
+      });
+
+      observer.observe(
+        document.body,
+        {
+          childList: true,
+          subtree: true
+        }
+      );
+    },
+
+    iniciar() {
+      this.aplicar();
+      this.observar();
+
+      window.__obaCentralUX7C2B = {
+        versao: '7C.2B',
+        ativo: true
+      };
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener(
+      'DOMContentLoaded',
+      () => UX.iniciar(),
+      { once: true }
+    );
+  }
+  else {
+    UX.iniciar();
+  }
+})();
+</script>
+<!-- FIM FASE 7C.2B -->
+
+
+
+
+
+
+
+
+<!-- =========================================================
+     FASE 7C.2B5 - AJUDA INTERNA MINIMA E ESTAVEL
+========================================================= -->
+<style id="oba-central-help-style">
+#oba-central-help-modal[hidden] {
+  display: none !important;
+}
+
+#oba-central-help-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0,0,0,.46);
+}
+
+.oba-help-card {
+  width: min(880px, 96vw);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #fffdf9;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+}
+
+.oba-help-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 20px 12px;
+  border-bottom: 1px solid #ead8c8;
+}
+
+.oba-help-header h2 {
+  margin: 0;
+  color: #7d3e10;
+}
+
+.oba-help-header p {
+  margin: 5px 0 0;
+  font-size: 13px;
+  color: #74685f;
+}
+
+#oba-help-close {
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: #f3ece6;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.oba-help-tools {
+  padding: 14px 20px 10px;
+}
+
+#oba-help-search {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid #bda998;
+  border-radius: 9px;
+  font: inherit;
+}
+
+.oba-help-shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.oba-help-shortcuts button {
+  border: 1px solid #da9a5c;
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: #fff8f0;
+  color: #8b430d;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+#oba-help-content {
+  padding: 0 20px 20px;
+  overflow-y: auto;
+}
+
+.oba-help-topic {
+  display: block;
+  padding: 14px 0;
+  border-top: 1px solid #eadfd5;
+}
+
+.oba-help-topic.oba-help-hidden {
+  display: none !important;
+}
+
+.oba-help-topic h3 {
+  margin: 0 0 8px;
+  color: #86420e;
+}
+
+.oba-help-topic ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.oba-help-topic li {
+  margin: 4px 0;
+  line-height: 1.45;
+}
+
+#oba-help-empty {
+  padding: 16px 0;
+}
+
+#oba-help-empty[hidden] {
+  display: none !important;
+}
+
+.oba-help-tech {
+  padding-top: 12px;
+  margin-top: 8px;
+  border-top: 1px solid #ead8c8;
+  font-size: 12px;
+  color: #756a62;
+}
+
+.oba-help-tech a {
+  color: #86420e;
+}
+</style>
+
+<div id="oba-central-help-modal" hidden>
+  <div class="oba-help-card">
+
+    <div class="oba-help-header">
+      <div>
+        <h2>Ajuda / Manual</h2>
+        <p>Pesquise aqui como administrar o cardápio.</p>
+      </div>
+
+      <button
+        type="button"
+        id="oba-help-close"
+        aria-label="Fechar ajuda"
+      >×</button>
+    </div>
+
+    <div class="oba-help-tools">
+
+      <input
+        id="oba-help-search"
+        type="search"
+        autocomplete="off"
+        placeholder="Buscar: preço, sabor, foto, publicar, backup..."
+      >
+
+      <div class="oba-help-shortcuts">
+
+        <button type="button" data-help-search="sabor">
+          Sabores
+        </button>
+
+        <button type="button" data-help-search="preço">
+          Alterar preço
+        </button>
+
+        <button type="button" data-help-search="foto">
+          Trocar foto
+        </button>
+
+        <button type="button" data-help-search="publicar">
+          Publicar
+        </button>
+
+        <button type="button" data-help-search="backup">
+          Backup
+        </button>
+
+        <button type="button" data-help-search="central">
+          Como funciona
+        </button>
+
+      </div>
+    </div>
+
+    <div id="oba-help-content">
+
+      <section
+        class="oba-help-topic"
+        data-help-id="central" data-help="central funcionamento usar manual ajuda publicar visualizar"
+      >
+        <h3>Como funciona a Central</h3>
+        <ul>
+          <li>Escolha a área que deseja administrar.</li>
+          <li>Faça a alteração e clique em Salvar.</li>
+          <li>Quando houver mudanças pendentes, use Publicar alterações.</li>
+          <li>Depois confira em Visualizar cardápio.</li>
+        </ul>
+      </section>
+
+      <section
+        class="oba-help-topic"
+        data-help-id="sabor" data-help="sabor sabores novo adicionar editar categoria descricao preço foto"
+      >
+        <h3>Adicionar ou editar um sabor</h3>
+        <ul>
+          <li>Abra Sabores.</li>
+          <li>Use + Novo sabor para cadastrar.</li>
+          <li>Para editar, clique no sabor existente.</li>
+          <li>Informe nome, categoria, preço, descrição e foto.</li>
+          <li>Salve e depois publique.</li>
+        </ul>
+      </section>
+
+      <section
+        class="oba-help-topic"
+        data-help-id="preco" data-help="preço preco valor reais sabor produto opcional combo"
+      >
+        <h3>Alterar preço</h3>
+        <ul>
+          <li>Abra a área correspondente ao item.</li>
+          <li>Clique no item existente.</li>
+          <li>Atualize o campo Preço.</li>
+          <li>Clique em Salvar.</li>
+          <li>Revise e publique.</li>
+        </ul>
+      </section>
+
+      <section
+        class="oba-help-topic"
+        data-help-id="imagem" data-help="foto imagem arquivo jpg jpeg png webp trocar"
+      >
+        <h3>Trocar foto ou imagem</h3>
+        <ul>
+          <li>Abra o item que deseja editar.</li>
+          <li>Clique em Escolher arquivo.</li>
+          <li>Selecione a nova imagem.</li>
+          <li>Salve e confira antes de publicar.</li>
+        </ul>
+      </section>
+
+      <section
+        class="oba-help-topic"
+        data-help-id="publicar" data-help="publicar publicação alteracoes alterações tudo publicado visualizar"
+      >
+        <h3>Publicar alterações</h3>
+        <ul>
+          <li>Salve primeiro as alterações.</li>
+          <li>Clique em Publicar alterações.</li>
+          <li>Aguarde a confirmação.</li>
+          <li>Abra Visualizar cardápio e confira.</li>
+        </ul>
+      </section>
+
+      <section
+        class="oba-help-topic"
+        data-help-id="backup" data-help="backup recuperar recuperação restaurar git github onedrive auditoria segurança"
+      >
+        <h3>Backup e recuperação</h3>
+        <ul>
+          <li>O projeto possui histórico Git e checkpoints locais.</li>
+          <li>Há também backup externo no OneDrive.</li>
+          <li>Não restaure arquivos manualmente sem identificar a versão correta.</li>
+        </ul>
+      </section>
+
+      <div id="oba-help-empty" hidden>
+        Nenhum tópico encontrado. Tente preço, sabor, foto, publicar ou backup.
+      </div>
+
+      <div class="oba-help-tech">
+        Referência técnica:
+        <a
+          href="https://github.com/obadoceria-gif/Projeto_Gemini/blob/main/docs/INDICE_DOCUMENTACAO.md"
+          target="_blank"
+          rel="noopener noreferrer"
+        >documentação no GitHub</a>.
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script id="oba-central-help-runtime">
+(function () {
+  "use strict";
+
+  function normalizar(valor) {
+    return String(valor || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
+  }
+
+  function filtrar(valor) {
+
+    var termo = normalizar(valor);
+
+    var topicos =
+      document.querySelectorAll(".oba-help-topic");
+
+    var encontrados = 0;
+
+    topicos.forEach(function (topico) {
+
+      var base = normalizar(
+        (topico.getAttribute("data-help") || "") +
+        " " +
+        topico.textContent
+      );
+
+      var visivel =
+        termo === "" ||
+        base.indexOf(termo) !== -1;
+
+      if (visivel) {
+        topico.classList.remove("oba-help-hidden");
+        encontrados++;
+      }
+      else {
+        topico.classList.add("oba-help-hidden");
+      }
+    });
+
+    var vazio =
+      document.getElementById("oba-help-empty");
+
+    if (vazio) {
+      vazio.hidden = encontrados !== 0;
+    }
+
+    return encontrados;
+  }
+
+  window.filtrarAjudaCentral = filtrar;
+
+  window.abrirAjudaCentral = function () {
+
+    var modal =
+      document.getElementById("oba-central-help-modal");
+
+    var busca =
+      document.getElementById("oba-help-search");
+
+    if (!modal) {
+      return;
+    }
+
+    modal.hidden = false;
+
+    if (busca) {
+      busca.value = "";
+    }
+
+    filtrar("");
+
+    setTimeout(function () {
+      if (busca) {
+        busca.focus();
+      }
+    }, 0);
+  };
+
+  function fechar() {
+
+    var modal =
+      document.getElementById("oba-central-help-modal");
+
+    if (modal) {
+      modal.hidden = true;
+    }
+  }
+
+  function iniciar() {
+
+    var busca =
+      document.getElementById("oba-help-search");
+
+    var botaoFechar =
+      document.getElementById("oba-help-close");
+
+    if (busca) {
+
+      busca.addEventListener(
+        "input",
+        function () {
+          filtrar(busca.value);
+        }
+      );
+
+      busca.addEventListener(
+        "keyup",
+        function () {
+          filtrar(busca.value);
+        }
+      );
+    }
+
+    if (botaoFechar) {
+
+      botaoFechar.addEventListener(
+        "click",
+        function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          fechar();
+        }
+      );
+    }
+
+    document
+      .querySelectorAll("[data-help-search]")
+      .forEach(function (botao) {
+
+        botao.addEventListener(
+          "click",
+          function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            var termo =
+              botao.getAttribute(
+                "data-help-search"
+              ) || "";
+
+            var mapaIds = {
+              "sabor": "sabor",
+              "preço": "preco",
+              "preco": "preco",
+              "foto": "imagem",
+              "publicar": "publicar",
+              "backup": "backup",
+              "central": "central"
+            };
+
+            var alvoId =
+              mapaIds[normalizar(termo)] || "";
+
+            var topicos =
+              document.querySelectorAll(
+                ".oba-help-topic"
+              );
+
+            var encontrados = 0;
+
+            topicos.forEach(
+              function (topico) {
+
+                var id =
+                  topico.getAttribute(
+                    "data-help-id"
+                  ) || "";
+
+                var visivel =
+                  id === alvoId;
+
+                if (visivel) {
+                  topico.classList.remove(
+                    "oba-help-hidden"
+                  );
+                  encontrados++;
+                }
+                else {
+                  topico.classList.add(
+                    "oba-help-hidden"
+                  );
+                }
+              }
+            );
+
+            var vazio =
+              document.getElementById(
+                "oba-help-empty"
+              );
+
+            if (vazio) {
+              vazio.hidden =
+                encontrados !== 0;
+            }
+
+            if (busca) {
+              busca.value =
+                botao.textContent.trim();
+            }
+          }
+        );
+      });
+
+    document.addEventListener(
+      "keydown",
+      function (event) {
+
+        if (event.key === "Escape") {
+          fechar();
+        }
+      }
+    );
+
+    /*
+     * IMPORTANTE:
+     * propositalmente NÃO existe fechamento
+     * por clique no fundo/modal.
+     *
+     * Isso evita que selecionar texto,
+     * arrastar o mouse ou clicar durante
+     * uma pesquisa feche a ajuda.
+     */
+
+    filtrar("");
+  }
+
+  if (document.readyState === "loading") {
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      iniciar,
+      { once: true }
+    );
+  }
+  else {
+    iniciar();
+  }
+})();
+</script>
+<!-- FIM FASE 7C.2B5 -->
+</body>
+</html>
