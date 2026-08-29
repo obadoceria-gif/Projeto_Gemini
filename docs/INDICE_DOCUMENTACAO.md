@@ -31,3 +31,8 @@ Consulte: docs/COMO_FUNCIONA_CARDAPIO.md
 ## Fluxo obrigatório de manutenção
 
 Checkpoint -> alteração -> testes -> homologação -> commit -> push -> publicação -> validação pública.
+
+## Estado oficial do projeto
+
+Consulte:
+docs/ESTADO_OFICIAL_CARDAPIO.md
