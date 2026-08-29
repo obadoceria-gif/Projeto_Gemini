@@ -78,8 +78,60 @@ if($port -gt ($PreferredPort+10)){
 
 Write-Host "[INFO] Iniciando Central na porta $port..." -ForegroundColor Cyan
 
-& powershell.exe `
-    -NoProfile `
-    -ExecutionPolicy Bypass `
-    -File $server `
-    -Port $port
+    $serverProcess = Start-Process `
+        -FilePath "powershell.exe" `
+        -ArgumentList @(
+            "-NoProfile",
+            "-ExecutionPolicy", "Bypass",
+            "-File", "`"$server`"",
+            "-Port", "$port",
+            "-NoBrowser"
+        ) `
+        -PassThru
+
+    $centralPronta = $false
+
+    for($tentativa = 1; $tentativa -le 20; $tentativa++){
+
+        Start-Sleep -Milliseconds 250
+
+        if($serverProcess.HasExited){
+            throw "Servidor da Central encerrou durante a inicializacao. ExitCode: $($serverProcess.ExitCode)"
+        }
+
+        try{
+
+            $health = Invoke-WebRequest `
+                -Uri ("http://127.0.0.1:{0}/api/status" -f $port) `
+                -UseBasicParsing `
+                -TimeoutSec 2
+
+            if($health.StatusCode -eq 200){
+                $centralPronta = $true
+                break
+            }
+        }
+        catch{
+        }
+    }
+
+    if(-not $centralPronta){
+
+        if(
+            $serverProcess -and
+            -not $serverProcess.HasExited
+        ){
+            Stop-Process `
+                -Id $serverProcess.Id `
+                -Force `
+                -ErrorAction SilentlyContinue
+        }
+
+        throw "Central nao ficou pronta na porta $port."
+    }
+
+    Write-Host "[PASS] Central persistente ativa na porta $port." -ForegroundColor Green
+
+    Start-Process ("http://127.0.0.1:{0}/" -f $port)
+
+    exit 0
