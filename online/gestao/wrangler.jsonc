@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "node_modules/wrangler/config-schema.json",
 
   "name": "oba-cardapio-gestao",
@@ -11,7 +11,13 @@
 
   "preview_urls": false,
 
-  "assets": {
+    "secrets": {
+    "required": [
+      "AUTH_PASSWORD",
+      "AUTH_SESSION_SECRET"
+    ]
+  },
+"assets": {
     "directory": "./public",
     "binding": "ASSETS",
     "run_worker_first": true
