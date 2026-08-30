@@ -1,4 +1,4 @@
-﻿const fs = require("fs");
+const fs = require("fs");
 const path = require("path");
 
 const root = path.resolve(__dirname, "..");
@@ -21,7 +21,9 @@ const gitignore = fs.readFileSync(
 const failures = [];
 
 function check(condition, message) {
-  if (!condition) failures.push(message);
+  if (!condition) {
+    failures.push(message);
+  }
 }
 
 check(
@@ -35,33 +37,42 @@ check(
 );
 
 check(
+  /__Host-oba_admin/.test(worker),
+  "cookie administrativo ausente"
+);
+
+check(
+  /__Host-oba_csrf/.test(worker),
+  "cookie CSRF ausente"
+);
+
+check(
   /HttpOnly/.test(worker),
-  "cookie sem HttpOnly"
+  "HttpOnly ausente"
 );
 
 check(
   /Secure/.test(worker),
-  "cookie sem Secure"
+  "Secure ausente"
 );
 
 check(
   /SameSite=Strict/.test(worker),
-  "cookie sem SameSite=Strict"
+  "SameSite Strict ausente"
+);
+
+/*
+ * A duracao agora e definida pela constante SESSION_SECONDS.
+ * Nao procurar mais Max-Age=28800 literalmente.
+ */
+check(
+  /const\s+SESSION_SECONDS\s*=\s*60\s*\*\s*60\s*\*\s*8\s*;/.test(worker),
+  "SESSION_SECONDS nao corresponde a 8 horas"
 );
 
 check(
-  /__Host-oba_admin/.test(worker),
-  "cookie __Host ausente"
-);
-
-check(
-  /Max-Age=28800/.test(worker),
-  "expiracao de sessao inesperada"
-);
-
-check(
-  /constantTimeEqual/.test(worker),
-  "comparacao controlada ausente"
+  /Max-Age=\$\{SESSION_SECONDS\}/.test(worker),
+  "cookies nao usam SESSION_SECONDS"
 );
 
 check(
@@ -71,7 +82,47 @@ check(
 
 check(
   /crypto\.randomUUID/.test(worker),
-  "nonce criptografico ausente"
+  "randomUUID ausente"
+);
+
+check(
+  /crypto\.getRandomValues/.test(worker),
+  "getRandomValues ausente"
+);
+
+check(
+  /constantTimeEqual/.test(worker),
+  "comparacao controlada ausente"
+);
+
+check(
+  /csrfValid/.test(worker),
+  "CSRF ausente"
+);
+
+check(
+  /LOGIN_MAX_ATTEMPTS\s*=\s*5/.test(worker),
+  "limite de tentativas inesperado"
+);
+
+check(
+  /isRateLimited/.test(worker),
+  "rate limiting ausente"
+);
+
+check(
+  /429/.test(worker),
+  "HTTP 429 ausente"
+);
+
+check(
+  /Content-Security-Policy/.test(worker),
+  "Content-Security-Policy ausente"
+);
+
+check(
+  /X-Frame-Options/.test(worker),
+  "X-Frame-Options ausente"
 );
 
 check(
@@ -81,7 +132,7 @@ check(
 
 check(
   /url\.pathname\.startsWith\("\/api\/"\)/.test(worker),
-  "gate API ausente"
+  "gate de API ausente"
 );
 
 check(
@@ -106,12 +157,12 @@ check(
 
 check(
   /^\.dev\.vars$/m.test(gitignore),
-  ".dev.vars nao ignorado"
+  ".dev.vars nao esta ignorado"
 );
 
 check(
   /^\.env$/m.test(gitignore),
-  ".env nao ignorado"
+  ".env nao esta ignorado"
 );
 
 const forbidden = [
@@ -127,7 +178,8 @@ for (const pattern of forbidden) {
   );
 }
 
-if (failures.length) {
+if (failures.length > 0) {
+
   console.error("");
   console.error("AUTH_GATE_STATIC_FAIL");
 
@@ -138,10 +190,14 @@ if (failures.length) {
   process.exit(1);
 }
 
+console.log("");
 console.log("AUTH_GATE_STATIC_OK");
-console.log("PASS: gate de autenticacao");
+console.log("PASS: sessao maxima de 8 horas");
 console.log("PASS: cookies endurecidos");
 console.log("PASS: Web Crypto");
+console.log("PASS: CSRF");
+console.log("PASS: rate limiting local");
+console.log("PASS: headers de seguranca");
 console.log("PASS: APIs protegidas");
 console.log("PASS: assets protegidos");
 console.log("PASS: secrets fora do codigo");

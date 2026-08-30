@@ -1,17 +1,67 @@
-﻿const encoder = new TextEncoder();
+const encoder = new TextEncoder();
 
 const COOKIE_NAME = "__Host-oba_admin";
+const CSRF_COOKIE = "__Host-oba_csrf";
+
+const SESSION_SECONDS = 60 * 60 * 8;
+
+const LOGIN_WINDOW_MS = 60 * 1000;
+const LOGIN_MAX_ATTEMPTS = 5;
+
+/*
+ * Rate limit local por isolate.
+ *
+ * Serve como primeira barreira e permite testes locais.
+ * Antes da abertura publica, a camada de rate limiting distribuida
+ * sera validada separadamente.
+ */
+const loginAttempts = new Map();
 
 function response(body, status = 200, headers = {}) {
+  /*
+   * IMPORTANTE:
+   *
+   * headers pode ser um Headers real, inclusive contendo multiplos
+   * Set-Cookie. Object spread de um objeto Headers nao preserva corretamente
+   * esses valores.
+   *
+   * Portanto trabalhamos diretamente com Headers.
+   */
+  const finalHeaders =
+    headers instanceof Headers
+      ? headers
+      : new Headers(headers);
+
+  if (!finalHeaders.has("Cache-Control")) {
+    finalHeaders.set("Cache-Control", "no-store");
+  }
+
+  if (!finalHeaders.has("X-Content-Type-Options")) {
+    finalHeaders.set("X-Content-Type-Options", "nosniff");
+  }
+
+  if (!finalHeaders.has("Referrer-Policy")) {
+    finalHeaders.set("Referrer-Policy", "no-referrer");
+  }
+
+  if (!finalHeaders.has("X-Frame-Options")) {
+    finalHeaders.set("X-Frame-Options", "DENY");
+  }
+
+  if (!finalHeaders.has("Content-Security-Policy")) {
+    finalHeaders.set(
+      "Content-Security-Policy",
+      "default-src 'self'; " +
+        "style-src 'unsafe-inline'; " +
+        "form-action 'self'; " +
+        "frame-ancestors 'none'; " +
+        "base-uri 'none'"
+    );
+  }
+
   return new Response(body, {
     status,
-    headers: {
-      "Cache-Control": "no-store",
-      "X-Content-Type-Options": "nosniff",
-      "Referrer-Policy": "no-referrer",
-      "X-Frame-Options": "DENY",
-      ...headers,
-    },
+    headers: finalHeaders,
   });
 }
 
@@ -53,6 +103,12 @@ function toBase64Url(bytes) {
     .replaceAll("=", "");
 }
 
+function randomToken(bytes = 32) {
+  const data = new Uint8Array(bytes);
+  crypto.getRandomValues(data);
+  return toBase64Url(data);
+}
+
 function constantTimeEqual(a, b) {
   if (typeof a !== "string" || typeof b !== "string") return false;
 
@@ -90,9 +146,62 @@ async function hmac(secret, value) {
   return toBase64Url(new Uint8Array(signature));
 }
 
+function getClientKey(request) {
+  return (
+    request.headers.get("CF-Connecting-IP") ||
+    request.headers.get("X-Forwarded-For") ||
+    "local"
+  ).split(",")[0].trim();
+}
+
+function pruneAttempts(now) {
+  if (loginAttempts.size < 1000) return;
+
+  for (const [key, value] of loginAttempts.entries()) {
+    if (now - value.startedAt >= LOGIN_WINDOW_MS) {
+      loginAttempts.delete(key);
+    }
+  }
+}
+
+function rateState(request) {
+  const now = Date.now();
+  const key = getClientKey(request);
+
+  pruneAttempts(now);
+
+  let state = loginAttempts.get(key);
+
+  if (!state || now - state.startedAt >= LOGIN_WINDOW_MS) {
+    state = {
+      startedAt: now,
+      failures: 0,
+    };
+
+    loginAttempts.set(key, state);
+  }
+
+  return { key, state, now };
+}
+
+function isRateLimited(request) {
+  const { state } = rateState(request);
+  return state.failures >= LOGIN_MAX_ATTEMPTS;
+}
+
+function registerFailure(request) {
+  const { key, state } = rateState(request);
+  state.failures += 1;
+  loginAttempts.set(key, state);
+}
+
+function clearFailures(request) {
+  loginAttempts.delete(getClientKey(request));
+}
+
 async function createSession(env) {
   const issuedAt = Math.floor(Date.now() / 1000);
-  const expiresAt = issuedAt + 60 * 60 * 8;
+  const expiresAt = issuedAt + SESSION_SECONDS;
 
   const nonce = crypto.randomUUID();
 
@@ -132,12 +241,25 @@ async function validateSession(request, env) {
 
   if (issuedAt > now + 60) return false;
   if (expiresAt <= now) return false;
-  if (expiresAt - issuedAt > 60 * 60 * 8) return false;
+  if (expiresAt - issuedAt > SESSION_SECONDS) return false;
 
   const payload = `${issuedAt}.${expiresAt}.${nonce}`;
   const expected = await hmac(env.AUTH_SESSION_SECRET, payload);
 
   return constantTimeEqual(expected, signature);
+}
+
+function csrfValid(request) {
+  const cookies = parseCookies(request);
+  const cookieToken = cookies[CSRF_COOKIE];
+  const headerToken = request.headers.get("X-CSRF-Token");
+
+  return (
+    typeof cookieToken === "string" &&
+    typeof headerToken === "string" &&
+    cookieToken.length >= 32 &&
+    constantTimeEqual(cookieToken, headerToken)
+  );
 }
 
 function loginPage(error = "") {
@@ -220,6 +342,12 @@ async function handleLogin(request, env) {
     return response("Authentication not configured", 503);
   }
 
+  if (isRateLimited(request)) {
+    return response("Too Many Requests", 429, {
+      "Retry-After": "60",
+    });
+  }
+
   const contentType = request.headers.get("Content-Type") || "";
 
   if (!contentType.includes("application/x-www-form-urlencoded")) {
@@ -230,26 +358,60 @@ async function handleLogin(request, env) {
   const password = String(form.get("password") || "");
 
   if (!constantTimeEqual(password, env.AUTH_PASSWORD)) {
+    registerFailure(request);
+
     return response(loginPage("invalid"), 401, {
       "Content-Type": "text/html; charset=utf-8",
     });
   }
 
-  const session = await createSession(env);
+  clearFailures(request);
 
-  return response("", 303, {
-    "Location": "/",
-    "Set-Cookie":
-      `${COOKIE_NAME}=${session}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=28800`,
-  });
+  const session = await createSession(env);
+  const csrf = randomToken();
+
+  const headers = new Headers();
+
+  headers.set("Location", "/");
+
+  headers.append(
+    "Set-Cookie",
+    `${COOKIE_NAME}=${session}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${SESSION_SECONDS}`
+  );
+
+  /*
+   * CSRF precisa estar disponivel ao JavaScript administrativo
+   * para ser enviado no header X-CSRF-Token.
+   * Nao e credencial de autenticacao.
+   */
+  headers.append(
+    "Set-Cookie",
+    `${CSRF_COOKIE}=${csrf}; Path=/; Secure; SameSite=Strict; Max-Age=${SESSION_SECONDS}`
+  );
+
+  return response("", 303, headers);
 }
 
 function handleLogout() {
-  return response("", 303, {
-    "Location": "/__auth/login",
-    "Set-Cookie":
-      `${COOKIE_NAME}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0`,
-  });
+  const headers = new Headers();
+
+  headers.set("Location", "/__auth/login");
+
+  headers.append(
+    "Set-Cookie",
+    `${COOKIE_NAME}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0`
+  );
+
+  headers.append(
+    "Set-Cookie",
+    `${CSRF_COOKIE}=; Path=/; Secure; SameSite=Strict; Max-Age=0`
+  );
+
+  return response("", 303, headers);
+}
+
+function isUnsafeMethod(method) {
+  return !["GET", "HEAD", "OPTIONS"].includes(method);
 }
 
 export default {
@@ -287,6 +449,16 @@ export default {
         });
       }
 
+      const authenticated = await validateSession(request, env);
+
+      if (!authenticated) {
+        return json({ ok: false, error: "unauthorized" }, 401);
+      }
+
+      if (!csrfValid(request)) {
+        return json({ ok: false, error: "csrf" }, 403);
+      }
+
       return handleLogout();
     }
 
@@ -308,11 +480,28 @@ export default {
       });
     }
 
+    if (
+      url.pathname.startsWith("/api/") &&
+      isUnsafeMethod(request.method) &&
+      !csrfValid(request)
+    ) {
+      return json(
+        {
+          ok: false,
+          error: "csrf",
+        },
+        403
+      );
+    }
+
     if (url.pathname.startsWith("/api/")) {
-      return json({
-        ok: false,
-        error: "not_implemented",
-      }, 501);
+      return json(
+        {
+          ok: false,
+          error: "not_implemented",
+        },
+        501
+      );
     }
 
     return env.ASSETS.fetch(request);
