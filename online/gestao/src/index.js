@@ -785,6 +785,470 @@ async function obaHandleCatalogReadApi(
 /* OBA_CATALOG_READ_API_END */
 
 
+
+
+/* OBA_DRAFT_API_BEGIN */
+
+function obaDraftStableJson(value) {
+
+  if (Array.isArray(value)) {
+
+    return "[" +
+      value
+        .map(
+          obaDraftStableJson
+        )
+        .join(",") +
+      "]";
+  }
+
+  if (
+    value !== null &&
+    typeof value === "object"
+  ) {
+
+    return "{" +
+      Object.keys(value)
+        .sort()
+        .map(
+          key =>
+            JSON.stringify(key) +
+            ":" +
+            obaDraftStableJson(
+              value[key]
+            )
+        )
+        .join(",") +
+      "}";
+  }
+
+  return JSON.stringify(value);
+}
+
+async function obaDraftSha256(
+  text
+) {
+
+  const encoded =
+    new TextEncoder()
+      .encode(text);
+
+  const digest =
+    await crypto.subtle.digest(
+      "SHA-256",
+      encoded
+    );
+
+  return Array
+    .from(
+      new Uint8Array(
+        digest
+      )
+    )
+    .map(
+      value =>
+        value
+          .toString(16)
+          .padStart(2, "0")
+    )
+    .join("");
+}
+
+function obaDraftPayloadValid(
+  payload
+) {
+
+  if (
+    !payload ||
+    typeof payload !== "object" ||
+    Array.isArray(payload)
+  ) {
+    return false;
+  }
+
+  const required = [
+    "sabores",
+    "categorias",
+    "caixas",
+    "produtos",
+    "opcionais",
+    "combos",
+    "loja"
+  ];
+
+  return required.every(
+    key =>
+      Object.prototype
+        .hasOwnProperty
+        .call(
+          payload,
+          key
+        )
+  );
+}
+
+async function obaHandleDraftApi(
+  request,
+  env,
+  url
+) {
+
+  if (
+    url.pathname !== "/api/draft"
+  ) {
+    return null;
+  }
+
+  /*
+   * GET /api/draft
+   */
+
+  if (
+    request.method === "GET"
+  ) {
+
+    const sql =
+      [
+        "SELECT",
+        "s.slot,",
+        "s.revision_id,",
+        "s.updated_at,",
+        "r.payload_json,",
+        "r.payload_sha256,",
+        "r.created_at",
+        "FROM catalog_slots s",
+        "LEFT JOIN catalog_revisions r",
+        "ON r.revision_id = s.revision_id",
+        "WHERE s.slot = 'DRAFT'",
+        "LIMIT 1"
+      ].join(" ");
+
+    const row =
+      await env.DB
+        .prepare(sql)
+        .first();
+
+    if (
+      !row ||
+      !row.revision_id
+    ) {
+
+      return obaApiJson({
+        ok: true,
+        slot: "DRAFT",
+        revision_id: null,
+        payload_sha256: null,
+        payload: null
+      });
+    }
+
+    let payload;
+
+    try {
+
+      payload =
+        JSON.parse(
+          row.payload_json
+        );
+    }
+    catch {
+
+      return obaApiJson(
+        {
+          ok: false,
+          error:
+            "draft_payload_corrupt"
+        },
+        500
+      );
+    }
+
+    return obaApiJson({
+      ok: true,
+      slot: "DRAFT",
+      revision_id:
+        row.revision_id,
+      updated_at:
+        row.updated_at,
+      payload_sha256:
+        row.payload_sha256,
+      payload
+    });
+  }
+
+  /*
+   * Somente POST grava.
+   */
+
+  if (
+    request.method !== "POST"
+  ) {
+
+    return obaApiJson(
+      {
+        ok: false,
+        error:
+          "method_not_allowed"
+      },
+      405
+    );
+  }
+
+  let body;
+
+  try {
+
+    body =
+      await request.json();
+  }
+  catch {
+
+    return obaApiJson(
+      {
+        ok: false,
+        error:
+          "invalid_json"
+      },
+      400
+    );
+  }
+
+  const payload =
+    body &&
+    body.payload &&
+    typeof body.payload === "object"
+      ? body.payload
+      : body;
+
+  if (
+    !obaDraftPayloadValid(
+      payload
+    )
+  ) {
+
+    return obaApiJson(
+      {
+        ok: false,
+        error:
+          "invalid_catalog_payload"
+      },
+      400
+    );
+  }
+
+  const payloadJson =
+    obaDraftStableJson(
+      payload
+    );
+
+  const sha =
+    await obaDraftSha256(
+      payloadJson
+    );
+
+  const now =
+    new Date()
+      .toISOString();
+
+  const existing =
+    await env.DB
+      .prepare(
+        [
+          "SELECT revision_id",
+          "FROM catalog_revisions",
+          "WHERE payload_sha256 = ?",
+          "LIMIT 1"
+        ].join(" ")
+      )
+      .bind(sha)
+      .first();
+
+  const revisionId =
+    (
+      existing &&
+      existing.revision_id
+    )
+      ? existing.revision_id
+      : (
+          "draft_" +
+          sha.slice(
+            0,
+            24
+          )
+        );
+
+  const previous =
+    await env.DB
+      .prepare(
+        [
+          "SELECT revision_id",
+          "FROM catalog_slots",
+          "WHERE slot = 'DRAFT'",
+          "LIMIT 1"
+        ].join(" ")
+      )
+      .first();
+
+  const statements = [];
+
+  /*
+   * Conteudo novo:
+   * cria revisao.
+   *
+   * Conteudo ja existente:
+   * reutiliza a revisao imutavel.
+   */
+
+  if (
+    !existing ||
+    !existing.revision_id
+  ) {
+
+    statements.push(
+      env.DB
+        .prepare(
+          [
+            "INSERT INTO catalog_revisions",
+            "(",
+            "revision_id,",
+            "payload_json,",
+            "payload_sha256,",
+            "source,",
+            "created_at,",
+            "created_by",
+            ")",
+            "VALUES (?, ?, ?, ?, ?, ?)"
+          ].join(" ")
+        )
+        .bind(
+          revisionId,
+          payloadJson,
+          sha,
+          "CENTRAL_ONLINE_DRAFT",
+          now,
+          "admin"
+        )
+    );
+  }
+
+  /*
+   * Somente DRAFT muda.
+   */
+
+  statements.push(
+    env.DB
+      .prepare(
+        [
+          "UPDATE catalog_slots",
+          "SET revision_id = ?,",
+          "updated_at = ?",
+          "WHERE slot = 'DRAFT'"
+        ].join(" ")
+      )
+      .bind(
+        revisionId,
+        now
+      )
+  );
+
+  /*
+   * Auditoria append-only.
+   */
+
+  statements.push(
+    env.DB
+      .prepare(
+        [
+          "INSERT INTO catalog_promotions",
+          "(",
+          "promotion_id,",
+          "action,",
+          "from_revision_id,",
+          "to_revision_id,",
+          "created_at,",
+          "created_by",
+          ")",
+          "VALUES (?, ?, ?, ?, ?, ?)"
+        ].join(" ")
+      )
+      .bind(
+        "promotion_" +
+          crypto.randomUUID()
+            .replaceAll(
+              "-",
+              ""
+            ),
+        "DRAFT_SAVED",
+        previous
+          ? previous.revision_id
+          : null,
+        revisionId,
+        now,
+        "admin"
+      )
+  );
+
+  await env.DB.batch(
+    statements
+  );
+
+  /*
+   * Gate pós-write:
+   * conferir os três slots.
+   */
+
+  const slotsResult =
+    await env.DB
+      .prepare(
+        [
+          "SELECT slot, revision_id",
+          "FROM catalog_slots",
+          "ORDER BY slot"
+        ].join(" ")
+      )
+      .all();
+
+  const slots = {
+    DRAFT: null,
+    PREVIEW: null,
+    PUBLISHED: null
+  };
+
+  for (
+    const row of
+    slotsResult.results || []
+  ) {
+
+    if (
+      Object.prototype
+        .hasOwnProperty.call(
+          slots,
+          row.slot
+        )
+    ) {
+
+      slots[row.slot] =
+        row.revision_id ?? null;
+    }
+  }
+
+  return obaApiJson({
+    ok: true,
+    slot: "DRAFT",
+    revision_id:
+      revisionId,
+    payload_sha256:
+      sha,
+    reused:
+      Boolean(
+        existing &&
+        existing.revision_id
+      ),
+    slots
+  });
+}
+
+/* OBA_DRAFT_API_END */
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -866,6 +1330,18 @@ export default {
     }
 
     if (url.pathname.startsWith("/api/")) {
+
+      const obaDraftResponse =
+        await obaHandleDraftApi(
+          request,
+          env,
+          url
+        );
+
+      if (obaDraftResponse) {
+        return obaDraftResponse;
+      }
+
 
     const obaCatalogReadResponse =
       await obaHandleCatalogReadApi(
