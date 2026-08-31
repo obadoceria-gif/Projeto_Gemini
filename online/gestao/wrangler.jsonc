@@ -21,5 +21,12 @@
     "directory": "./public",
     "binding": "ASSETS",
     "run_worker_first": true
-  }
-}
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "oba-cardapio-catalogo",
+      "database_id": "2105b8dd-d5e4-4052-843d-eee15a035e03",
+      "migrations_dir": "migrations"
+    }
+  ]}
