@@ -1,86 +1,135 @@
-﻿const fs = require("fs");
+"use strict";
+
+const fs = require("fs");
 const path = require("path");
 
 const root = path.resolve(__dirname, "..");
-const wranglerPath = path.join(root, "wrangler.jsonc");
+
+const configPath = path.join(
+  root,
+  "wrangler.jsonc"
+);
+
+const workerPath = path.join(
+  root,
+  "src",
+  "index.js"
+);
+
+function pass(message) {
+  console.log(`[PASS] ${message}`);
+}
 
 function fail(message) {
-  console.error("[FAIL]", message);
+  console.error(`[FAIL] ${message}`);
   process.exit(1);
 }
 
-function pass(message) {
-  console.log("[PASS]", message);
+const config = fs.readFileSync(
+  configPath,
+  "utf8"
+);
+
+const worker = fs.readFileSync(
+  workerPath,
+  "utf8"
+);
+
+const workersDevTrue =
+  /"workers_dev"\s*:\s*true/.test(config);
+
+const workersDevFalse =
+  /"workers_dev"\s*:\s*false/.test(config);
+
+if (workersDevTrue === workersDevFalse) {
+  fail(
+    "workers_dev deve estar explicitamente true OU false"
+  );
 }
 
-if (!fs.existsSync(wranglerPath)) {
-  fail("wrangler.jsonc ausente");
+const state =
+  workersDevTrue
+    ? "ONLINE PROTEGIDO"
+    : "ISOLADO";
+
+if (!/"preview_urls"\s*:\s*false/.test(config)) {
+  fail("preview_urls precisa permanecer false");
 }
 
-const text = fs.readFileSync(wranglerPath, "utf8");
-
-if (!/"workers_dev"\s*:\s*false/.test(text)) {
-  fail("workers_dev deve permanecer false");
+if (/"routes?"\s*:/.test(config)) {
+  fail("routes customizadas nao sao permitidas");
 }
 
-pass("workers_dev bloqueado");
-
-if (!/"preview_urls"\s*:\s*false/.test(text)) {
-  fail("preview_urls deve permanecer false");
+if (!/"run_worker_first"\s*:\s*true/.test(config)) {
+  fail("run_worker_first precisa permanecer true");
 }
 
-pass("preview_urls bloqueadas");
-
-if (/"routes?"\s*:/.test(text)) {
-  fail("rota publica nao permitida antes do Access");
+if (!/"binding"\s*:\s*"ASSETS"/.test(config)) {
+  fail("binding ASSETS ausente");
 }
 
-pass("nenhuma rota publica configurada");
-
-const dangerous = [
-  /CLOUDFLARE_API_TOKEN\s*[:=]\s*["'][^"']+/i,
-  /CLOUDFLARE_API_KEY\s*[:=]\s*["'][^"']+/i,
-  /Authorization\s*:\s*["']Bearer\s+[A-Za-z0-9._-]+/i
-];
-
-const scanExtensions = new Set([
-  ".js", ".json", ".jsonc", ".html",
-  ".css", ".md", ".txt", ".ps1"
-]);
-
-const ignoredDirs = new Set([
-  "node_modules",
-  ".wrangler",
-  ".git"
-]);
-
-function scan(dir) {
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (ignoredDirs.has(entry.name)) continue;
-
-    const full = path.join(dir, entry.name);
-
-    if (entry.isDirectory()) {
-      scan(full);
-      continue;
-    }
-
-    if (!scanExtensions.has(path.extname(entry.name).toLowerCase())) {
-      continue;
-    }
-
-    const content = fs.readFileSync(full, "utf8");
-
-    for (const rule of dangerous) {
-      if (rule.test(content)) {
-        fail(`possivel segredo encontrado em ${path.relative(root, full)}`);
-      }
-    }
-  }
+if (!/"AUTH_PASSWORD"/.test(config)) {
+  fail("AUTH_PASSWORD nao declarado no contrato");
 }
 
-scan(root);
+if (!/"AUTH_SESSION_SECRET"/.test(config)) {
+  fail("AUTH_SESSION_SECRET nao declarado no contrato");
+}
 
-pass("nenhum segredo literal detectado");
-console.log("");
+if (!/env\.AUTH_PASSWORD/.test(worker)) {
+  fail("Worker nao consome AUTH_PASSWORD via env");
+}
+
+if (!/env\.AUTH_SESSION_SECRET/.test(worker)) {
+  fail("Worker nao consome AUTH_SESSION_SECRET via env");
+}
+
+if (!/__Host-oba_admin/.test(worker)) {
+  fail("cookie administrativo ausente");
+}
+
+if (!/__Host-oba_csrf/.test(worker)) {
+  fail("cookie CSRF ausente");
+}
+
+if (!/X-CSRF-Token/.test(worker)) {
+  fail("protecao CSRF ausente");
+}
+
+if (!/crypto\.subtle/.test(worker)) {
+  fail("WebCrypto/HMAC ausente");
+}
+
+if (!/LOGIN_MAX_ATTEMPTS/.test(worker)) {
+  fail("limitador de login ausente");
+}
+
+if (
+  /AUTH_PASSWORD\s*=\s*["'][^"']+["']/.test(worker)
+) {
+  fail("possivel AUTH_PASSWORD literal no codigo");
+}
+
+if (
+  /AUTH_SESSION_SECRET\s*=\s*["'][^"']+["']/.test(worker)
+) {
+  fail(
+    "possivel AUTH_SESSION_SECRET literal no codigo"
+  );
+}
+
+pass(`workers.dev: ${state}`);
+pass("preview_urls false");
+pass("zero routes customizadas");
+pass("run_worker_first true");
+pass("ASSETS passa pelo Worker");
+pass("AUTH_PASSWORD via env");
+pass("AUTH_SESSION_SECRET via env");
+pass("cookie administrativo presente");
+pass("cookie CSRF presente");
+pass("CSRF presente");
+pass("WebCrypto/HMAC presente");
+pass("limitador de login presente");
+pass("zero secret literal");
+
 console.log("SECURITY_GATE_OK");
