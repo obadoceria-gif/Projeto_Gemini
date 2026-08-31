@@ -414,6 +414,377 @@ function isUnsafeMethod(method) {
   return !["GET", "HEAD", "OPTIONS"].includes(method);
 }
 
+
+
+/* OBA_CATALOG_READ_API_BEGIN */
+
+const OBA_CATALOG_FILES = Object.freeze({
+  "loja": "config.json",
+  "combos": "combos.json",
+  "categorias": "categories.json",
+  "caixas": "boxes.json",
+  "sabores": "flavors.json",
+  "produtos": "products.json",
+  "opcionais": "options.json"
+});
+
+const OBA_CATALOG_ALIASES = Object.freeze({
+  sabor: "sabores",
+  sabores: "sabores",
+  flavor: "sabores",
+  flavors: "sabores",
+  flavour: "sabores",
+  flavours: "sabores",
+
+  categoria: "categorias",
+  categorias: "categorias",
+  category: "categorias",
+  categories: "categorias",
+
+  caixa: "caixas",
+  caixas: "caixas",
+  box: "caixas",
+  boxes: "caixas",
+
+  produto: "produtos",
+  produtos: "produtos",
+  product: "produtos",
+  products: "produtos",
+
+  opcional: "opcionais",
+  opcionais: "opcionais",
+  option: "opcionais",
+  options: "opcionais",
+
+  combo: "combos",
+  combos: "combos",
+
+  loja: "loja",
+  config: "loja",
+  store: "loja"
+});
+
+async function obaReadCatalogFile(
+  request,
+  env,
+  fileName
+) {
+
+  const assetUrl =
+    new URL(request.url);
+
+  assetUrl.pathname =
+    "/data/catalog-v1/" +
+    encodeURIComponent(fileName);
+
+  assetUrl.search = "";
+  assetUrl.hash = "";
+
+  const assetRequest =
+    new Request(
+      assetUrl.toString(),
+      {
+        method: "GET",
+        headers: request.headers
+      }
+    );
+
+  const response =
+    await env.ASSETS.fetch(
+      assetRequest
+    );
+
+  if (!response.ok) {
+    return {
+      ok: false,
+      status: response.status
+    };
+  }
+
+  const text =
+    await response.text();
+
+  try {
+    return {
+      ok: true,
+      value: JSON.parse(text)
+    };
+  }
+  catch {
+    return {
+      ok: false,
+      status: 500
+    };
+  }
+}
+
+function obaApiJson(
+  value,
+  status = 200
+) {
+
+  return new Response(
+    JSON.stringify(value),
+    {
+      status,
+      headers: {
+        "Content-Type":
+          "application/json; charset=utf-8",
+        "Cache-Control":
+          "no-store"
+      }
+    }
+  );
+}
+
+async function obaCatalogSnapshot(
+  request,
+  env
+) {
+
+  const snapshot = {};
+
+  for (
+    const [key, fileName]
+    of Object.entries(
+      OBA_CATALOG_FILES
+    )
+  ) {
+
+    const result =
+      await obaReadCatalogFile(
+        request,
+        env,
+        fileName
+      );
+
+    if (!result.ok) {
+      return null;
+    }
+
+    snapshot[key] =
+      result.value;
+  }
+
+  /*
+   * Aliases para compatibilidade da UI existente.
+   */
+  snapshot.flavors =
+    snapshot.sabores;
+
+  snapshot.categories =
+    snapshot.categorias;
+
+  snapshot.boxes =
+    snapshot.caixas;
+
+  snapshot.products =
+    snapshot.produtos;
+
+  snapshot.options =
+    snapshot.opcionais;
+
+  snapshot.store =
+    snapshot.loja;
+
+  return snapshot;
+}
+
+async function obaHandleCatalogReadApi(
+  request,
+  env
+) {
+
+  /*
+   * ESTA FASE E EXCLUSIVAMENTE GET.
+   */
+  if (request.method !== "GET") {
+    return null;
+  }
+
+  const url =
+    new URL(request.url);
+
+  if (
+    !url.pathname.startsWith(
+      "/api/"
+    )
+  ) {
+    return null;
+  }
+
+  const segments =
+    url.pathname
+      .split("/")
+      .filter(Boolean)
+      .slice(1);
+
+  if (!segments.length) {
+    return null;
+  }
+
+  const first =
+    segments[0]
+      .toLowerCase();
+
+  const aggregateNames =
+    new Set([
+      "catalog",
+      "catalogo",
+      "catalog-v1",
+      "bootstrap",
+      "state",
+      "data"
+    ]);
+
+  /*
+   * /api/catalog
+   * /api/catalogo
+   * /api/bootstrap
+   * /api/state
+   */
+  if (
+    segments.length === 1 &&
+    aggregateNames.has(first)
+  ) {
+
+    const catalog =
+      await obaCatalogSnapshot(
+        request,
+        env
+      );
+
+    if (!catalog) {
+      return obaApiJson(
+        {
+          ok: false,
+          error:
+            "catalog_read_failed"
+        },
+        500
+      );
+    }
+
+    /*
+     * Mantemos varios envelopes COMPATIVEIS
+     * apontando para o mesmo snapshot.
+     */
+    return obaApiJson({
+      ok: true,
+      data: catalog,
+      catalog,
+      state: catalog,
+
+      sabores:
+        catalog.sabores,
+      flavors:
+        catalog.sabores,
+
+      categorias:
+        catalog.categorias,
+      categories:
+        catalog.categorias,
+
+      caixas:
+        catalog.caixas,
+      boxes:
+        catalog.caixas,
+
+      produtos:
+        catalog.produtos,
+      products:
+        catalog.produtos,
+
+      opcionais:
+        catalog.opcionais,
+      options:
+        catalog.opcionais,
+
+      combos:
+        catalog.combos,
+
+      loja:
+        catalog.loja,
+      store:
+        catalog.loja
+    });
+  }
+
+  /*
+   * Tambem aceitar:
+   *
+   * /api/sabores
+   * /api/flavors
+   * /api/catalog/sabores
+   * /api/catalog/flavors
+   */
+  let entityName = null;
+
+  if (segments.length === 1) {
+
+    entityName =
+      segments[0];
+  }
+  else if (
+    segments.length === 2 &&
+    aggregateNames.has(first)
+  ) {
+
+    entityName =
+      segments[1];
+  }
+
+  if (!entityName) {
+    return null;
+  }
+
+  const canonical =
+    OBA_CATALOG_ALIASES[
+      entityName.toLowerCase()
+    ];
+
+  if (!canonical) {
+    return null;
+  }
+
+  const fileName =
+    OBA_CATALOG_FILES[
+      canonical
+    ];
+
+  if (!fileName) {
+    return null;
+  }
+
+  const entity =
+    await obaReadCatalogFile(
+      request,
+      env,
+      fileName
+    );
+
+  if (!entity.ok) {
+
+    return obaApiJson(
+      {
+        ok: false,
+        error:
+          "catalog_read_failed",
+        entity:
+          canonical
+      },
+      entity.status || 500
+    );
+  }
+
+  return obaApiJson(
+    entity.value
+  );
+}
+
+/* OBA_CATALOG_READ_API_END */
+
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -495,7 +866,18 @@ export default {
     }
 
     if (url.pathname.startsWith("/api/")) {
-      return json(
+
+    const obaCatalogReadResponse =
+      await obaHandleCatalogReadApi(
+        request,
+        env
+      );
+
+    if (obaCatalogReadResponse) {
+      return obaCatalogReadResponse;
+    }
+
+return json(
         {
           ok: false,
           error: "not_implemented",
