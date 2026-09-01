@@ -1418,6 +1418,294 @@ async function obaHandlePreviewApi(request, env, url) {
   });
 }
 
+
+/* OBA_PUBLISH_API_BEGIN */
+
+async function obaHandlePublishApi(request, env, url) {
+  if (
+    url.pathname !== "/api/publish" &&
+    url.pathname !== "/api/publish/rollback"
+  ) {
+    return null;
+  }
+
+  if (
+    url.pathname === "/api/publish" &&
+    request.method === "GET"
+  ) {
+    const preview =
+      await obaLoadCatalogSlot(env, "PREVIEW");
+
+    const published =
+      await obaLoadCatalogSlot(env, "PUBLISHED");
+
+    return obaApiJson({
+      ok: true,
+      preview: {
+        revision_id: preview.revision_id,
+        payload_sha256: preview.payload_sha256
+      },
+      published: {
+        revision_id: published.revision_id,
+        payload_sha256: published.payload_sha256
+      },
+      slots: await obaCatalogSlotsState(env)
+    });
+  }
+
+  if (request.method !== "POST") {
+    return obaApiJson(
+      { ok: false, error: "method_not_allowed" },
+      405
+    );
+  }
+
+  let body;
+  try {
+    body = await request.json();
+  }
+  catch {
+    return obaApiJson(
+      { ok: false, error: "invalid_json" },
+      400
+    );
+  }
+
+  if (url.pathname === "/api/publish") {
+    if (!body || body.confirm !== "PUBLISH") {
+      return obaApiJson(
+        {
+          ok: false,
+          error: "publish_confirmation_required"
+        },
+        400
+      );
+    }
+
+    const preview =
+      await obaLoadCatalogSlot(env, "PREVIEW");
+
+    const published =
+      await obaLoadCatalogSlot(env, "PUBLISHED");
+
+    if (!preview.revision_id || !preview.payload) {
+      return obaApiJson(
+        { ok: false, error: "preview_missing" },
+        409
+      );
+    }
+
+    if (
+      !body.expected_revision_id ||
+      body.expected_revision_id !== preview.revision_id
+    ) {
+      return obaApiJson(
+        {
+          ok: false,
+          error: "preview_stale",
+          expected_revision_id:
+            body.expected_revision_id || null,
+          current_preview_revision_id:
+            preview.revision_id
+        },
+        409
+      );
+    }
+
+    if (published.revision_id === preview.revision_id) {
+      return obaApiJson({
+        ok: true,
+        slot: "PUBLISHED",
+        revision_id: preview.revision_id,
+        payload_sha256: preview.payload_sha256,
+        previous_revision_id: published.revision_id,
+        reused: true,
+        slots: await obaCatalogSlotsState(env)
+      });
+    }
+
+    const now = new Date().toISOString();
+    const promotionId =
+      "promotion_" +
+      crypto.randomUUID().replaceAll("-", "");
+
+    await env.DB.batch([
+      env.DB
+        .prepare(
+          [
+            "UPDATE catalog_slots",
+            "SET revision_id = ?,",
+            "updated_at = ?",
+            "WHERE slot = 'PUBLISHED'"
+          ].join(" ")
+        )
+        .bind(preview.revision_id, now),
+
+      env.DB
+        .prepare(
+          [
+            "INSERT INTO catalog_promotions",
+            "(",
+            "promotion_id,",
+            "action,",
+            "from_revision_id,",
+            "to_revision_id,",
+            "created_at,",
+            "created_by",
+            ")",
+            "VALUES (?, ?, ?, ?, ?, ?)"
+          ].join(" ")
+        )
+        .bind(
+          promotionId,
+          "PUBLISHED_PROMOTED",
+          published.revision_id,
+          preview.revision_id,
+          now,
+          "admin"
+        )
+    ]);
+
+    const after =
+      await obaLoadCatalogSlot(env, "PUBLISHED");
+
+    if (after.revision_id !== preview.revision_id) {
+      throw new Error("published_post_write_mismatch");
+    }
+
+    return obaApiJson({
+      ok: true,
+      slot: "PUBLISHED",
+      revision_id: after.revision_id,
+      payload_sha256: after.payload_sha256,
+      previous_revision_id: published.revision_id,
+      promotion_id: promotionId,
+      reused: false,
+      slots: await obaCatalogSlotsState(env)
+    });
+  }
+
+  /* /api/publish/rollback */
+
+  if (
+    !body ||
+    body.confirm !== "ROLLBACK" ||
+    !body.revision_id
+  ) {
+    return obaApiJson(
+      {
+        ok: false,
+        error: "rollback_confirmation_required"
+      },
+      400
+    );
+  }
+
+  const target =
+    await env.DB
+      .prepare(
+        [
+          "SELECT",
+          "revision_id,",
+          "payload_sha256",
+          "FROM catalog_revisions",
+          "WHERE revision_id = ?",
+          "LIMIT 1"
+        ].join(" ")
+      )
+      .bind(body.revision_id)
+      .first();
+
+  if (!target) {
+    return obaApiJson(
+      {
+        ok: false,
+        error: "rollback_revision_not_found"
+      },
+      404
+    );
+  }
+
+  const published =
+    await obaLoadCatalogSlot(env, "PUBLISHED");
+
+  if (published.revision_id === target.revision_id) {
+    return obaApiJson({
+      ok: true,
+      slot: "PUBLISHED",
+      revision_id: target.revision_id,
+      payload_sha256: target.payload_sha256,
+      previous_revision_id: published.revision_id,
+      reused: true,
+      rolled_back: true,
+      slots: await obaCatalogSlotsState(env)
+    });
+  }
+
+  const now = new Date().toISOString();
+  const promotionId =
+    "promotion_" +
+    crypto.randomUUID().replaceAll("-", "");
+
+  await env.DB.batch([
+    env.DB
+      .prepare(
+        [
+          "UPDATE catalog_slots",
+          "SET revision_id = ?,",
+          "updated_at = ?",
+          "WHERE slot = 'PUBLISHED'"
+        ].join(" ")
+      )
+      .bind(target.revision_id, now),
+
+    env.DB
+      .prepare(
+        [
+          "INSERT INTO catalog_promotions",
+          "(",
+          "promotion_id,",
+          "action,",
+          "from_revision_id,",
+          "to_revision_id,",
+          "created_at,",
+          "created_by",
+          ")",
+          "VALUES (?, ?, ?, ?, ?, ?)"
+        ].join(" ")
+      )
+      .bind(
+        promotionId,
+        "PUBLISHED_ROLLBACK",
+        published.revision_id,
+        target.revision_id,
+        now,
+        "admin"
+      )
+  ]);
+
+  const after =
+    await obaLoadCatalogSlot(env, "PUBLISHED");
+
+  if (after.revision_id !== target.revision_id) {
+    throw new Error("rollback_post_write_mismatch");
+  }
+
+  return obaApiJson({
+    ok: true,
+    slot: "PUBLISHED",
+    revision_id: after.revision_id,
+    payload_sha256: after.payload_sha256,
+    previous_revision_id: published.revision_id,
+    promotion_id: promotionId,
+    reused: false,
+    rolled_back: true,
+    slots: await obaCatalogSlotsState(env)
+  });
+}
+
+/* OBA_PUBLISH_API_END */
+
 async function obaPrivatePreviewPage(request, env) {
   const preview = await obaLoadCatalogSlot(env, "PREVIEW");
   if (!preview.revision_id || !preview.payload) {
@@ -1540,6 +1828,17 @@ export default {
     }
 
 if (url.pathname.startsWith("/api/")) {
+
+      const obaPublishResponse =
+        await obaHandlePublishApi(
+          request,
+          env,
+          url
+        );
+
+      if (obaPublishResponse) {
+        return obaPublishResponse;
+      }
 
             const obaPreviewResponse =
         await obaHandlePreviewApi(

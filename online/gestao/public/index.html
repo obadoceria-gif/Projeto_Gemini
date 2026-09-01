@@ -1568,5 +1568,101 @@ carregar().catch(e=>msg(String(e.message||e),'erro'));
 })();
 </script>
 <!-- FIM FASE 7C.2B5 -->
+
+<script id="oba-publish-8e9f">
+(function(){
+  async function obaPublishPreview(){
+    const preview = await api('/api/preview');
+
+    if (!preview || !preview.revision_id) {
+      throw new Error('Preview ainda nao foi criado.');
+    }
+
+    const confirmado = window.confirm(
+      'Publicar exatamente a revisao aprovada no Preview?\n\n' +
+      preview.revision_id
+    );
+
+    if (!confirmado) return;
+
+    const result = await api(
+      '/api/publish',
+      {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify({
+          confirm:'PUBLISH',
+          expected_revision_id:preview.revision_id
+        })
+      }
+    );
+
+    if (!result || !result.ok || !result.revision_id) {
+      throw new Error('Publicacao nao confirmada pela API.');
+    }
+
+    if (typeof atualizarStatus === 'function') {
+      await atualizarStatus();
+    }
+
+    if (typeof msg === 'function') {
+      msg(
+        result.reused
+          ? 'Preview ja estava publicado.'
+          : 'Publicacao concluida com seguranca.'
+      );
+    }
+    else {
+      alert(
+        result.reused
+          ? 'Preview ja estava publicado.'
+          : 'Publicacao concluida com seguranca.'
+      );
+    }
+  }
+
+  const button = document.getElementById('publicarBtn');
+
+  if (!button) {
+    console.error('[8E.9F] publicarBtn ausente.');
+    return;
+  }
+
+  button.onclick = async function(){
+    const originalText = button.textContent;
+
+    button.disabled = true;
+    button.textContent = 'Publicando...';
+
+    try {
+      await obaPublishPreview();
+    }
+    catch (error) {
+      const message =
+        String(
+          error && error.message
+            ? error.message
+            : error
+        );
+
+      if (typeof msg === 'function') {
+        msg(message, 'erro');
+      }
+      else {
+        alert('Erro ao publicar: ' + message);
+      }
+    }
+    finally {
+      button.disabled = false;
+      button.textContent =
+        originalText || 'Publicar alteracoes';
+    }
+  };
+
+  window.obaPublishPreview = obaPublishPreview;
+})();
+</script>
 </body>
 </html>
