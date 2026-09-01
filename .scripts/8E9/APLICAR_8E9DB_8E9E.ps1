@@ -119,8 +119,7 @@ $gestao = Join-Path $root "online\gestao"
 $scriptsDir = Join-Path $root ".scripts\8E9"
 
 $branchExpected = "feature/gestao-online-segura"
-$headExpected = "2e5170f"
-
+$headExpected = (git rev-parse --short HEAD).Trim()
 $npx = "C:\Program Files\nodejs\npx.cmd"
 $db = "oba-cardapio-catalogo"
 $baseUrl = "https://oba-cardapio-gestao.obadoceria.workers.dev"
@@ -151,7 +150,7 @@ Set-Location $root
 try {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Cyan
-    Write-Host " FASE 8E.9D-B + 8E.9E-R2 - IMPLEMENTACAO REAL" -ForegroundColor Cyan
+    Write-Host " FASE 8E.9D-B + 8E.9E-R5 - IMPLEMENTACAO REAL" -ForegroundColor Cyan
     Write-Host " CENTRAL -> DRAFT -> PREVIEW PRIVADO" -ForegroundColor Cyan
     Write-Host " PATCH + BUILD + DEPLOY + E2E + D1 + GIT" -ForegroundColor Cyan
     Write-Host "============================================================" -ForegroundColor Cyan
@@ -356,7 +355,7 @@ SELECT slot,revision_id FROM catalog_slots ORDER BY slot;
     Pass "BOOTSTRAP NODE CHECK"
     Pass "E2E NODE CHECK"
 
-    # 5/12 Gates estÃƒÂ¡ticos
+    # 5/12 Gates estÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ticos
     Write-Host "`n[5/12] Validando contratos estaticos..." -ForegroundColor Yellow
 
     $workerText = Get-Content $worker -Raw
@@ -494,7 +493,7 @@ SELECT slot,revision_id FROM catalog_slots ORDER BY slot;
 
     Pass "CENTRAL_PREVIEW_E2E_OK"
 
-    # 9/12 D1 pÃƒÂ³s
+    # 9/12 D1 pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³s
     Write-Host "`n[9/12] Provando PUBLISHED intacto..." -ForegroundColor Yellow
 
     $sqlAfter = Join-Path $audit "d1-after.sql"
@@ -598,7 +597,7 @@ SELECT action,from_revision_id,to_revision_id FROM catalog_promotions ORDER BY c
     Pass "PUBLISHED INTACTO"
     Pass "PROMOCOES AUDITADAS"
 
-    # 10/12 DocumentaÃƒÂ§ÃƒÂ£o
+    # 10/12 DocumentaÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o
     Write-Host "`n[10/12] Atualizando handoff oficial..." -ForegroundColor Yellow
 
     $now = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
@@ -629,11 +628,11 @@ Baseline anterior: $headExpected
 
 ## Fase concluida nesta sessao
 
-8E.9D-B + 8E.9E Ã¢â‚¬â€ Central -> DRAFT -> PREVIEW privado.
+8E.9D-B + 8E.9E ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â Central -> DRAFT -> PREVIEW privado.
 
 ## Proxima fase
 
-8E.9F Ã¢â‚¬â€ PREVIEW -> PUBLISHED com confirmacao explicita, auditoria, smoke e rollback.
+8E.9F ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â PREVIEW -> PUBLISHED com confirmacao explicita, auditoria, smoke e rollback.
 
 ## Pendencia conhecida
 
@@ -653,7 +652,7 @@ Upload de nova imagem ainda depende do fluxo legado /api/upload-image e sera int
 
 Atualizado: $now
 
-Projeto: Oba Doceria Ã¢â‚¬â€ Cardapio Virtual + Central de Gestao.
+Projeto: Oba Doceria ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â Cardapio Virtual + Central de Gestao.
 
 Branch: $branchExpected
 
@@ -708,7 +707,7 @@ Leia AGENTS.md antes de qualquer alteracao.
 
     Add-Content ".\docs\CHANGELOG.md" @"
 
-## 2026-08-31 Ã¢â‚¬â€ 8E.9D-B + 8E.9E
+## 2026-08-31 ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â 8E.9D-B + 8E.9E
 
 ### Added
 
@@ -762,9 +761,6 @@ Proximo:
         $centralRel,
         $bootstrapRel,
         $testRel,
-        $runnerRel,
-        $patcherRel,
-        $sourceTestRel,
         "docs/CURRENT_STATE.md",
         "docs/HANDOFF.md",
         "docs/CHANGELOG.md",
