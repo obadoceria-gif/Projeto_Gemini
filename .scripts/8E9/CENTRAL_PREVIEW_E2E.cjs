@@ -165,7 +165,7 @@ function parse(result) {
   const page = await call('/__preview?cb=' + Date.now(), { headers: { Cookie: cookie } });
   if (page.status !== 200) throw new Error(`Preview visual=${page.status}`);
 
-  if (!page.text.includes("<base href='/ui-desenvolvimento/'>")) {
+  if (!page.text.includes("<base href='/'>")) {
     throw new Error('base do Preview ausente');
   }
 

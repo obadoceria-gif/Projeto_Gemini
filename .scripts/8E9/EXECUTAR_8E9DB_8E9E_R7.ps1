@@ -140,11 +140,14 @@ $workerRel = "online/gestao/src/index.js"
 $centralRel = "online/gestao/public/index.html"
 $bootstrapRel = "online/gestao/public/preview-bootstrap.js"
 $testRel = "online/gestao/tests/central-preview-e2e.cjs"
+$previewClientRel = "online/gestao/public/ui-desenvolvimento/index.html"
 
 $worker = Join-Path $root $workerRel
 $central = Join-Path $root $centralRel
 $bootstrap = Join-Path $root $bootstrapRel
 $testFile = Join-Path $root $testRel
+$previewClient = Join-Path $root $previewClientRel
+$previewClientSource = Join-Path $root "ui-desenvolvimento\index.html"
 
 $patcher = Join-Path $root ".scripts\8E9\PATCH_8E9_PREVIEW.cjs"
 $sourceTest = Join-Path $root ".scripts\8E9\CENTRAL_PREVIEW_E2E.cjs"
@@ -176,6 +179,7 @@ try {
     if (-not (Test-Path $npx)) { Fail "NPX global ausente." }
     if (-not (Test-Path $patcher)) { Fail "Patcher 8E9 ausente." }
     if (-not (Test-Path $sourceTest)) { Fail "E2E 8E9 ausente." }
+    if (-not (Test-Path $previewClientSource)) { Fail "Cliente homologado ausente." }
 
     if (Test-Path ".\.wrangler\cache") {
         Remove-Item ".\.wrangler\cache" -Recurse -Force
@@ -237,6 +241,8 @@ try {
     # 4/11
     Write-Host "`n[4/11] Aplicando patch deterministico..." -ForegroundColor Yellow
 
+    New-Item -ItemType Directory -Force -Path (Split-Path $previewClient -Parent) | Out-Null
+    Copy-Item $previewClientSource $previewClient -Force
     Copy-Item $sourceTest $testFile -Force
 
     $patch = Invoke-ObaProcess `
@@ -264,6 +270,11 @@ try {
     node.exe --check $testFile
     if ($LASTEXITCODE -ne 0) { Fail "E2E invalido." }
 
+    $sourceHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $previewClientSource).Hash
+    $previewHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $previewClient).Hash
+    if ($sourceHash -ne $previewHash) { Fail "Cliente Preview diverge do cliente homologado." }
+
+    Pass "PREVIEW CLIENTE = CLIENTE HOMOLOGADO"
     Pass "PATCH APLICADO"
     Pass "NODE CHECKS"
 
@@ -412,10 +423,10 @@ Baseline anterior da fase: $head
 - Publicacao direta antiga bloqueada.
 
 ## Ultima fase aprovada
-8E.9D-B + 8E.9E — Central -> DRAFT -> PREVIEW privado.
+8E.9D-B + 8E.9E â€” Central -> DRAFT -> PREVIEW privado.
 
 ## Proxima fase
-8E.9F — PREVIEW -> PUBLISHED com confirmacao, smoke e rollback.
+8E.9F â€” PREVIEW -> PUBLISHED com confirmacao, smoke e rollback.
 
 ## Pendencia separada
 Upload de imagens online.
@@ -426,7 +437,7 @@ Upload de imagens online.
 
 Atualizado: $now
 
-Projeto: Oba Doceria — Cardapio Virtual + Central de Gestao.
+Projeto: Oba Doceria â€” Cardapio Virtual + Central de Gestao.
 Branch: $branchExpected
 
 ## Ultima fase aprovada
@@ -440,14 +451,14 @@ Branch: $branchExpected
 - Publicacao direta antiga: bloqueada.
 
 ## Proximo passo
-8E.9F — PREVIEW -> PUBLISHED + rollback seguro.
+8E.9F â€” PREVIEW -> PUBLISHED + rollback seguro.
 
 Leia AGENTS.md, docs/CURRENT_STATE.md, docs/DECISIONS.md e docs/ROADMAP.md antes de alterar codigo.
 "@ | Set-Content ".\docs\HANDOFF.md" -Encoding UTF8
 
     Add-Content ".\docs\CHANGELOG.md" @"
 
-## 2026-09-01 — 8E.9D-B + 8E.9E
+## 2026-09-01 â€” 8E.9D-B + 8E.9E
 
 ### Added
 - Central integrada ao DRAFT.
@@ -478,6 +489,7 @@ Proximo: 8E.9F PREVIEW -> PUBLISHED + rollback.
         $centralRel,
         $bootstrapRel,
         $testRel,
+        $previewClientRel,
         "docs/CURRENT_STATE.md",
         "docs/HANDOFF.md",
         "docs/CHANGELOG.md",
