@@ -27,3 +27,16 @@ Formato inspirado em Keep a Changelog.
 
 Baseline anterior:
 c4d4c2d.
+
+## 2026-09-01 Ã¢â‚¬â€ 8E.9D-B + 8E.9E
+
+### Added
+- Central integrada ao DRAFT.
+- API PREVIEW.
+- Preview privado autenticado.
+- E2E remoto de Preview.
+
+### Security
+- PUBLISHED preservado.
+- CSRF exigido no Preview.
+- Preview anonimo bloqueado.

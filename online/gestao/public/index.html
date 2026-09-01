@@ -80,12 +80,80 @@ let pendencias=[];
 const $=id=>document.getElementById(id);
 const moeda=v=>Number(v??0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 
-async function api(url,opts){
-  const r=await fetch(url,opts);
-  const j=await r.json();
-  if(!r.ok)throw new Error(j.error||'Falha na operação.');
+async function api(url,opts={}){
+  const options={...opts};
+  const method=String(options.method||'GET').toUpperCase();
+  const headers=new Headers(options.headers||{});
+  if(!['GET','HEAD','OPTIONS'].includes(method)){
+    const token=String(document.cookie||'').split(';').map(x=>x.trim()).find(x=>x.startsWith('__Host-oba_csrf='));
+    const csrf=token?decodeURIComponent(token.slice('__Host-oba_csrf='.length)):'';
+    if(!csrf)throw new Error('Sessao sem CSRF. Entre novamente na Central.');
+    headers.set('X-CSRF-Token',csrf);
+  }
+  options.headers=headers;
+  const r=await fetch(url,options);
+  const text=await r.text();
+  let j={};
+  if(text){try{j=JSON.parse(text)}catch{j={error:text}}}
+  if(!r.ok)throw new Error(j.error||('HTTP '+r.status));
   return j;
 }
+
+function obaNormalizeCatalog(raw){
+  const s=(raw&&((raw.catalog)||(raw.data)||(raw.state)))||raw||{};
+  return {
+    flavors:s.flavors||s.sabores||[],
+    categories:s.categories||s.categorias||[],
+    boxes:s.boxes||s.caixas||[],
+    products:s.products||s.produtos||[],
+    options:s.options||s.opcionais||[],
+    combos:s.combos||[],
+    config:s.config||s.loja||s.store||{}
+  };
+}
+
+function obaDraftPayload(state=catalogo){
+  return {
+    sabores:state.flavors||[],
+    categorias:state.categories||[],
+    caixas:state.boxes||[],
+    produtos:state.products||[],
+    opcionais:state.options||[],
+    combos:state.combos||[],
+    loja:state.config||{}
+  };
+}
+
+async function obaLoadDraftCatalog(){
+  const draft=await api('/api/draft',{cache:'no-store'});
+  if(draft&&draft.payload)return obaNormalizeCatalog(draft.payload);
+  return obaNormalizeCatalog(await api('/api/catalog',{cache:'no-store'}));
+}
+
+async function obaSaveDraftState(nextState){
+  const saved=await api('/api/draft',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({payload:obaDraftPayload(nextState)})
+  });
+  return {...saved,backup:'DRAFT '+String(saved.revision_id||'')};
+}
+
+async function obaSaveDraftWith(tipo,value){
+  const next={...catalogo,[tipo]:value};
+  const saved=await obaSaveDraftState(next);
+  catalogo[tipo]=value;
+  return saved;
+}
+
+async function obaPreparePreview(){
+  return api('/api/preview',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({confirm:'PREVIEW'})
+  });
+}
+
 
 function msg(t,tipo='ok'){const b=$('mensagem');b.textContent=t;b.className=tipo==='ok'?'okbox':'errbox';b.style.display='block';window.scrollTo({top:0,behavior:'smooth'})}
 function td(t,c=''){const x=document.createElement('td');x.textContent=t??'—';if(c)x.className=c;return x}
@@ -116,21 +184,24 @@ function renderPendencias(){
 
 async function atualizarStatus(){
   try{
-    const s=await api('/api/status',{cache:'no-store'});
+    const draft=await api('/api/draft',{cache:'no-store'});
+    const preview=await api('/api/preview',{cache:'no-store'});
     const b=$('statusBadge');
-
-    if(s.dirty){
-      b.textContent=s.changed.length+' arquivo(s) não versionado(s)';
+    const slots=preview.slots||{};
+    if(!draft.revision_id){
+      b.textContent='Rascunho vazio';
       b.className='badge off';
-    }else if(s.publishPendingFlag){
-      b.textContent=s.publishPendingCount+' arquivo(s) pendente(s) de publicação';
+    }else if(slots.PREVIEW!==draft.revision_id){
+      b.textContent='Rascunho aguardando Preview';
+      b.className='badge off';
+    }else if(slots.PUBLISHED!==draft.revision_id){
+      b.textContent='Preview pronto para publicar';
       b.className='badge off';
     }else{
-      b.textContent='Tudo publicado';
+      b.textContent='Sem alteracoes publicaveis';
       b.className='badge ok';
     }
-
-    window.__obaStatusPublicacao=s;
+    window.__obaStatusPublicacao={draft,preview,slots};
   }catch{}
 }
 
@@ -292,7 +363,7 @@ async function salvarEditor(){
   }
 
   const items=novo?[...catalogo[tipo],item]:catalogo[tipo].map(x=>String(x.id)===String(id)?item:x);
-  const res=await api('/api/'+tipo,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items})});
+  const res=await obaSaveDraftWith(tipo,items);
   catalogo[tipo]=items;
   $('editor').close();
   renderTudo();
@@ -308,7 +379,7 @@ async function arquivarAtual(){
 
   const novo={...item,ativo:false,disponivel:false};
   const items=catalogo[tipo].map(x=>String(x.id)===String(id)?novo:x);
-  const res=await api('/api/'+tipo,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items})});
+  const res=await obaSaveDraftWith(tipo,items);
   catalogo[tipo]=items;$('editor').close();renderTudo();addPendencia('Arquivado: '+item.nome);msg('Item arquivado. Backup: '+res.backup);
 }
 
@@ -331,7 +402,7 @@ function renderTudo(){
 }
 
 async function carregar(){
-  catalogo=await api('/api/catalog',{cache:'no-store'});
+  catalogo=await obaLoadDraftCatalog();
   const f=$('filtroCategoria');f.replaceChildren(new Option('Todas as categorias',''));catalogo.categories.forEach(c=>f.add(new Option(c.nome,c.id)));
   $('cfgWhatsapp').value=catalogo.config?.store?.whatsapp??'';$('cfgLocale').value=catalogo.config?.store?.locale??'pt-BR';$('cfgCurrency').value=catalogo.config?.store?.currency??'BRL';$('cfgPayments').value=Array.isArray(catalogo.config?.checkout?.paymentMethods)?catalogo.config.checkout.paymentMethods.join(', '):'';
   renderTudo();await atualizarStatus();
@@ -351,25 +422,27 @@ $('formConfig').onsubmit=async e=>{
     const cfg=window.structuredClone?window.structuredClone(catalogo.config):JSON.parse(JSON.stringify(catalogo.config));
     cfg.store=cfg.store||{};cfg.checkout=cfg.checkout||{};
     cfg.store.whatsapp=$('cfgWhatsapp').value.trim();cfg.store.locale=$('cfgLocale').value.trim()||'pt-BR';cfg.store.currency=$('cfgCurrency').value.trim()||'BRL';cfg.checkout.paymentMethods=$('cfgPayments').value.split(',').map(x=>x.trim()).filter(Boolean);
-    const res=await api('/api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config:cfg})});
+    const res=await obaSaveDraftWith('config',cfg);
     catalogo.config=cfg;addPendencia('Configurações da loja alteradas');msg('Loja salva. Backup: '+res.backup);
   }catch(err){msg(String(err.message||err),'erro')}
 };
 
-$('previewBtn').onclick=()=>window.open('/ui-desenvolvimento/index.html?preview='+Date.now(),'_blank','noopener,noreferrer');
-
-$('publicarBtn').onclick=async()=>{
-  const s=await api('/api/status',{cache:'no-store'});
-  if(!s.dirty && !s.publishPendingFlag){msg('Não há alterações pendentes para publicar.','erro');return}
-  if(!confirm('Publicar alterações no cardápio oficial? O processo fará backup, validação, Git, deploy, smoke e rollback automático se necessário.'))return;
-
-  const b=$('publicarBtn');b.disabled=true;b.textContent='Publicando...';
+$('previewBtn').onclick=async()=>{
+  const b=$('previewBtn');
+  b.disabled=true;b.textContent='Preparando preview...';
   try{
-    await api('/api/publish',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({confirm:'PUBLICAR'})});
-    pendencias=[];renderPendencias();await atualizarStatus();msg('Publicação concluída com sucesso.');
+    await obaPreparePreview();
+    await atualizarStatus();
+    window.open('/__preview?cb='+Date.now(),'_blank','noopener,noreferrer');
+    msg('Preview privado atualizado. O cardapio publicado continua intacto.');
   }catch(err){msg(String(err.message||err),'erro')}
-  finally{b.disabled=false;b.textContent='Publicar alterações'}
+  finally{b.disabled=false;b.textContent='Visualizar cardapio'}
 };
+
+$('publicarBtn').onclick=()=>{
+  msg('Publicacao oficial protegida. Valide primeiro o Preview privado; PREVIEW -> PUBLISHED sera habilitado na proxima fase.','erro');
+};
+$('publicarBtn').textContent='Publicar apos Preview';;
 
 carregar().catch(e=>msg(String(e.message||e),'erro'));
 </script>

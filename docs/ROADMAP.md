@@ -72,3 +72,7 @@
 - release final;
 - documentação final;
 - backups finais.
+
+## Atualizacao 8E.9D-B + 8E.9E
+Concluido: Central -> DRAFT -> PREVIEW privado.
+Proximo: 8E.9F PREVIEW -> PUBLISHED + rollback.

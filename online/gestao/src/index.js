@@ -1249,6 +1249,212 @@ async function obaHandleDraftApi(
 }
 
 /* OBA_DRAFT_API_END */
+
+/* OBA_PREVIEW_API_BEGIN */
+
+async function obaLoadCatalogSlot(env, slot) {
+  const row =
+    await env.DB
+      .prepare(
+        [
+          "SELECT",
+          "s.slot,",
+          "s.revision_id,",
+          "s.updated_at,",
+          "r.payload_json,",
+          "r.payload_sha256,",
+          "r.created_at",
+          "FROM catalog_slots s",
+          "LEFT JOIN catalog_revisions r",
+          "ON r.revision_id = s.revision_id",
+          "WHERE s.slot = ?",
+          "LIMIT 1"
+        ].join(" ")
+      )
+      .bind(slot)
+      .first();
+
+  if (!row || !row.revision_id) {
+    return {
+      slot,
+      revision_id: null,
+      updated_at: row ? row.updated_at : null,
+      payload_sha256: null,
+      payload: null
+    };
+  }
+
+  let payload;
+  try {
+    payload = JSON.parse(row.payload_json);
+  }
+  catch {
+    throw new Error("slot_payload_corrupt");
+  }
+
+  return {
+    slot,
+    revision_id: row.revision_id,
+    updated_at: row.updated_at,
+    payload_sha256: row.payload_sha256,
+    payload
+  };
+}
+
+async function obaCatalogSlotsState(env) {
+  const rows =
+    await env.DB
+      .prepare(
+        [
+          "SELECT slot, revision_id",
+          "FROM catalog_slots",
+          "ORDER BY slot"
+        ].join(" ")
+      )
+      .all();
+
+  const slots = { DRAFT: null, PREVIEW: null, PUBLISHED: null };
+  for (const row of rows.results || []) {
+    if (Object.prototype.hasOwnProperty.call(slots, row.slot)) {
+      slots[row.slot] = row.revision_id ?? null;
+    }
+  }
+  return slots;
+}
+
+async function obaHandlePreviewApi(request, env, url) {
+  if (url.pathname !== "/api/preview") return null;
+
+  if (request.method === "GET") {
+    const preview = await obaLoadCatalogSlot(env, "PREVIEW");
+    const slots = await obaCatalogSlotsState(env);
+    return obaApiJson({ ok: true, ...preview, slots });
+  }
+
+  if (request.method !== "POST") {
+    return obaApiJson({ ok: false, error: "method_not_allowed" }, 405);
+  }
+
+  let body;
+  try { body = await request.json(); }
+  catch { return obaApiJson({ ok: false, error: "invalid_json" }, 400); }
+
+  if (!body || body.confirm !== "PREVIEW") {
+    return obaApiJson({ ok: false, error: "preview_confirmation_required" }, 400);
+  }
+
+  const draft = await obaLoadCatalogSlot(env, "DRAFT");
+  if (!draft.revision_id) {
+    return obaApiJson({ ok: false, error: "draft_required" }, 409);
+  }
+
+  const before = await obaLoadCatalogSlot(env, "PREVIEW");
+  const published = await obaLoadCatalogSlot(env, "PUBLISHED");
+
+  if (before.revision_id === draft.revision_id) {
+    return obaApiJson({
+      ok: true,
+      slot: "PREVIEW",
+      revision_id: draft.revision_id,
+      payload_sha256: draft.payload_sha256,
+      reused: true,
+      slots: {
+        DRAFT: draft.revision_id,
+        PREVIEW: before.revision_id,
+        PUBLISHED: published.revision_id
+      }
+    });
+  }
+
+  const now = new Date().toISOString();
+  await env.DB.batch([
+    env.DB
+      .prepare(
+        [
+          "UPDATE catalog_slots",
+          "SET revision_id = ?,",
+          "updated_at = ?",
+          "WHERE slot = 'PREVIEW'"
+        ].join(" ")
+      )
+      .bind(draft.revision_id, now),
+
+    env.DB
+      .prepare(
+        [
+          "INSERT INTO catalog_promotions",
+          "(",
+          "promotion_id,",
+          "action,",
+          "from_revision_id,",
+          "to_revision_id,",
+          "created_at,",
+          "created_by",
+          ")",
+          "VALUES (?, ?, ?, ?, ?, ?)"
+        ].join(" ")
+      )
+      .bind(
+        "promotion_" + crypto.randomUUID().replaceAll("-", ""),
+        "PREVIEW_CREATED",
+        before.revision_id,
+        draft.revision_id,
+        now,
+        "admin"
+      )
+  ]);
+
+  return obaApiJson({
+    ok: true,
+    slot: "PREVIEW",
+    revision_id: draft.revision_id,
+    payload_sha256: draft.payload_sha256,
+    reused: false,
+    slots: {
+      DRAFT: draft.revision_id,
+      PREVIEW: draft.revision_id,
+      PUBLISHED: published.revision_id
+    }
+  });
+}
+
+async function obaPrivatePreviewPage(request, env) {
+  const preview = await obaLoadCatalogSlot(env, "PREVIEW");
+  if (!preview.revision_id || !preview.payload) {
+    return new Response(
+      "<!doctype html><html lang='pt-BR'><meta charset='utf-8'><title>Preview indisponivel</title><body><h1>Preview ainda nao foi criado.</h1><p>Volte a Central e clique em Visualizar cardapio.</p></body></html>",
+      { status: 409, headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow" } }
+    );
+  }
+
+  const assetUrl = new URL(request.url);
+  assetUrl.pathname = "/ui-desenvolvimento/index.html";
+  assetUrl.search = "";
+  assetUrl.hash = "";
+  const asset = await env.ASSETS.fetch(new Request(assetUrl.toString(), { method: "GET", headers: request.headers }));
+  if (!asset.ok) return new Response("Preview asset unavailable", { status: 502 });
+
+  const source = await asset.text();
+  const inject = "<base href='/'><script src='/preview-bootstrap.js'></script>";
+  const html = source.includes("<head>") ? source.replace("<head>", "<head>" + inject) : inject + source;
+
+  return new Response(html, {
+    status: 200,
+    headers: {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "no-store, no-cache, must-revalidate",
+      "Pragma": "no-cache",
+      "X-Robots-Tag": "noindex, nofollow, noarchive",
+      "X-Content-Type-Options": "nosniff",
+      "Referrer-Policy": "no-referrer",
+      "X-Frame-Options": "DENY",
+      "Content-Security-Policy": "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'"
+    }
+  });
+}
+
+/* OBA_PREVIEW_API_END */
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -1329,9 +1535,24 @@ export default {
       );
     }
 
-    if (url.pathname.startsWith("/api/")) {
+        if (url.pathname === "/__preview") {
+      return obaPrivatePreviewPage(request, env);
+    }
 
-      const obaDraftResponse =
+if (url.pathname.startsWith("/api/")) {
+
+            const obaPreviewResponse =
+        await obaHandlePreviewApi(
+          request,
+          env,
+          url
+        );
+
+      if (obaPreviewResponse) {
+        return obaPreviewResponse;
+      }
+
+const obaDraftResponse =
         await obaHandleDraftApi(
           request,
           env,
