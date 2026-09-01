@@ -77,7 +77,7 @@ function parse(result) {
   if (central.status !== 200) throw new Error(`Central=${central.status}`);
 
   for (const marker of [
-    'obaLoadDraftCatalog',
+    '/api/draft',
     'obaSaveDraftWith',
     'obaPreparePreview',
     '/api/draft',
